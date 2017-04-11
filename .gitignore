@@ -35,3 +35,17 @@ jspm_packages
 
 # Optional REPL history
 .node_repl_history
+
+# Office documents
+*.odt
+*.odp
+*.ods
+*.doc
+*.xlsx
+*.ppt
+
+# Office LOCK-Files
+~*.doc
+~*.xlsx
+~*.ppt
+.lock~*

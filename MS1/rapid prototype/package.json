@@ -1,0 +1,25 @@
+{
+  "name": "eisss17vilents_rapidprototyping",
+  "version": "1.0.0",
+  "description": "Rapid Prototyping für EIS SoSe2017 - Leonid Vilents (11096044)",
+  "main": "server.js",
+  "scripts": {
+    "test": "unittest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "\u0016\u0016https://github.com/scarcloud/EISSS17Vilents.git"
+  },
+  "keywords": [
+    "thkoeln",
+    "eis",
+    "cologne",
+    "uoas"
+  ],
+  "author": "Leonid Vilents",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^2.5.5",
+    "express": "^4.14.1"
+  }
+}
