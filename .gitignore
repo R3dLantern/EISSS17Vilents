@@ -46,6 +46,7 @@ jspm_packages
 
 # Office LOCK-Files
 ~*.doc
+~*.docx
 ~*.xlsx
 ~*.ppt
 .lock~*
