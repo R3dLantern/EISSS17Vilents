@@ -41,8 +41,11 @@ jspm_packages
 *.odp
 *.ods
 *.doc
+*.docx
+*.xls
 *.xlsx
 *.ppt
+*.pptx
 
 # Office LOCK-Files
 ~*.doc
