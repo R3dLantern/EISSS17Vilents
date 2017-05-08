@@ -1,0 +1,18 @@
+extends layout
+
+block content
+  h1 Welcome to Corona
+  a(href='http://en.wikipedia.org/wiki/Corona_(satellite)') Corona is always watching...
+  form(
+    action="/"
+    method="post"
+    target="_self"
+  )
+    input(
+      type="text"
+      name="message"
+    )
+    button(
+      type="submit"
+      value="Submit"
+    )
