@@ -37,15 +37,15 @@ jspm_packages
 .node_repl_history
 
 # Office documents
-*.odt
-*.odp
-*.ods
-*.doc
-*.docx
-*.xls
-*.xlsx
-*.ppt
-*.pptx
+#*.odt
+#*.odp
+#*.ods
+#*.doc
+#*.docx
+#*.xls
+#*.xlsx
+#*.ppt
+#*.pptx
 
 # Office LOCK-Files
 ~*.doc
