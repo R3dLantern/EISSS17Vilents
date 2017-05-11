@@ -1,0 +1,26 @@
+[
+    {
+        "id":"6543",
+        "user":"superBuilder",
+        "content":"Sieht gut aus! :)",
+        "upvotes":"0"
+    },
+    {
+        "id":"8769",
+        "user":"superBuilder",
+        "content":"Was ist mit der einen LED da unten?",
+        "upvotes":"3"
+    },
+    {
+        "id":"8857",
+        "user":"superBuilder",
+        "content":"Vielleicht solltest Du stattdessen PVC benutzen, das ist stabiler",
+        "upvotes":"9"
+    },
+    {
+        "id":"3122",
+        "user":"caseModMan",
+        "content":"Find ich klasse!",
+        "upvotes":"2"
+    }
+]
