@@ -108,7 +108,8 @@ public class Main extends Application
 	 
 	/**
 	 * Sendet eine Anfrage an den Server zur Berechnung der Gesamtreputation.
-	 * @param username Der Name des Benutzers
+	 * @param username Der Benutzername des Benutzers
+	 * @return die vom Server erhaltene Gesamtreputation des Benutzers
 	 */
 	int getTotalReputationFor(String username)
 	{
@@ -119,12 +120,18 @@ public class Main extends Application
 			conn = (HttpURLConnection) url.openConnection();
 			
 			int responseCode = conn.getResponseCode();
-			if(responseCode == 404){
-				return -404;
-			}
+			
 			System.out.println("\nSending 'GET' request to URL : " + url);
 			System.out.println("Response Code : " + responseCode);
 			
+			// bei Status 404 abbrechen
+			if(responseCode == 404){
+				if (conn != null) {
+					conn.disconnect();
+				}
+				return -404;
+			}
+	
 			BufferedReader in = new BufferedReader(
 			        new InputStreamReader(conn.getInputStream()));
 			String inputLine;

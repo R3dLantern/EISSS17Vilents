@@ -1,5 +1,14 @@
-
+/*jslint node:true nomen:true*/
 "use strict";
+
+/**
+ * server.js
+ * Backend-Hauptmodul des Rapid Prototype im Rahmen von EIS SS2017
+ * Demonstriert die Kommunikation mit dem Client sowie das Alleinstellungsmerkmal
+ * "Berechnung gewichtete Gesamtreputation"
+ * @author Leonid Vilents
+ */
+
 var express     = require('express');
 var http        = require('http');
 var path        = require('path');
@@ -30,24 +39,20 @@ app.use(express['static'](path.join(__dirname, 'public')));
 */
 app.get('/users/:username', function (req, res) {
     var username = req.params.username;
+    if (username !== "superBuilder" && username !== "caseModMan") {
+        res.send(404);
+    }
     res.send(reputation.getTotalReputation(username).toString());
 });
 
-var server = app.listen(port, function () {
-    console.log('Listening on port %d', server.address().port);
+
+app.listen(port, function () {
+    console.log('Listening on port %d', port);
 });
 
-/// catch 404 and forwarding to error handler
-app.use(function (req, res, next) {
-    var err = new Error('Not Found');
-    err.status = 404;
-    next(err);
-});
-
-/// error handlers
-
-// development error handler
-// will print stacktrace
+/**
+ * In der Entwicklungsumgebung wird ein Stacktrace ausgegeben.
+ */
 if (app.get('env') === 'development') {
     app.use(function (err, req, res, next) {
         res.render('error', {
@@ -57,8 +62,9 @@ if (app.get('env') === 'development') {
     });
 }
 
-// production error handler
-// no stacktraces leaked to user
+/**
+ * Kein Stacktrace-Leak in Produktivumgebung
+ */
 app.use(function (err, req, res, next) {
     res.render('error', {
         message: err.message,

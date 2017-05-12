@@ -1,13 +1,16 @@
 /*jslint node:true nomen:true*/
 "use strict";
 
-// Modificators based on different weights of user activity
-var FACTOR_WRITTEN_COMMENT = 0.3,
-    FACTOR_NEW_PROJECT = 2.0,
-    FACTOR_PROJECT_UPDATE = 1.0,
-    FACTOR_COMMENT_UPVOTES = 0.7,
-    FACTOR_PROJECT_UPVOTES = 0.7;
+/**
+ * reputation.js
+ * Modul des Rapid Prototype im Rahmen von EIS SS2017
+ * Zuständig für die Berechnung der Teilreputationen und Gesamtreputation eines Casemodders
+ * @author Leonid Vilents
+ */
 
+/**
+ * Einlesen der Testdaten des Prototyps
+ *===================================================*/
 var fs          = require('fs');
 var jsonfile    = require('jsonfile');
 
@@ -42,7 +45,22 @@ fs.readFile(datax[2], 'utf-8', function (err, data) {
     comments = JSON.parse(data);
     console.log("Kommentare eingelesen");
 });
+/**==================================================*/
 
+/**
+ * Gewichtungsfaktoren für die Teilreputationen
+ */
+var FACTOR_WRITTEN_COMMENT = 0.3,
+    FACTOR_NEW_PROJECT = 2.0,
+    FACTOR_PROJECT_UPDATE = 1.0,
+    FACTOR_COMMENT_UPVOTES = 0.7,
+    FACTOR_PROJECT_UPVOTES = 0.7;
+
+/**
+ * Abfragefunktion für die verfassten Kommentare sowie deren Upvotes eines Benutzers
+ * @param username der Benutzername des Benutzers
+ * @return die modifizierte Summe der Teilreputationen
+ */
 var getModifiedReputationForWrittenCommentsAndCommentUpvotes = function (username) {
     var i = 0,
         writtenCommentsCount = 0,
@@ -57,6 +75,11 @@ var getModifiedReputationForWrittenCommentsAndCommentUpvotes = function (usernam
     return Math.floor(writtenCommentsCount * FACTOR_WRITTEN_COMMENT) + Math.floor(commentUpvotesCount * FACTOR_COMMENT_UPVOTES);
 };
 
+/**
+ * Abfragefunktion für die Projekte, Projekt-Updates und die Upvotezahlen der einzelnen Projekt-Updates eines Benutzers
+ * @param username der Benutzername des Benutzers
+ * @return die modifizierte Summe der Teilreputation
+ */
 var getModifiedReputationForProjectsAndProjectUpdates = function (username) {
     var i = 0,
         projectsCount = 0,
@@ -76,6 +99,11 @@ var getModifiedReputationForProjectsAndProjectUpdates = function (username) {
     return Math.floor(projectsCount * FACTOR_NEW_PROJECT) + Math.floor(projectUpdatesCount * FACTOR_PROJECT_UPDATE) + Math.floor(projectUpvotesCount * FACTOR_PROJECT_UPVOTES);
 };
 
+/**
+ * Hauptrückgabefunktion für die Gesamtreputation eines Benutzers
+ * @param username der Benutzername
+ * @return die Gesamtreputation des Benutzers nach Modifizierung
+ */
 exports.getTotalReputation = function (username) {
     return getModifiedReputationForProjectsAndProjectUpdates(username) + getModifiedReputationForWrittenCommentsAndCommentUpvotes(username);
 };
