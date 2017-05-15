@@ -17,4 +17,4 @@ Im Konzept werden in verschiedenen der Nutzungskontext, die Marktsituation, der 
 Sinn des Projektplans ist die schriftliche Erfassung der Beschäftigung mit den (Teil-)Aufgaben des Projektes. Anhand dieses Dokumentes soll das Projektteam sich orientieren können und ihren Aufwand - geschätzt und tatsächlich - festhalten.
 
 ### Das Rapid Prototyping
-Zum Abgabe des ersten Meilensteins soll ein Prototyp des zu entwickelnden Systems vorliegen, der besonders auf die Alleinstellungsmerkmale des Systems eingeht und diese in ihrer Funktion präsentiert.
+Zum ersten Projektmeilenstein soll neben den Dokumenten auch ein funktionsfähiger Prototyp abgegeben werden, welcher eines der im Konzept angeführten Alleinstellungsmerkmale funktionell darstellt. Dieser wird am 22.05.2017 vorgeführt.

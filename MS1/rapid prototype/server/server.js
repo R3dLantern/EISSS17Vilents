@@ -10,11 +10,7 @@
  */
 
 var express     = require('express');
-var http        = require('http');
-var path        = require('path');
-var favicon     = require('static-favicon');
 var logger      = require('morgan');
-var bodyParser  = require('body-parser');
 var reputation  = require('./reputation');
 
 var count       = 0;
@@ -23,15 +19,7 @@ var clients     = {};
 var port        = process.env.PORT || 8000;
 var app         = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
-
-app.use(favicon());
 app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded());
-app.use(express['static'](path.join(__dirname, 'public')));
 
 /*
 * GET Gesamtreputation für Benutzer
@@ -39,15 +27,11 @@ app.use(express['static'](path.join(__dirname, 'public')));
 */
 app.get('/users/:username', function (req, res) {
     var username = req.params.username;
+    // FÜR TESTZWECKE: Es können nur die Gesamtreputationen von "superBuilder" und "caseModMan" angezeigt werden, alle anderen Usernamen sollen 404 zurückgeben.
     if (username !== "superBuilder" && username !== "caseModMan") {
         res.send(404);
     }
     res.send(reputation.getTotalReputation(username).toString());
-});
-
-
-app.listen(port, function () {
-    console.log('Listening on port %d', port);
 });
 
 /**
@@ -70,6 +54,10 @@ app.use(function (err, req, res, next) {
         message: err.message,
         error: {}
     });
+});
+
+app.listen(port, function () {
+    console.log('Listening on port %d', port);
 });
 
 module.exports = app;
