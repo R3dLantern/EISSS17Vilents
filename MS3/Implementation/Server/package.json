@@ -1,0 +1,23 @@
+{
+  "name": "eisss17-ms3-server",
+  "version": "1.0.0",
+  "description": "Server-Implementation für EIS im Sommersemester 2017",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/scarcloud/EISSS17Vilents.git"
+  },
+  "keywords": [
+    "eis",
+    "thkoeln"
+  ],
+  "author": "Leonid Vilents",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/scarcloud/EISSS17Vilents/issues"
+  },
+  "homepage": "https://github.com/scarcloud/EISSS17Vilents#readme"
+}
