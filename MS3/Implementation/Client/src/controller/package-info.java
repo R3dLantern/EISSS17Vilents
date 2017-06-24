@@ -5,4 +5,4 @@
  * @author Léon
  *
  */
-package ui;
+package controller;

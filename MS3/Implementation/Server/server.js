@@ -20,6 +20,10 @@ var profilesController  = require('./routing/ProfilesController.js');
 var port                = process.env.PORT || 8000;
 var app                 = express();
 
+/** @todo für Produktivumgebung entfernen! */
+console.log("[MAIN] Main module loaded.");
+
+/** @todo für Produktivumgebung entfernen! */
 console.log("[MAIN] Initializing database connection...");
 dbam.initializeConnection();
 
@@ -31,6 +35,7 @@ app.use('/profiles', profilesController);
  * @desc Registriert einen Benutzer
  * @param {object} req - HTTP Request-Objekt
  * @param {object} res - HTTP Response-Objekt
+ * @todo <strong>Implementieren</strong>
  */
 app.post('/register', function (req, res) {
     
@@ -41,6 +46,7 @@ app.post('/register', function (req, res) {
  * @desc Loggt einen Benutzer ein
  * @param {object} req - HTTP Request-Objekt
  * @param {object} res - HTTP Response-Objekt
+ * @todo <strong>Implementieren</strong>
  */
 app.post('/login', function (req, res) {
     
