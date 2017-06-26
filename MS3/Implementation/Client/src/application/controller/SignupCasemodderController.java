@@ -64,10 +64,12 @@ public class SignupCasemodderController{
 		
 		if(password.getText().isEmpty()) {
 			errorLabel.setText("Bitte Passwort angeben");
+			return;
 		}
 		
 		if(dateOfBirth.getValue() == null) {
 			errorLabel.setText("Bitte Geburtsdatum angeben");
+			return;
 		}
 		//SceneLoader.loadScene(event, FILENAME_SIGNUP_SUCCESS);
 	}

@@ -12,6 +12,7 @@
  */
 
 var express             = require('express');
+var bodyParser          = require('body-parser');
 
 var dbam                = require('./util/dbam.js');
 
@@ -29,6 +30,9 @@ console.log("[MAIN] Initializing database connection...");
 
 dbam.initializeConnection();
 
+app.use(bodyParser.json()); // for parsing application/json
+
+app.use(loginController);
 app.use('/profiles', profilesController);
 
 /**

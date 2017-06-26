@@ -30,13 +30,23 @@ exports.initializeConnection = function () {
 };
 
 /**
- * Sucht in der Datenbank einen Benutzer nach ID.
- * @param {int} id - ID des Benutzers
+ * Sucht in der Datenbank einen Benutzer nach Email-Adresse.
+ * @param {string} email - Email-Adresse des Benutzers
  * @returns {object} JSON-Objekt mit öffentlichen Benutzerdaten
  * @todo <strong>Implementieren</strong>
  */
-exports.findUserById = function (id) {
-    
+exports.findUserByEmail = function (email) {
+    if (this.conn) {
+        conn.query({
+            sql: 'SELECT * FROM `benutzer` WHERE `email` = ?',
+            values: [conn.escape(email)]
+        }, function (error, results, fields) {
+            if (error) {
+                throw error;
+            }
+            return results;
+        });
+    }
 };
 
 /**

@@ -1,5 +1,7 @@
 package application;
 	
+import java.net.HttpURLConnection;
+
 import application.util.SceneLoader;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -13,6 +15,13 @@ import javafx.stage.Stage;
  */
 public class Main extends Application
 {
+	public static final String SERVER_IP = "127.0.0.1";
+	
+	public static final int SERVER_PORT = 8000;
+	
+	public static HttpURLConnection conn = null;
+	
+	
 	private Stage primaryStage;
 	
 	private SceneLoader sceneLoader;
