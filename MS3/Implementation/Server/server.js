@@ -15,6 +15,7 @@ var express             = require('express');
 
 var dbam                = require('./util/dbam.js');
 
+var loginController     = require('./routing/LoginController.js');
 var profilesController  = require('./routing/ProfilesController.js');
 
 var port                = process.env.PORT || 8000;
@@ -25,34 +26,13 @@ console.log("[MAIN] Main module loaded.");
 
 /** @todo für Produktivumgebung entfernen! */
 console.log("[MAIN] Initializing database connection...");
+
 dbam.initializeConnection();
 
 app.use('/profiles', profilesController);
 
-
-/** @function
- * @name Controller::signUp
- * @desc Registriert einen Benutzer
- * @param {object} req - HTTP Request-Objekt
- * @param {object} res - HTTP Response-Objekt
- * @todo <strong>Implementieren</strong>
- */
-app.post('/register', function (req, res) {
-    
-});
-
-/** @function
- * @name Controller::login
- * @desc Loggt einen Benutzer ein
- * @param {object} req - HTTP Request-Objekt
- * @param {object} res - HTTP Response-Objekt
- * @todo <strong>Implementieren</strong>
- */
-app.post('/login', function (req, res) {
-    
-});
-
-/** @function
+/**
+ * @function
  * @name stackTraceHandling
  * @desc In der Produktiv-Umgebung soll bei Fehlern kein Stacktrace mitgeschickt werden
  * @param {object} err - Error-Objekt

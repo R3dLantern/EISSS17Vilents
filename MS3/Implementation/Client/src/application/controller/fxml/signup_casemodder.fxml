@@ -16,7 +16,7 @@
             <Font name="Calibri" size="30.0" />
          </font>
       </Label>
-      <Hyperlink layoutX="327.0" layoutY="129.0" text="Als Sponsor registrieren">
+      <Hyperlink layoutX="327.0" layoutY="129.0" onAction="#handleSignupSponsorLink" text="Als Sponsor registrieren">
          <font>
             <Font name="Calibri" size="14.0" />
          </font>
@@ -26,24 +26,29 @@
             <Font name="Calibri" size="14.0" />
          </font>
       </Label>
-      <TextField layoutX="343.0" layoutY="228.0" prefHeight="25.0" prefWidth="230.0" />
+      <TextField fx:id="email" layoutX="343.0" layoutY="228.0" prefHeight="25.0" prefWidth="230.0" />
       <Label layoutX="228.0" layoutY="292.0" text="Passwort">
          <font>
             <Font name="Calibri" size="14.0" />
          </font>
       </Label>
-      <PasswordField layoutX="343.0" layoutY="288.0" prefHeight="25.0" prefWidth="230.0" />
-      <DatePicker layoutX="343.0" layoutY="344.0" prefHeight="25.0" prefWidth="230.0" />
+      <PasswordField fx:id="password" layoutX="343.0" layoutY="288.0" prefHeight="25.0" prefWidth="230.0" />
+      <DatePicker fx:id="dateOfBirth" layoutX="343.0" layoutY="344.0" prefHeight="25.0" prefWidth="230.0" />
       <Label layoutX="227.0" layoutY="348.0" text="Geburtsdatum">
          <font>
             <Font name="Calibri" size="14.0" />
          </font>
       </Label>
-      <Button layoutX="320.0" layoutY="415.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="160.0" text="Registrieren" />
-      <Hyperlink layoutX="345.0" layoutY="535.0" text="Zurück zum Login" onAction="#handleBackToLoginLink">
+      <Button layoutX="320.0" layoutY="431.0" mnemonicParsing="false" onAction="#handleSignupButton" prefHeight="35.0" prefWidth="160.0" text="Registrieren" />
+      <Hyperlink layoutX="345.0" layoutY="535.0" onAction="#handleBackToLoginLink" text="Zurück zum Login">
          <font>
             <Font name="Calibri" size="14.0" />
          </font>
       </Hyperlink>
+      <Label fx:id="errorLabel" alignment="CENTER" layoutX="226.0" layoutY="390.0" prefHeight="14.0" prefWidth="345.0" textFill="RED">
+         <font>
+            <Font name="Calibri" size="12.0" />
+         </font>
+      </Label>
    </children>
 </Pane>

@@ -10,8 +10,10 @@
  * @author Leonid Vilents <lvilents@smail.th-koeln.de>
  */
 var express             = require('express');
+
 var dbam                = require('../util/dbam.js');
 var reputation          = require('../util/reputation.js');
+
 var profilesController  = express.Router();
 
 /** @todo für Produktivumgebung entfernen! */

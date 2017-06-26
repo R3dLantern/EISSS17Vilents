@@ -36,7 +36,7 @@ exports.initializeConnection = function () {
  * @todo <strong>Implementieren</strong>
  */
 exports.findUserById = function (id) {
-
+    
 };
 
 /**

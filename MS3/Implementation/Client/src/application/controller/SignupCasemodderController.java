@@ -1,11 +1,13 @@
 package application.controller;
 
 import application.util.SceneLoader;
+import java.security.MessageDigest;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
@@ -32,6 +34,9 @@ public class SignupCasemodderController{
 	private DatePicker dateOfBirth;
 	
 	@FXML
+	private Label errorLabel;
+	
+	@FXML
 	private Button signupButton;
 	
 	@FXML
@@ -52,6 +57,18 @@ public class SignupCasemodderController{
 	@FXML
 	protected void handleSignupButton(ActionEvent event)
 	{
-		SceneLoader.loadScene(event, FILENAME_SIGNUP_SUCCESS);
+		if(email.getText().isEmpty()) {
+			errorLabel.setText("Bitte Email angeben");
+			return;
+		}
+		
+		if(password.getText().isEmpty()) {
+			errorLabel.setText("Bitte Passwort angeben");
+		}
+		
+		if(dateOfBirth.getValue() == null) {
+			errorLabel.setText("Bitte Geburtsdatum angeben");
+		}
+		//SceneLoader.loadScene(event, FILENAME_SIGNUP_SUCCESS);
 	}
 }
