@@ -30,6 +30,32 @@ exports.initializeConnection = function () {
 };
 
 /**
+ * Versucht, einen User in der Datenbank anzulegen. Bei Erfolg, wird der Typ des Users in der Datenbank bestimmt, und 0 zurückgegeben.
+ * @param newUser {object} Ein newUser-Objekt, bestehend aus den Werten email, type, password und dateOfBirth
+ * @return {int} 0 bei Erfolg
+ * @throws Fehler bei MySQL
+ */
+exports.trySignup = function (newUser) {
+    if (this.conn) {
+        console.log("[DBAM] trySignup: Query 1 mit " + this.conn.threadId);
+        
+        var sql = "INSERT INTO ?? SET ?";
+        var inserts = ['benutzer', newUser];
+        var query = conn.query(mysql.format(sql, inserts), function (error, results, fields) {
+            console.log("[DBAM] Query 1 wird ausgeführt.");
+            if (error) {
+                console.log("[DBAM] SQL: " + this.sql);
+                console.log("[DBAM] " + error.stack);
+                throw error;
+            } else {
+                console.log("[DBAM] trySignup: Query 2...");
+            }
+        });
+        console.log(query.sql);
+    }
+};
+
+/**
  * Sucht in der Datenbank einen Benutzer nach Email-Adresse.
  * @param {string} email - Email-Adresse des Benutzers
  * @returns {object} JSON-Objekt mit öffentlichen Benutzerdaten

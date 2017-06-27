@@ -1,6 +1,15 @@
 {
   "name": "eisss17-ms3-server",
   "version": "1.0.0",
+  "dependencies": {
+      "body-parser":"^1.17.2",
+      "express":"^4.15.3",
+      "express-session":"^1.15.3",
+      "mysql":"^2.13.0"
+  },
+  "devDependencies":{
+      "jsdoc":"^3.4.3"
+  },
   "description": "Server-Implementation für EIS im Sommersemester 2017",
   "main": "server.js",
   "scripts": {

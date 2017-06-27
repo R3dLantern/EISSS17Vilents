@@ -37,7 +37,7 @@ public class SceneLoader {
 	{
 		// TODO: Session-Checking
 		try {
-			Parent content = FXMLLoader.load(SceneLoader.class.getResource("/application/controller/fxml/login.fxml"));
+			Parent content = FXMLLoader.load(SceneLoader.class.getResource(FXML_PATH + "login.fxml"));
 			Scene scene = new Scene(content);
 			this.primaryStage.setScene(scene);
 			this.primaryStage.show();

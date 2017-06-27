@@ -12,6 +12,7 @@
  */
 
 var express             = require('express');
+var session             = require('express-session');
 var bodyParser          = require('body-parser');
 
 var dbam                = require('./util/dbam.js');
@@ -31,9 +32,13 @@ console.log("[MAIN] Initializing database connection...");
 dbam.initializeConnection();
 
 app.use(bodyParser.json()); // for parsing application/json
+app.use(session({secret: "eisss2017vilents"})); // Session secret
 
 app.use(loginController);
 app.use('/profiles', profilesController);
+
+/** Session-Objekt */
+var sess;
 
 /**
  * @function

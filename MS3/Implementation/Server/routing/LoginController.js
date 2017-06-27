@@ -27,7 +27,10 @@ console.log("[LGCO] LoginController loaded.");
  * @todo <strong>Implementieren</strong>
  */
 loginController.post('/signup', function (req, res) {
-    console.log(req.param);
+    console.log("[LGCO] Request auf /signup!");
+    var result = dbam.trySignup(req.body);
+    console.log(result);
+    res.end("{\"code\":" + result + "}");
 });
 
 
@@ -43,7 +46,7 @@ loginController.post('/login', function (req, res) {
     /** @todo für Produktivumgebung entfernen! */
     console.log("[LGCO] Request auf /login!");
     console.log(req.body);
-    res.end(JSON.stringify(req.body));
+    res.end("{\"code\":0}");
 });
 
 

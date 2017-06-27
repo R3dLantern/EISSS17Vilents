@@ -1,7 +1,12 @@
 package application.controller;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import application.util.FormValidator;
+import application.util.PasswordUtil;
 import application.util.SceneLoader;
-import java.security.MessageDigest;
+import application.util.ServerRequest;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -19,7 +24,10 @@ public class SignupCasemodderController{
 	
 	private static final String FILENAME_LOGIN = "login";
 	private static final String FILENAME_SIGNUP_SPONSOR = "signup_sponsor";
+	@SuppressWarnings("unused")
 	private static final String FILENAME_SIGNUP_SUCCESS = "signup_success";
+	
+	private final String SIGNUP_STRING = "http://%s:%s/signup";
 	
 	@FXML
 	private Hyperlink signUpAsSponsorLink;
@@ -57,20 +65,52 @@ public class SignupCasemodderController{
 	@FXML
 	protected void handleSignupButton(ActionEvent event)
 	{
-		if(email.getText().isEmpty()) {
-			errorLabel.setText("Bitte Email angeben");
+		FormValidator validator = new FormValidator();
+		
+		/*errorLabel.setText(validator.validateEmail(email.getText()));
+		if(!errorLabel.getText().isEmpty()){
 			return;
 		}
 		
-		if(password.getText().isEmpty()) {
-			errorLabel.setText("Bitte Passwort angeben");
+		errorLabel.setText(validator.validatePassword(password.getText(), false));
+		if(!errorLabel.getText().isEmpty()){
 			return;
 		}
 		
 		if(dateOfBirth.getValue() == null) {
 			errorLabel.setText("Bitte Geburtsdatum angeben");
 			return;
+		}*/
+		
+		ServerRequest req = new ServerRequest(SIGNUP_STRING);
+		
+		try {
+			JSONObject res = new JSONObject(req.post(getSignupData()));
+			switch (res.getInt("code")) {
+			case 0:
+			default:
+				System.out.println(res.toString());
+				break;
+			}
+			return;
+		} catch (JSONException e) {
+			e.printStackTrace();
+			errorLabel.setText("JSONException");
 		}
-		//SceneLoader.loadScene(event, FILENAME_SIGNUP_SUCCESS);
+	}
+	
+	private String getSignupData()
+	{
+		JSONObject obj = new JSONObject();
+		try{
+			obj.put("email", email.getText());
+			obj.put("password", PasswordUtil.getHash(PasswordUtil.ALGORITHM_SHA256, password.getText()));
+			obj.put("type", "casemodder");
+			obj.put("dateOfBirth", dateOfBirth.getValue().toString());
+			return obj.toString();
+		} catch (JSONException e){
+			e.printStackTrace();
+			return null;
+		}
 	}
 }

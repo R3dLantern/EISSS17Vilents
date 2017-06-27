@@ -1,19 +1,15 @@
 package application.controller;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import application.Main;
+import application.util.FormValidator;
+import application.util.PasswordUtil;
 import application.util.SceneLoader;
-import java.security.MessageDigest;
+import application.util.ServerRequest;
+
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -23,9 +19,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 /**
  * Controller-Klasse für login.fxml
  * @author Léon
@@ -33,6 +26,9 @@ import org.json.JSONObject;
 public class LoginController {
 	
 	private static final String FILENAME_SIGNUP_CASEMODDER = "signup_casemodder";
+	
+	private final String LOGINDATA_STRING = "{\"email\":\"%s\",\"password\":\"%s\"}";
+	private final String LOGIN_STRING = "http://%s:%s/login";
 	
 	@FXML
 	private TextField email;
@@ -51,58 +47,37 @@ public class LoginController {
 	
 	@FXML
 	protected void handleLoginButton()
-	{		
-		if(email.getText().isEmpty()) {
-			errorLabel.setText("Bitte Email eingeben");
+	{	
+		FormValidator validator = new FormValidator();
+		
+		errorLabel.setText(validator.validateEmail(email.getText()));
+		if(!errorLabel.getText().isEmpty()){
 			return;
 		}
 		
-		if(password.getText().isEmpty()) {
-			errorLabel.setText("Bitte Passwort eingeben");
+		errorLabel.setText(validator.validatePassword(password.getText(), false));
+		if(!errorLabel.getText().isEmpty()){
 			return;
 		}
+		
+		String pwdHashStr = PasswordUtil.getHash(PasswordUtil.ALGORITHM_SHA256, password.getText());
+		
+		ServerRequest req = new ServerRequest(LOGIN_STRING);
 		
 		try {
-			MessageDigest md = MessageDigest.getInstance("MD5");
-			byte[] pwdBytes = password.getText().getBytes("UTF-8");
-			byte[] hash = md.digest(pwdBytes);
-			String pwdHashStr = hash.toString();
-			
-			String loginData = String.format("{\"email\":\"%s\",\"password\":\"%s\"}", email.getText(), pwdHashStr);
-			URL loginURL = new URL(String.format("http://%s:%s/login", Main.SERVER_IP, Main.SERVER_PORT));
-			
-			Main.conn = (HttpURLConnection) loginURL.openConnection();
-			Main.conn.setRequestMethod("POST");
-			Main.conn.setRequestProperty("Content-Type", "application/json");
-			Main.conn.setDoOutput(true);
-			
-			OutputStreamWriter out = new OutputStreamWriter(Main.conn.getOutputStream());  
-		    out.write(loginData.toString());
-		    out.flush();
-		    out.close();
-
-		    int res = Main.conn.getResponseCode();
-		    System.out.println(res);
-		    
-		    InputStream is = Main.conn.getInputStream();
-		    BufferedReader br = new BufferedReader(new InputStreamReader(is));
-		    String line = null;
-		    while((line = br.readLine() ) != null) {
-		        System.out.println(line);
-		    }
-		    Main.conn.disconnect();
-			
-		} catch (NoSuchAlgorithmException a) {
-			a.printStackTrace();
-		} catch (UnsupportedEncodingException b) {
-			b.printStackTrace();
-		} catch (MalformedURLException c) {
-			c.printStackTrace();
-		} catch (IOException d) {
-			d.printStackTrace();
+			JSONObject res = new JSONObject(req.post(String.format(LOGINDATA_STRING, email.getText(), pwdHashStr)));
+			switch (res.getInt("code")) {
+			case 0:
+			default:
+				System.out.println(res.toString());
+				break;
+			}
+			return;
+		} catch (JSONException e) {
+			e.printStackTrace();
+			errorLabel.setText("JSONException");
+			return;
 		}
-		
-		
 	}
 	
 	@FXML
