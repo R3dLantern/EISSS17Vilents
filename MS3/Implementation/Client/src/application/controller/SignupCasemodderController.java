@@ -1,5 +1,7 @@
 package application.controller;
 
+import java.io.IOException;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,19 +17,13 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import model.HttpResponse;
 
 /**
  * Controller-Klasse für signup_casemodder.fxml
  * @author Léon
  */
-public class SignupCasemodderController{
-	
-	private static final String FILENAME_LOGIN = "login";
-	private static final String FILENAME_SIGNUP_SPONSOR = "signup_sponsor";
-	@SuppressWarnings("unused")
-	private static final String FILENAME_SIGNUP_SUCCESS = "signup_success";
-	
-	private final String SIGNUP_STRING = "http://%s:%s/signup";
+public class SignupCasemodderController implements ISignInUpHandling{
 	
 	@FXML
 	private Hyperlink signUpAsSponsorLink;
@@ -67,35 +63,38 @@ public class SignupCasemodderController{
 	{
 		FormValidator validator = new FormValidator();
 		
-		/*errorLabel.setText(validator.validateEmail(email.getText()));
+		errorLabel.setText(validator.validateEmail(email.getText(), IS_NOT_LOGIN));
 		if(!errorLabel.getText().isEmpty()){
 			return;
 		}
 		
-		errorLabel.setText(validator.validatePassword(password.getText(), false));
+		errorLabel.setText(validator.validatePassword(password.getText(), IS_NOT_LOGIN));
 		if(!errorLabel.getText().isEmpty()){
 			return;
 		}
 		
-		if(dateOfBirth.getValue() == null) {
-			errorLabel.setText("Bitte Geburtsdatum angeben");
+		errorLabel.setText(validator.valiateDateOfBirth(dateOfBirth.getValue(), IS_NOT_SPONSOR));
+		if(!errorLabel.getText().isEmpty()){
 			return;
-		}*/
+		}
 		
 		ServerRequest req = new ServerRequest(SIGNUP_STRING);
 		
 		try {
-			JSONObject res = new JSONObject(req.post(getSignupData()));
-			switch (res.getInt("code")) {
-			case 0:
+			HttpResponse res = req.post(getSignupData());
+			switch (res.getStatusCode()) {
+			case 500:
+				errorLabel.setText(ERROR_500);
+			case 201:
 			default:
-				System.out.println(res.toString());
+				//TODO: Weiterleitungslogik implementieren
+				System.out.println(res.getContent());
 				break;
 			}
 			return;
-		} catch (JSONException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
-			errorLabel.setText("JSONException");
+			errorLabel.setText("IOException");
 		}
 	}
 	

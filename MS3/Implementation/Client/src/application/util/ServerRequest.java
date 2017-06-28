@@ -10,6 +10,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import application.Main;
+import model.HttpResponse;
 
 public class ServerRequest {
 	
@@ -38,35 +39,34 @@ public class ServerRequest {
 	 * @param postData die zu übertragenden POST-Daten
 	 * @return Die Antwort des Servers 
 	 */
-	public String post(String postData)
+	public HttpResponse post(String postData) throws IOException
 	{
-		try{
-			Main.conn = (HttpURLConnection) url.openConnection();
-			Main.conn.setRequestMethod(HTTP_METHOD_POST);
-			Main.conn.setRequestProperty("Content-Type", "application/json");
-			Main.conn.setRequestProperty("Content-length", Integer.toString(postData.length()));
-			Main.conn.setDoOutput(true);
+		Main.conn = (HttpURLConnection) url.openConnection();
+		Main.conn.setRequestMethod(HTTP_METHOD_POST);
+		Main.conn.setRequestProperty("Content-Type", "application/json");
+		Main.conn.setRequestProperty("Content-length", Integer.toString(postData.length()));
+		Main.conn.setDoOutput(true);
 			
-			OutputStreamWriter out = new OutputStreamWriter(Main.conn.getOutputStream());  
-		    out.write(postData);
-		    out.flush();
-		    out.close();
+		OutputStreamWriter out = new OutputStreamWriter(Main.conn.getOutputStream());  
+	    out.write(postData);
+	    out.flush();
+	    out.close();
 		    
-		    return this.handleResponse();
-		} catch (IOException a) {
-			a.printStackTrace();
-			return CONNECTION_ERROR;
-		}
+	    return this.handleResponse();
 	}
 	
-	public String get()
+	/**
+	 * Führt einen HTTP GET-Request auf den Server aus.
+	 * @return HttpResponse-Objekt
+	 */
+	public HttpResponse get()
 	{
 		try {
 			Main.conn = (HttpURLConnection) url.openConnection();
 			Main.conn.setRequestMethod(HTTP_METHOD_GET);
 			return this.handleResponse();
 		} catch (IOException a) {
-			return CONNECTION_ERROR;
+			return new HttpResponse(400, CONNECTION_ERROR);
 		}
 	}
 	
@@ -79,16 +79,17 @@ public class ServerRequest {
 		}
 	}
 	
-	private String handleResponse() throws IOException
+	private HttpResponse handleResponse() throws IOException
 	{
-		StringBuilder res = new StringBuilder();
+		StringBuilder sb = new StringBuilder();
 	    InputStream is = Main.conn.getInputStream();
 	    BufferedReader br = new BufferedReader(new InputStreamReader(is));
 	    String line = null;
 	    while((line = br.readLine() ) != null) {
-	        res.append(line);
+	        sb.append(line);
 	    }
+	    HttpResponse res = new HttpResponse(Main.conn.getResponseCode(), sb.toString());
 	    Main.conn.disconnect();
-	    return res.toString();
+	    return res;
 	}
 }

@@ -27,10 +27,26 @@ console.log("[LGCO] LoginController loaded.");
  * @todo <strong>Implementieren</strong>
  */
 loginController.post('/signup', function (req, res) {
-    console.log("[LGCO] Request auf /signup!");
-    var result = dbam.trySignup(req.body);
-    console.log(result);
-    res.end("{\"code\":" + result + "}");
+    dbam.trySignup(req.body, function (err) {
+        if (err) {
+            console.log(err.stack);
+            res.status(500).end();
+        }
+        res.status(200).end();
+    });
+});
+
+
+/**
+ * @function
+ * @name LoginController::handleFileUpload
+ * @desc Registriert einen Benutzer
+ * @param {object} req - HTTP Request-Objekt
+ * @param {object} res - HTTP Response-Objekt
+ * @todo <strong>Implementieren</strong>
+ */
+loginController.post('/signup/upload', function (req, res) {
+    
 });
 
 

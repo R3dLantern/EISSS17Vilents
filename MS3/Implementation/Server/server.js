@@ -11,6 +11,9 @@
  * @author Leonid Vilents <lvilents@smail.th-koeln.de>
  */
 
+/** @todo für Produktivumgebung entfernen! */
+console.log("[MAIN] Main module loaded.");
+
 var express             = require('express');
 var session             = require('express-session');
 var bodyParser          = require('body-parser');
@@ -22,9 +25,6 @@ var profilesController  = require('./routing/ProfilesController.js');
 
 var port                = process.env.PORT || 8000;
 var app                 = express();
-
-/** @todo für Produktivumgebung entfernen! */
-console.log("[MAIN] Main module loaded.");
 
 /** @todo für Produktivumgebung entfernen! */
 console.log("[MAIN] Initializing database connection...");

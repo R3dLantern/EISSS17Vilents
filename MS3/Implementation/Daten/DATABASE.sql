@@ -13,7 +13,6 @@
 
 
 -- Exportiere Datenbank Struktur für eis_ss2017
-DROP DATABASE IF EXISTS `eis_ss2017`;
 CREATE DATABASE IF NOT EXISTS `eis_ss2017` /*!40100 DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci */;
 USE `eis_ss2017`;
 

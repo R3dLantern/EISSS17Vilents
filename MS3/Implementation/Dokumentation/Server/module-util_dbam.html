@@ -130,7 +130,7 @@
         <h3 class="subsection-title">Requires</h3>
 
         <ul>
-            <li>module:mysqljs/mysql</li>
+            <li>module:node-mysql</li>
         
             <li>module:fs</li>
         </ul>
@@ -152,14 +152,14 @@
 
     
 
-    <h4 class="name" id=".findUserById"><span class="type-signature">(static) </span>findUserById<span class="signature">(id)</span><span class="type-signature"> &rarr; {object}</span></h4>
+    <h4 class="name" id=".findUserByEmail"><span class="type-signature">(static) </span>findUserByEmail<span class="signature">(email)</span><span class="type-signature"> &rarr; {object}</span></h4>
 
     
 
 
 
 <div class="description">
-    Sucht in der Datenbank einen Benutzer nach ID.
+    Sucht in der Datenbank einen Benutzer nach Email-Adresse.
 </div>
 
 
@@ -195,13 +195,13 @@
 
         <tr>
             
-                <td class="name"><code>id</code></td>
+                <td class="name"><code>email</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">int</span>
+<span class="param-type">string</span>
 
 
             
@@ -211,7 +211,7 @@
 
             
 
-            <td class="description last">ID des Benutzers</td>
+            <td class="description last">Email-Adresse des Benutzers</td>
         </tr>
 
     
@@ -252,7 +252,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="util_dbam.js.html">util/dbam.js</a>, <a href="util_dbam.js.html#line38">line 38</a>
+        <a href="util_dbam.js.html">util/dbam.js</a>, <a href="util_dbam.js.html#line81">line 81</a>
     </li></ul></dd>
     
 
@@ -312,14 +312,14 @@
 
     
 
-    <h4 class="name" id=".getCredentialsFromJson"><span class="type-signature">(static) </span>getCredentialsFromJson<span class="signature">()</span><span class="type-signature"> &rarr; {object}</span></h4>
+    <h4 class="name" id="~DBAM::getCredentialsFromJson"><span class="type-signature">(inner) </span>DBAM::getCredentialsFromJson<span class="signature">()</span><span class="type-signature"> &rarr; {object}</span></h4>
 
     
 
 
 
 <div class="description">
-    Entnimmt der Konfigurationsdatei die Zugangsdaten für die Datenbank
+    Entnimmt der im System hinterlegten Konfigurationsdatei die Zugangsdaten für die Datenbank
 </div>
 
 
@@ -363,7 +363,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="util_dbam.js.html">util/dbam.js</a>, <a href="util_dbam.js.html#line46">line 46</a>
+        <a href="util_dbam.js.html">util/dbam.js</a>, <a href="util_dbam.js.html#line100">line 100</a>
     </li></ul></dd>
     
 
@@ -416,7 +416,7 @@
 
     
 
-    <h4 class="name" id=".initializeConnection"><span class="type-signature">(static) </span>initializeConnection<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="~DBAM:Exports:initializeConnection"><span class="type-signature">(inner) </span>DBAM:Exports:initializeConnection<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 
@@ -467,7 +467,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="util_dbam.js.html">util/dbam.js</a>, <a href="util_dbam.js.html#line24">line 24</a>
+        <a href="util_dbam.js.html">util/dbam.js</a>, <a href="util_dbam.js.html#line21">line 21</a>
     </li></ul></dd>
     
 
@@ -488,6 +488,172 @@
 
 
 
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="~DBAM:Exports:trySignUp"><span class="type-signature">(inner) </span>DBAM:Exports:trySignUp<span class="signature">(newUser, callback)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Versucht, einen User in der Datenbank anzulegen. Bei Erfolg, wird der Typ des Users in der Datenbank bestimmt, und 0 zurückgegeben.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>newUser</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Ein newUser-Objekt, bestehend aus den Werten email, type, password und dateOfBirth</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">callback</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Callbackfunktion zum Verarbeiten der Return-Werte</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="util_dbam.js.html">util/dbam.js</a>, <a href="util_dbam.js.html#line32">line 32</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+<h5>Throws:</h5>
+
+        
+
+    <div class="param-desc">
+    
+        Fehler bei MySQL
+    
+    </div>
+
+
+    
 
 
 
@@ -515,7 +681,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Jun 20 2017 14:10:57 GMT+0200 (Mitteleuropäische Sommerzeit)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Wed Jun 28 2017 23:47:39 GMT+0200 (Mitteleuropäische Sommerzeit)
 </footer>
 
 <script> prettyPrint(); </script>

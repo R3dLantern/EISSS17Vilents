@@ -67,4 +67,15 @@ public class SceneLoader {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Gibt die Stage zurück, in der ein ActionEvent ausgeführt wurde
+	 * @param event ActionEvent-Objekt, dessen Stage zurückgegeben soll
+	 * @return Das zu referenzierende Stage-Objekt
+	 */
+	public static Stage getStage(ActionEvent event)
+	{
+		Scene scene = ((Node) event.getSource()).getScene();
+		return (Stage) scene.getWindow();
+	}
 }

@@ -6,10 +6,6 @@ import application.util.SceneLoader;
 import application.util.ServerRequest;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -18,14 +14,13 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import model.HttpResponse;
 
 /**
  * Controller-Klasse für login.fxml
  * @author Léon
  */
-public class LoginController {
-	
-	private static final String FILENAME_SIGNUP_CASEMODDER = "signup_casemodder";
+public class LoginController implements ISignInUpHandling{
 	
 	private final String LOGINDATA_STRING = "{\"email\":\"%s\",\"password\":\"%s\"}";
 	private final String LOGIN_STRING = "http://%s:%s/login";
@@ -50,12 +45,12 @@ public class LoginController {
 	{	
 		FormValidator validator = new FormValidator();
 		
-		errorLabel.setText(validator.validateEmail(email.getText()));
+		errorLabel.setText(validator.validateEmail(email.getText(), IS_LOGIN));
 		if(!errorLabel.getText().isEmpty()){
 			return;
 		}
 		
-		errorLabel.setText(validator.validatePassword(password.getText(), false));
+		errorLabel.setText(validator.validatePassword(password.getText(), IS_LOGIN));
 		if(!errorLabel.getText().isEmpty()){
 			return;
 		}
@@ -65,15 +60,15 @@ public class LoginController {
 		ServerRequest req = new ServerRequest(LOGIN_STRING);
 		
 		try {
-			JSONObject res = new JSONObject(req.post(String.format(LOGINDATA_STRING, email.getText(), pwdHashStr)));
-			switch (res.getInt("code")) {
-			case 0:
+			HttpResponse res = req.post(String.format(LOGINDATA_STRING, email.getText(), pwdHashStr));
+			switch (res.getStatusCode()) {
+			case 200:
 			default:
 				System.out.println(res.toString());
 				break;
 			}
 			return;
-		} catch (JSONException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 			errorLabel.setText("JSONException");
 			return;
