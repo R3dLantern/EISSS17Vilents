@@ -62,17 +62,12 @@ console.log("[REPM] Reputation module loaded.");
 
 /**
  * Berechnet die Gesamtreputation für einen Casemodder-Benutzer
- * @param {int} userId - ID des Benutzers
+ * @param {string} userEmail - Email des Benutzers
  * @returns {int} Die Gesamtreputation des Benutzers
  * @todo <strong>Implementieren</strong>
  */
-exports.getTotalReputationForUser = function (userId) {
-    var user = dbam.findUserById(userId);
-    if (user === null) {
-        throw "[REP] No user found";
-    } else if (user.usertype !== "casemodder") {
-        throw "[REP] User is not a Casemodder";
-    } else {
-        
-    }
+exports.getTotalReputationForUser = function (userEmail) {
+    dbam.findUserByEmail(userEmail, function (error, statusCode, results) {
+        //if(statusCode)
+    });
 };

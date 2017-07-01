@@ -22,6 +22,7 @@ var dbam                = require('./util/dbam.js');
 
 var loginController     = require('./routing/LoginController.js');
 var profilesController  = require('./routing/ProfilesController.js');
+var dashboardController = require('./routing/DashboardController.js');
 
 var port                = process.env.PORT || 8000;
 var app                 = express();
@@ -39,25 +40,30 @@ app.use(session({
     secret: "eisss2017vilents",
     duration: 30 * 60 * 1000,
     activeDuration: 5 * 60 * 1000,
-    httpOnly: true,
     secure: true,
     ephemeral: true
 }));
 
 app.use(loginController);
+app.use(dashboardController);
 app.use('/profiles', profilesController);
 
 /** Session-Objekt */
 var sess;
 
+app.getSess = function () {
+    return sess;
+};
+
+app.setSess = function (newSess) {
+    sess = newSess;
+};
+
 /**
  * @function
  * @name stackTraceHandling
  * @desc In der Produktiv-Umgebung soll bei Fehlern kein Stacktrace mitgeschickt werden
- * @param {object} err - Error-Objekt
- * @param {object} req - HTTP Request-Objekt
- * @param {object} res - HTTP Response-Objekt
- * @param {object} next
+ * @param {function(err, req, res, next)} middleware - Callbackfunktion mit Fehler-, Request-, Response- und next-Objekt
  */
 app.use(function (err, req, res, next) {
     res.send({
@@ -75,24 +81,24 @@ app.listen(port, function () {
 });
 
 
-app.use(function(req, res, next) {
-  if (req.session && req.session.user) {
-      dbam.findUserByEmail(req.session.user.email, function(error, statusCode, results) {
-          if (error && statusCode === 500) {
-              res.statusCode(500).end();
-          }
-          if (results) {
-              req.user = results;
-              delete req.user.passwort;
-              req.session.user = results;
-              req.locals.user = results;
-          }
-          
-          next();
-      });
-  } else {
-      next();
-  }
-});
+/*app.use(function (req, res, next) {
+    console.log("[MAIN] Checking Session");
+    if (sess && sess.user) {
+        dbam.findUserByEmail(sess.user.email, function (error, statusCode, results) {
+            if (error) {
+                res.statusCode(500).end();
+            }
+            if (results) {
+                req.user = results;
+                delete req.user.passwort;
+                req.session.user = results;
+                req.locals.user = results;
+            }
+            next();
+        });
+    } else {
+        next();
+    }
+});*/
 
 module.exports = app;

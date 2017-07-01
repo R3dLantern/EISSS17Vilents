@@ -3,12 +3,10 @@ package application.controller;
 import application.Main;
 import application.util.FormValidator;
 import application.util.PasswordUtil;
-import application.util.SceneLoader;
 import application.util.ServerRequest;
 
 import java.io.IOException;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
@@ -24,7 +22,6 @@ import model.HttpResponse;
 public class LoginController implements ISignInUpHandling{
 	
 	private final String LOGINDATA_STRING = "{\"email\":\"%s\",\"password\":\"%s\"}";
-	private final String LOGIN_STRING = "http://%s:%s/login";
 	
 	@FXML
 	private TextField email;
@@ -44,6 +41,7 @@ public class LoginController implements ISignInUpHandling{
 	@FXML
 	protected void handleLoginButton()
 	{	
+		errorLabel.setText("");
 		FormValidator validator = new FormValidator();
 		
 		errorLabel.setText(validator.validateEmail(email.getText(), IS_LOGIN));
@@ -62,13 +60,23 @@ public class LoginController implements ISignInUpHandling{
 		
 		try {
 			HttpResponse res = req.post(String.format(LOGINDATA_STRING, email.getText(), pwdHashStr));
-			switch (res.getStatusCode()) {
-			case 200:
-			default:
-				System.out.println(res.toString());
-				break;
+			if(res.getStatusCode() == 200) {
+				System.out.println(Main.conn.getHeaderFields().values().toString());
+				Main.sceneLoader.loadScene("layout_casemodder");
+				return;
 			}
-			return;
+			switch (res.getStatusCode()) {
+			case 401:
+				errorLabel.setText(ERROR_401);
+				return;
+			case 404:
+				errorLabel.setText(ERROR_404);
+				return;
+			case 500:
+			default:
+				errorLabel.setText(ERROR_500);
+				return;
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			errorLabel.setText("JSONException");
@@ -77,8 +85,8 @@ public class LoginController implements ISignInUpHandling{
 	}
 	
 	@FXML
-	protected void handleSignupLink(ActionEvent event) throws IOException
+	protected void handleSignupLink()
 	{
-		Main.sceneLoader.loadScene(event, FILENAME_SIGNUP_CASEMODDER);
+		Main.sceneLoader.loadScene(FILENAME_SIGNUP_CASEMODDER);
 	}
 }

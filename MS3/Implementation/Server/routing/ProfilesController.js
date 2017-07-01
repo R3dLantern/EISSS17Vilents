@@ -19,23 +19,23 @@ var profilesController  = express.Router();
 /** @todo für Produktivumgebung entfernen! */
 console.log("[PRCO] ProfilesController loaded.");
 
-/** Router-Handling für Benutzerprofile */
+/** Router-Handling für Benutzerprofile 
+ * @param {string} path - Route
+ */
 profilesController.route('/:id')
     /** @function
-     * @name getProfileData
+     * @name ProfileController::getProfileData
      * @desc Holt Daten zu einem öffentlichen Benutzerprofil
-     * @param {object} req - HTTP Request-Objekt
-     * @param {object} res - HTTP Response-Objekt
+     * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
      * @todo <strong>Implementieren</strong>
      */
     .get(function (req, res) {
     
     })
     /** @function
-     * @name updateProfileData
+     * @name ProfileController::updateProfileData
      * @desc Aktualisiert einen Datensatz zu einem öffentlichen Benutzerprofil
-     * @param {object} req - HTTP Request-Objekt
-     * @param {object} res - HTTP Response-Objekt
+     * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
      * @todo <strong>Implementieren</strong>
      */
     .put(function (req, res) {

@@ -10,7 +10,6 @@ import application.Main;
 import application.util.FormValidator;
 import application.util.PasswordUtil;
 import application.util.ServerRequest;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
@@ -51,29 +50,29 @@ public class SignupSponsorController implements ISignInUpHandling {
 	private Hyperlink backToLoginLink;
 	
 	@FXML
-	protected void handleBackToLoginLink(ActionEvent event)
+	protected void handleBackToLoginLink()
 	{
-		Main.sceneLoader.loadScene(event, FILENAME_LOGIN);
+		Main.sceneLoader.loadScene(FILENAME_LOGIN);
 	}
 	
 	@FXML
-	protected void handleSignupCasemodderLink(ActionEvent event)
+	protected void handleSignupCasemodderLink()
 	{
-		Main.sceneLoader.loadScene(event, FILENAME_SIGNUP_CASEMODDER);
+		Main.sceneLoader.loadScene(FILENAME_SIGNUP_CASEMODDER);
 	}
 	
 	@FXML
-	protected void handleFileChoice(ActionEvent event)
+	protected void handleFileChoice()
 	{
 		final FileChooser fileChooser = getFileChooser();
-		File file = fileChooser.showOpenDialog(Main.sceneLoader.getStage(event));
+		File file = fileChooser.showOpenDialog(Main.sceneLoader.getPrimaryStage());
         if (file != null) {
             filePath.setText(file.getAbsolutePath());
         }
 	}
 	
 	@FXML
-	protected void handleSignupButton(ActionEvent event)
+	protected void handleSignupButton()
 	{
 		FormValidator validator = new FormValidator();
 		

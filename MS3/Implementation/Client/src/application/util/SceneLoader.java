@@ -37,7 +37,7 @@ public class SceneLoader {
 	{
 		// TODO: Session-Checking
 		try {
-			Parent content = FXMLLoader.load(SceneLoader.class.getResource(FXML_PATH + "login.fxml"));
+			Parent content = FXMLLoader.load(getClass().getResource(FXML_PATH + "login.fxml"));
 			Scene scene = new Scene(content);
 			this.primaryStage.setScene(scene);
 			this.primaryStage.show();
@@ -49,20 +49,17 @@ public class SceneLoader {
 	
 	/**
 	 * Lädt eine Scene.
-	 * @param event Das ActionEvent-Objekt des Controllers, der diese Methode aufgerufen hat
 	 * @param fxml Der Dateiname der zur Scene zugehörigen FXML-Datei, ohne Dateiendung
 	 * @throws IOException Die Datei konnte nicht gefunden werden
 	 */
-	public void loadScene(ActionEvent event, String fxml)
+	public void loadScene(String fxml)
 	{
 		String fullPath = SceneLoader.FXML_PATH + fxml + ".fxml";
 		
 		try{
-			Parent content = FXMLLoader.load(SceneLoader.class.getResource(fullPath));
-			Scene scene = ((Node) event.getSource()).getScene();
-			scene.setRoot(content);
-			Stage primaryStage = (Stage) scene.getWindow();
-			primaryStage.show();
+			Parent content = FXMLLoader.load(getClass().getResource(fullPath));
+			this.primaryStage.getScene().setRoot(content);
+			this.primaryStage.show();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -77,5 +74,14 @@ public class SceneLoader {
 	{
 		Scene scene = ((Node) event.getSource()).getScene();
 		return (Stage) scene.getWindow();
+	}
+	
+	/**
+	 * Gibt die in diesem SceneLoader hinterlegte primaryStage zurück
+	 * @return this.primaryStage
+	 */
+	public Stage getPrimaryStage()
+	{
+		return this.primaryStage;
 	}
 }

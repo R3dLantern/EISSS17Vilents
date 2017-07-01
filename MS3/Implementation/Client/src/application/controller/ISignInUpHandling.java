@@ -8,6 +8,8 @@ public interface ISignInUpHandling {
 	public static final String FILENAME_SIGNUP_SPONSOR = "signup_sponsor";
 	
 	public static final String SIGNUP_STRING = "http://%s:%s/signup";
+	public static final String LOGIN_STRING = "http://%s:%s/login";
+	public static final String LOGOUT_STRING = "http://%s:%s/logout";
 	
 	public static final boolean IS_LOGIN = true;
 	public static final boolean IS_NOT_LOGIN = false;
@@ -15,4 +17,7 @@ public interface ISignInUpHandling {
 	public static final boolean IS_NOT_SPONSOR = false;
 	
 	public static final String ERROR_500 = "Es ist ein Serverfehler aufgetreten.";
+	public static final String ERROR_400 = "Es ist ein Fehler aufgetreten";
+	public static final String ERROR_404 = "Nicht gefunden";
+	public static final String ERROR_401 = "Login fehlgeschlagen";
 }

@@ -61,13 +61,21 @@ public class ServerRequest {
 	 */
 	public HttpResponse get()
 	{
+		HttpResponse res = null;
 		try {
 			Main.conn = (HttpURLConnection) url.openConnection();
 			Main.conn.setRequestMethod(HTTP_METHOD_GET);
-			return this.handleResponse();
+			res = this.handleResponse();
 		} catch (IOException a) {
-			return new HttpResponse(400, CONNECTION_ERROR);
+			a.printStackTrace();
+			try {
+				res = new HttpResponse(Main.conn.getResponseCode(), CONNECTION_ERROR);
+			} catch (IOException e) {
+				e.printStackTrace();
+				res = new HttpResponse(500, CONNECTION_ERROR);
+			}
 		}
+		return res;
 	}
 	
 	public void setURL(String url)

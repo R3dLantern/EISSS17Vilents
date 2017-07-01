@@ -19,11 +19,9 @@ public class Main extends Application
 	
 	public static final int SERVER_PORT = 8000;
 	
-	public static HttpURLConnection conn = null;
+	public static HttpURLConnection conn;
 	
 	public static SceneLoader sceneLoader;
-	
-	private Stage primaryStage;
 	
 	
 	
@@ -31,7 +29,6 @@ public class Main extends Application
 	public void start(Stage primaryStage)
 	{
 		primaryStage = this.configureStage(primaryStage);
-		this.setPrimaryStage(primaryStage);
 		this.setSceneLoader(new SceneLoader(primaryStage));
 		try {
 			Main.sceneLoader.init();
@@ -59,24 +56,6 @@ public class Main extends Application
 		
 		target.setTitle("EIS SS2017 Vilents");
 		return target;
-	}
-	
-	/**
-	 * Setter für this.primaryStage
-	 * @param primaryStage zu setzende primaryStage
-	 */
-	private void setPrimaryStage(Stage primaryStage)
-	{
-		this.primaryStage = primaryStage;
-	}
-	
-	/**
-	 * Getter für this.primaryStage
-	 * @return die adressierte primaryStage
-	 */
-	public Stage getPrimaryStage()
-	{
-		return this.primaryStage;
 	}
 	
 	/**
