@@ -21,10 +21,11 @@ public class Main extends Application
 	
 	public static HttpURLConnection conn = null;
 	
+	public static SceneLoader sceneLoader;
 	
 	private Stage primaryStage;
 	
-	private SceneLoader sceneLoader;
+	
 	
 	@Override
 	public void start(Stage primaryStage)
@@ -33,7 +34,7 @@ public class Main extends Application
 		this.setPrimaryStage(primaryStage);
 		this.setSceneLoader(new SceneLoader(primaryStage));
 		try {
-			this.sceneLoader.init();
+			Main.sceneLoader.init();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -84,15 +85,6 @@ public class Main extends Application
 	 */
 	private void setSceneLoader(SceneLoader sceneLoader)
 	{
-		this.sceneLoader = sceneLoader;
-	}
-	
-	/**
-	 * Getter für this.sceneLoader
-	 * @return der adressierte SceneLoader
-	 */
-	public SceneLoader getMainSceneLoader()
-	{
-		return this.sceneLoader;
+		Main.sceneLoader = sceneLoader;
 	}
 }

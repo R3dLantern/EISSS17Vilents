@@ -32,7 +32,17 @@ console.log("[MAIN] Initializing database connection...");
 dbam.initializeConnection();
 
 app.use(bodyParser.json()); // for parsing application/json
-app.use(session({secret: "eisss2017vilents"})); // Session secret
+
+// Set session cookie
+app.use(session({
+    cookieName: "session",
+    secret: "eisss2017vilents",
+    duration: 30 * 60 * 1000,
+    activeDuration: 5 * 60 * 1000,
+    httpOnly: true,
+    secure: true,
+    ephemeral: true
+}));
 
 app.use(loginController);
 app.use('/profiles', profilesController);
@@ -62,6 +72,27 @@ app.use(function (err, req, res, next) {
  */
 app.listen(port, function () {
     console.log("[MAIN] Server listens on port %d", port);
+});
+
+
+app.use(function(req, res, next) {
+  if (req.session && req.session.user) {
+      dbam.findUserByEmail(req.session.user.email, function(error, statusCode, results) {
+          if (error && statusCode === 500) {
+              res.statusCode(500).end();
+          }
+          if (results) {
+              req.user = results;
+              delete req.user.passwort;
+              req.session.user = results;
+              req.locals.user = results;
+          }
+          
+          next();
+      });
+  } else {
+      next();
+  }
 });
 
 module.exports = app;

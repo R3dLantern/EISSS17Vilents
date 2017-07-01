@@ -6,9 +6,9 @@ import java.io.IOException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import application.Main;
 import application.util.FormValidator;
 import application.util.PasswordUtil;
-import application.util.SceneLoader;
 import application.util.ServerRequest;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -53,20 +53,20 @@ public class SignupSponsorController implements ISignInUpHandling {
 	@FXML
 	protected void handleBackToLoginLink(ActionEvent event)
 	{
-		SceneLoader.loadScene(event, FILENAME_LOGIN);
+		Main.sceneLoader.loadScene(event, FILENAME_LOGIN);
 	}
 	
 	@FXML
 	protected void handleSignupCasemodderLink(ActionEvent event)
 	{
-		SceneLoader.loadScene(event, FILENAME_SIGNUP_CASEMODDER);
+		Main.sceneLoader.loadScene(event, FILENAME_SIGNUP_CASEMODDER);
 	}
 	
 	@FXML
 	protected void handleFileChoice(ActionEvent event)
 	{
 		final FileChooser fileChooser = getFileChooser();
-		File file = fileChooser.showOpenDialog(SceneLoader.getStage(event));
+		File file = fileChooser.showOpenDialog(Main.sceneLoader.getStage(event));
         if (file != null) {
             filePath.setText(file.getAbsolutePath());
         }

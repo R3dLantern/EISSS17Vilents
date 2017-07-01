@@ -1,5 +1,6 @@
 package application.controller;
 
+import application.Main;
 import application.util.FormValidator;
 import application.util.PasswordUtil;
 import application.util.SceneLoader;
@@ -78,6 +79,6 @@ public class LoginController implements ISignInUpHandling{
 	@FXML
 	protected void handleSignupLink(ActionEvent event) throws IOException
 	{
-		SceneLoader.loadScene(event, FILENAME_SIGNUP_CASEMODDER);
+		Main.sceneLoader.loadScene(event, FILENAME_SIGNUP_CASEMODDER);
 	}
 }

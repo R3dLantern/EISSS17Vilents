@@ -53,7 +53,7 @@ public class SceneLoader {
 	 * @param fxml Der Dateiname der zur Scene zugehörigen FXML-Datei, ohne Dateiendung
 	 * @throws IOException Die Datei konnte nicht gefunden werden
 	 */
-	public static void loadScene(ActionEvent event, String fxml)
+	public void loadScene(ActionEvent event, String fxml)
 	{
 		String fullPath = SceneLoader.FXML_PATH + fxml + ".fxml";
 		
@@ -73,7 +73,7 @@ public class SceneLoader {
 	 * @param event ActionEvent-Objekt, dessen Stage zurückgegeben soll
 	 * @return Das zu referenzierende Stage-Objekt
 	 */
-	public static Stage getStage(ActionEvent event)
+	public Stage getStage(ActionEvent event)
 	{
 		Scene scene = ((Node) event.getSource()).getScene();
 		return (Stage) scene.getWindow();

@@ -41,7 +41,7 @@ exports.trySignup = function (newUser, callback) {
     console.log("[DBAM] trySignup");
     this.pool.getConnection(function (connectionError, conn) {
         if (connectionError) {
-            callback(connectionError, null);
+            callback(connectionError);
         }
         console.log("[DBAM] Connected with ID " + conn.threadId);
         
@@ -50,7 +50,7 @@ exports.trySignup = function (newUser, callback) {
             values: [newUser.email, newUser.password, newUser.dateOfBirth]
         }, function (insertError, results, fields) {
             if (insertError) {
-                callback(insertError, null);
+                callback(insertError);
             }
             console.log("[DBAM] Insert 1 successful");
             var sql2 = "INSERT INTO ";
@@ -62,10 +62,10 @@ exports.trySignup = function (newUser, callback) {
             conn.query(sql2, [results.insertId], function (insertError2, results2, fields2) {
                 conn.release();
                 if (insertError2) {
-                    callback(insertError2, null);
+                    callback(insertError2);
                 }
                 console.log("[DBAM] Insert 2 successful");
-                callback(null, null);
+                callback(null);
             });
         });
     });
@@ -92,6 +92,9 @@ exports.findUserByEmail = function (email, callback) {
             conn.release();
             if (selectError) {
                 callback(selectError, 500, null);
+            } else {
+                console.log(results.toString());
+                callback(null, null, results);
             }
         });
     });

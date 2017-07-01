@@ -75,7 +75,8 @@ loginController.post('/login', function (req, res) {
  * @todo <strong>Implementieren</strong>
  */
 loginController.get('/logout', function (req, res) {
-    
+    req.session.reset();
+    res.status(200).end();
 });
 
 module.exports = loginController;

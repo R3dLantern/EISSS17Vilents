@@ -5,9 +5,9 @@ import java.io.IOException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import application.Main;
 import application.util.FormValidator;
 import application.util.PasswordUtil;
-import application.util.SceneLoader;
 import application.util.ServerRequest;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -49,13 +49,13 @@ public class SignupCasemodderController implements ISignInUpHandling{
 	@FXML
 	protected void handleBackToLoginLink(ActionEvent event)
 	{
-		SceneLoader.loadScene(event, FILENAME_LOGIN);
+		Main.sceneLoader.loadScene(event, FILENAME_LOGIN);
 	}
 	
 	@FXML
 	protected void handleSignupSponsorLink(ActionEvent event)
 	{
-		SceneLoader.loadScene(event, FILENAME_SIGNUP_SPONSOR);
+		Main.sceneLoader.loadScene(event, FILENAME_SIGNUP_SPONSOR);
 	}
 	
 	@FXML
