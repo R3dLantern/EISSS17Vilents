@@ -18,7 +18,6 @@ import javafx.stage.Stage;
 public class SceneLoader {
 	
 	private static final String FXML_PATH = "/application/controller/fxml/";
-	@SuppressWarnings("unused")
 	private static final String FXML_SNIPPET_PATH = "application/controller/fxml/snippet/";
 	
 	private Stage primaryStage;
@@ -69,6 +68,18 @@ public class SceneLoader {
 		}
 	}
 	
+	
+	public Parent getElement(boolean isSnippet, String fxml)
+	{
+		String fullPath = (isSnippet ? FXML_SNIPPET_PATH : FXML_PATH) + fxml + ".fxml";
+		try {
+			return FXMLLoader.load(getClass().getResource(fullPath));
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 	/**
 	 * Gibt die Stage zurück, in der ein ActionEvent ausgeführt wurde
 	 * @param event ActionEvent-Objekt, dessen Stage zurückgegeben soll
@@ -104,7 +115,6 @@ public class SceneLoader {
 			this.primaryStage.setScene(new Scene((Pane) loader.load()));
 			LayoutController controller = loader.<LayoutController>getController();
 			controller.setUsernameLabel(email);
-			controller.loadDashboard();
 			this.primaryStage.show();
 		} catch (IOException e) {
 			e.printStackTrace();

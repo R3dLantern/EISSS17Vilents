@@ -63,6 +63,7 @@ public class LoginController implements ISignInUpHandling{
 		
 		try {
 			HttpResponse res = req.post(String.format(LOGINDATA_STRING, email.getText(), pwdHashStr));
+			
 			if(res.getStatusCode() == 200) {
 				JSONObject resContent = new JSONObject(res.getContent());
 				Main.sceneLoader.loadLayout(email.getText(), resContent.getString("type") == "sponsor" ? true : false);

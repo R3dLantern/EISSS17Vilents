@@ -67,7 +67,6 @@ loginController.post('/login', function (req, res) {
                     email: results[0].email,
                     type: results[0].type
                 };
-                console.log(req.session.user);
                 res.status(200).end(JSON.stringify({ type: results[0].type }));
             } else {
                 res.status(401).end();
@@ -90,9 +89,9 @@ loginController.get('/logout', function (req, res) {
     req.session.destroy(function (err) {
         if (err) {
             console.log(err);
-        } else {
-            res.status(200).end();
+            
         }
+        res.status(200).end();
     });
 });
 

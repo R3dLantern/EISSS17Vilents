@@ -29,6 +29,12 @@ public class LayoutController implements ISignInUpHandling {
 	private Button logoutButton;
 	
 	@FXML
+	protected void initialize()
+	{
+		tabDashboard.setContent(Main.sceneLoader.getElement(false, "Dashboard"));
+	}
+	
+	@FXML
 	protected void handleLogoutButton()
 	{
 		ServerRequest req = new ServerRequest(LOGOUT_STRING);
@@ -51,10 +57,5 @@ public class LayoutController implements ISignInUpHandling {
 	public void setUsernameLabel(String email)
 	{
 		usernameLabel.setText(email);
-	}
-	
-	public void loadDashboard()
-	{
-		tabDashboard.setContent(Main.sceneLoader.loadScene("dashboard"));
 	}
 }

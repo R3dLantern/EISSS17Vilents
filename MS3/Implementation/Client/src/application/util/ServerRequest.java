@@ -5,12 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.CookieHandler;
-import java.net.CookieManager;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import application.Main;
 import model.HttpResponse;
 
@@ -28,9 +25,7 @@ public class ServerRequest {
 	private URL url;
 	
 	public ServerRequest(String url)
-	{
-		CookieHandler.setDefault(new CookieManager());
-		
+	{		
 		try{
 			this.url = new URL(String.format(url,  Main.SERVER_IP, Main.SERVER_PORT));
 		} catch (MalformedURLException e) {
@@ -84,7 +79,7 @@ public class ServerRequest {
 	}
 	
 	public void setURL(String url)
-	{
+	{		
 		try{
 			this.url = new URL(url);
 		} catch (MalformedURLException e) {
@@ -97,7 +92,7 @@ public class ServerRequest {
 	 * @return
 	 */
 	private HttpResponse handleResponse()
-	{
+	{	
 		StringBuilder sb = new StringBuilder();
 		try {
 		    InputStream is = Main.conn.getInputStream();
@@ -114,5 +109,10 @@ public class ServerRequest {
 		} finally {
 			Main.conn.disconnect();
 		}
+	}
+	
+	public void SetUrl(String url)
+	{
+		
 	}
 }

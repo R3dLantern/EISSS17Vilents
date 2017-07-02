@@ -22,7 +22,6 @@ console.log("[MAIN] Main module loaded.");
 var express             = require('express');
 var session             = require('express-session');
 var bodyParser          = require('body-parser');
-var uid2                = require('uid2');
 
 var dbam                = require('./util/dbam.js');
 
@@ -48,32 +47,41 @@ app.use(bodyParser.json()); // for parsing application/json
 
 // Set session cookie
 app.use(session({
-    name: "session",
     secret: "eisss2017vilents",
     resave: false,
-    saveUnitialized: true,
+    saveUninitialized: true,
     cookie: {
-        secure: true,
+        path: "/",
+        secure: false,
         maxAge: 60000
     }
 }));
 
+
+/**
+ * @function
+ * @name checkSessionMiddleware
+ * @desc Überprüft bei jedem HTTP Request den Status der Session.
+ * @param {function(req, res, next)} middleware - Callbackfunktion mit Request-, Response- und next-Objekt
+ */
 app.use(function (req, res, next) {
-    console.log("[MAIN] Checking Session");
     if (req.session && req.session.user) {
-        dbam.findUserByEmail(req.session.user.email, function (error, statusCode, results) {
+        var email = req.session.user.email;
+        dbam.findUserByEmail(email, function (error, results) {
             if (error) {
                 res.statusCode(500).end();
             }
             if (results) {
                 var userSessionData = {
                     id: results[0].id,
-                    email: results[0].id,
-                    type: resulte[0].type
+                    email: results[0].email,
+                    type: results[0].type
                 };
                 req.user = userSessionData;
                 req.session.user = userSessionData;
-                req.locals.user = userSessionData;
+                req.locals = {
+                    user: userSessionData
+                };
             }
             next();
         });
@@ -81,16 +89,6 @@ app.use(function (req, res, next) {
         next();
     }
 });
-
-app.use(loginController);
-app.use(dashboardController);
-app.use('/profiles', profilesController);
-app.use('/messages', messagesController);
-app.use('/projects', projectsController);
-app.use('/projectupdates', projectUpdatesController);
-app.use('/sponsoring', sponsoringController);
-app.use('/comment', commentsController);
-app.use('/upvote', upvotesController);
 
 
 /**
@@ -105,6 +103,18 @@ app.use(function (err, req, res, next) {
         error: app.get('env') === "development" ? err : {}
     });
 });
+
+
+app.use(loginController);
+app.use(dashboardController);
+app.use('/profiles', profilesController);
+app.use('/messages', messagesController);
+app.use('/projects', projectsController);
+app.use('/projectupdates', projectUpdatesController);
+app.use('/sponsoring', sponsoringController);
+app.use('/comment', commentsController);
+app.use('/upvote', upvotesController);
+
 
 /** @function
  * @name listenToDefaultPort

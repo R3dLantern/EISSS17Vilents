@@ -60,14 +60,44 @@ var dbam = require('./dbam.js');
 /** @todo für Produktivumgebung entfernen! */
 console.log("[REPM] Reputation module loaded.");
 
+
+/**
+ * Callbackfunktion für Übergabe der GesamtReputation
+ * @callback getTotalRepCallback
+ * @param {object} error - Fehler-Objekt, falls ein Fehler aufgetreten ist
+ * @param {int} totalRep - Ergebnis aus Abfrage
+ */
+
 /**
  * Berechnet die Gesamtreputation für einen Casemodder-Benutzer
- * @param {string} userEmail - Email des Benutzers
- * @returns {int} Die Gesamtreputation des Benutzers
+ * @param {int} userId - Email des Benutzers
+ * @param {getTotalRepCallback} callback - Callbackfunktion zur Rückgabe des Wertes
  * @todo <strong>Implementieren</strong>
  */
-exports.getTotalReputationForUser = function (userEmail) {
-    dbam.findUserByEmail(userEmail, function (error, statusCode, results) {
-        //if(statusCode)
+exports.getTotalReputationForUser = function (userId, callback) {
+    var totalRep = 0.0;
+    dbam.countUserProjects(userId, function (projectsError, projectsResult) {
+        if (projectsError) {
+            callback(projectsError, null);
+        }
+        if (projectsResult) {
+            totalRep += projectsResult.projects * FACTOR_PROJECTS;
+            totalRep += projectsResult.projectUpdates * FACTOR_PROJECT_UPDATES;
+            totalRep += projectsResult.projectUpvotes * FACTOR_PROJECT_UPVOTES;
+            totalRep += projectsResult.projectUpdateUpvotes * FACTOR_PROJECT_UPDATE_UPVOTES;
+        }
     });
+    dbam.countUserComments(userId, function (error, result) {
+        if (error) {
+            callback(error, null);
+        }
+        if (result) {
+            totalRep += result.comments * FACTOR_COMMENTS;
+            totalRep += result.commentUpvotes * FACTOR_COMMENTS_UPVOTES;
+        }
+        callback(null, totalRep);
+    });
+    
 };
+
+module.exports = exports;

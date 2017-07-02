@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `benutzer` (
   `geburtsdatum` date DEFAULT NULL COMMENT 'Geburtstdatum des Benutzers',
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Übergeordnete Tabelle für Benutzer des Systems';
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Übergeordnete Tabelle für Benutzer des Systems';
 
 -- Daten Export vom Benutzer nicht ausgewählt
 -- Exportiere Struktur von Tabelle eis_ss2017.casemodder
@@ -73,6 +73,7 @@ CREATE TABLE IF NOT EXISTS `nachricht` (
   `empfanger_id` int(11) DEFAULT NULL COMMENT 'Löschung des Empfängers löscht automatisch Nachricht',
   `zeitstempel` datetime DEFAULT NULL,
   `inhalt` blob,
+  `gelesen` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Wurde die Nachricht gelesen?',
   PRIMARY KEY (`id`),
   KEY `sender_user_id` (`absender_id`),
   KEY `receiver_user_id` (`empfanger_id`),
@@ -99,9 +100,12 @@ CREATE TABLE IF NOT EXISTS `projekt` (
 DROP TABLE IF EXISTS `projektupdate`;
 CREATE TABLE IF NOT EXISTS `projektupdate` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `projekt_id` int(11) NOT NULL COMMENT 'ID des zugehörigen Projekts',
   `datum` date DEFAULT NULL,
   `inhalt` blob,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `PROJECT_ID` (`projekt_id`),
+  CONSTRAINT `PROJECT_ID` FOREIGN KEY (`projekt_id`) REFERENCES `projekt` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Updates zu Projekten';
 
 -- Daten Export vom Benutzer nicht ausgewählt

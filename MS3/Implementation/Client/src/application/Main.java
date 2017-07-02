@@ -1,6 +1,9 @@
 package application;
 	
+import java.net.CookieHandler;
+import java.net.CookieManager;
 import java.net.HttpURLConnection;
+
 
 import application.util.SceneLoader;
 import javafx.application.Application;
@@ -39,6 +42,7 @@ public class Main extends Application
 	
 	public static void main(String[] args)
 	{
+		CookieHandler.setDefault(new CookieManager());
 		launch(args);
 	}
 	
