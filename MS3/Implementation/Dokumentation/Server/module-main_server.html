@@ -132,7 +132,15 @@
         <ul>
             <li>module:express</li>
         
+            <li>module:express-session</li>
+        
+            <li>module:body-parser</li>
+        
+            <li>module:uid2</li>
+        
             <li><a href="module-util_dbam.html">module:util/dbam</a></li>
+        
+            <li>module:routing/LoginController</li>
         
             <li><a href="module-routing_ProfilesController.html">module:routing/ProfilesController</a></li>
         </ul>
@@ -145,19 +153,80 @@
     
 
     
-        <h3 class="subsection-title">Members</h3>
+
+    
+        <h3 class="subsection-title">Methods</h3>
 
         
             
-<h4 class="name" id="~sess"><span class="type-signature">(inner) </span>sess<span class="type-signature"></span></h4>
 
+    
+
+    <h4 class="name" id="~checkSessionMiddleware"><span class="type-signature">(inner) </span>checkSessionMiddleware<span class="signature">(middleware)</span><span class="type-signature"></span></h4>
+
+    
 
 
 
 <div class="description">
-    Session-Objekt
+    Überprüft bei jedem HTTP Request den Status der Session.
 </div>
 
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>middleware</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Callbackfunktion mit Request-, Response- und next-Objekt</td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -193,7 +262,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="server.js.html">server.js</a>, <a href="server.js.html#line41">line 41</a>
+        <a href="server.js.html">server.js</a>, <a href="server.js.html#line61">line 61</a>
     </li></ul></dd>
     
 
@@ -209,11 +278,15 @@
 
 
 
-        
-    
 
-    
-        <h3 class="subsection-title">Methods</h3>
+
+
+
+
+
+
+
+
 
         
             
@@ -271,7 +344,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="server.js.html">server.js</a>, <a href="server.js.html#line59">line 59</a>
+        <a href="server.js.html">server.js</a>, <a href="server.js.html#line119">line 119</a>
     </li></ul></dd>
     
 
@@ -302,7 +375,7 @@
 
     
 
-    <h4 class="name" id="~stackTraceHandling"><span class="type-signature">(inner) </span>stackTraceHandling<span class="signature">(err, req, res, next)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="~stackTraceHandling"><span class="type-signature">(inner) </span>stackTraceHandling<span class="signature">(middleware)</span><span class="type-signature"></span></h4>
 
     
 
@@ -345,13 +418,13 @@
 
         <tr>
             
-                <td class="name"><code>err</code></td>
+                <td class="name"><code>middleware</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">object</span>
+<span class="param-type">function</span>
 
 
             
@@ -361,76 +434,7 @@
 
             
 
-            <td class="description last">Error-Objekt</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>req</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">HTTP Request-Objekt</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>res</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">HTTP Response-Objekt</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>next</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
+            <td class="description last">Callbackfunktion mit Fehler-, Request-, Response- und next-Objekt</td>
         </tr>
 
     
@@ -471,7 +475,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="server.js.html">server.js</a>, <a href="server.js.html#line43">line 43</a>
+        <a href="server.js.html">server.js</a>, <a href="server.js.html#line94">line 94</a>
     </li></ul></dd>
     
 
@@ -513,13 +517,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-main_server.html">main/server</a></li><li><a href="module-routing_ProfilesController.html">routing/ProfilesController</a></li><li><a href="module-util_dbam.html">util/dbam</a></li><li><a href="module-util_reputation.html">util/reputation</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-main_server.html">main/server</a></li><li><a href="module-routing_CommentsController.html">routing/CommentsController</a></li><li><a href="module-routing_MessagesController.html">routing/MessagesController</a></li><li><a href="module-routing_ProfilesController.html">routing/ProfilesController</a></li><li><a href="module-routing_ProjectsController.html">routing/ProjectsController</a></li><li><a href="module-routing_ProjectUpdatesController.html">routing/ProjectUpdatesController</a></li><li><a href="module-routing_SponsoringController.html">routing/SponsoringController</a></li><li><a href="module-routing_UpvotesController.html">routing/UpvotesController</a></li><li><a href="module-util_dbam.html">util/dbam</a></li><li><a href="module-util_reputation.html">util/reputation</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Wed Jun 28 2017 23:47:39 GMT+0200 (Mitteleuropäische Sommerzeit)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Sun Jul 02 2017 17:37:20 GMT+0200 (Mitteleuropäische Sommerzeit)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -34,8 +34,13 @@
  * Prototyps im Rahmen der EIS-Veranstaltung im Sommersemester 2017
  * @module main/server
  * @requires express
+ * @requires express-session
+ * @requires body-parser
+ * @requires uid2
  * @requires util/dbam
+ * @requires routing/LoginController
  * @requires routing/ProfilesController
+ * 
  * @author Leonid Vilents &lt;lvilents@smail.th-koeln.de>
  */
 
@@ -48,8 +53,15 @@ var bodyParser          = require('body-parser');
 
 var dbam                = require('./util/dbam.js');
 
-var loginController     = require('./routing/LoginController.js');
-var profilesController  = require('./routing/ProfilesController.js');
+var loginController             = require('./routing/LoginController.js');
+var profilesController          = require('./routing/ProfilesController.js');
+var dashboardController         = require('./routing/DashboardController.js');
+var messagesController          = require('./routing/MessagesController.js');
+var projectsController          = require('./routing/ProjectsController.js');
+var projectUpdatesController    = require('./routing/ProjectUpdatesController.js');
+var sponsoringController        = require('./routing/SponsoringController.js');
+var commentsController          = require('./routing/CommentsController.js');
+var upvotesController           = require('./routing/UpvotesController.js');
 
 var port                = process.env.PORT || 8000;
 var app                 = express();
@@ -60,22 +72,58 @@ console.log("[MAIN] Initializing database connection...");
 dbam.initializeConnection();
 
 app.use(bodyParser.json()); // for parsing application/json
-app.use(session({secret: "eisss2017vilents"})); // Session secret
 
-app.use(loginController);
-app.use('/profiles', profilesController);
+// Set session cookie
+app.use(session({
+    secret: "eisss2017vilents",
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        path: "/",
+        secure: false,
+        maxAge: 60000
+    }
+}));
 
-/** Session-Objekt */
-var sess;
+
+/**
+ * @function
+ * @name checkSessionMiddleware
+ * @desc Überprüft bei jedem HTTP Request den Status der Session.
+ * @param {function(req, res, next)} middleware - Callbackfunktion mit Request-, Response- und next-Objekt
+ */
+app.use(function (req, res, next) {
+    if (req.session &amp;&amp; req.session.user) {
+        var email = req.session.user.email;
+        dbam.findUserByEmail(email, function (error, results) {
+            if (error) {
+                res.statusCode(500).end();
+            }
+            if (results) {
+                var userSessionData = {
+                    id: results[0].id,
+                    email: results[0].email,
+                    type: results[0].type
+                };
+                req.user = userSessionData;
+                req.session.user = userSessionData;
+                req.locals = {
+                    user: userSessionData
+                };
+            }
+            next();
+        });
+    } else {
+        next();
+    }
+});
+
 
 /**
  * @function
  * @name stackTraceHandling
  * @desc In der Produktiv-Umgebung soll bei Fehlern kein Stacktrace mitgeschickt werden
- * @param {object} err - Error-Objekt
- * @param {object} req - HTTP Request-Objekt
- * @param {object} res - HTTP Response-Objekt
- * @param {object} next
+ * @param {function(err, req, res, next)} middleware - Callbackfunktion mit Fehler-, Request-, Response- und next-Objekt
  */
 app.use(function (err, req, res, next) {
     res.send({
@@ -84,6 +132,18 @@ app.use(function (err, req, res, next) {
     });
 });
 
+
+app.use(loginController);
+app.use(dashboardController);
+app.use('/profiles', profilesController);
+app.use('/messages', messagesController);
+app.use('/projects', projectsController);
+app.use('/projectupdates', projectUpdatesController);
+app.use('/sponsoring', sponsoringController);
+app.use('/comment', commentsController);
+app.use('/upvote', upvotesController);
+
+
 /** @function
  * @name listenToDefaultPort
  * @desc "Startprozess", der dem Server das Emfpangen von HTTP-Anfragen ermöglicht
@@ -91,6 +151,7 @@ app.use(function (err, req, res, next) {
 app.listen(port, function () {
     console.log("[MAIN] Server listens on port %d", port);
 });
+
 
 module.exports = app;</code></pre>
         </article>
@@ -102,13 +163,13 @@ module.exports = app;</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-main_server.html">main/server</a></li><li><a href="module-routing_ProfilesController.html">routing/ProfilesController</a></li><li><a href="module-util_dbam.html">util/dbam</a></li><li><a href="module-util_reputation.html">util/reputation</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-main_server.html">main/server</a></li><li><a href="module-routing_CommentsController.html">routing/CommentsController</a></li><li><a href="module-routing_MessagesController.html">routing/MessagesController</a></li><li><a href="module-routing_ProfilesController.html">routing/ProfilesController</a></li><li><a href="module-routing_ProjectsController.html">routing/ProjectsController</a></li><li><a href="module-routing_ProjectUpdatesController.html">routing/ProjectUpdatesController</a></li><li><a href="module-routing_SponsoringController.html">routing/SponsoringController</a></li><li><a href="module-routing_UpvotesController.html">routing/UpvotesController</a></li><li><a href="module-util_dbam.html">util/dbam</a></li><li><a href="module-util_reputation.html">util/reputation</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Wed Jun 28 2017 23:47:39 GMT+0200 (Mitteleuropäische Sommerzeit)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Sun Jul 02 2017 17:37:20 GMT+0200 (Mitteleuropäische Sommerzeit)
 </footer>
 
 <script> prettyPrint(); </script>

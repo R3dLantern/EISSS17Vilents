@@ -152,7 +152,476 @@
 
     
 
-    <h4 class="name" id=".findUserByEmail"><span class="type-signature">(static) </span>findUserByEmail<span class="signature">(email)</span><span class="type-signature"> &rarr; {object}</span></h4>
+    <h4 class="name" id=".checkForNewMessages"><span class="type-signature">(static) </span>checkForNewMessages<span class="signature">(userId, callback)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Sucht nach ungelesenen Nachrichten im Postfach des Benutzers
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>userId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">ID des Benutzers</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">checkForNewMessagesCallback</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Callbackfunktion zum Verarbeiten der Rückgabewerte</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="util_dbam.js.html">util/dbam.js</a>, <a href="util_dbam.js.html#line190">line 190</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".countUserComments"><span class="type-signature">(static) </span>countUserComments<span class="signature">(userId, callback)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Zählt die Kommentare eines Benutzers
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>userId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Die ID des Benutzers</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">countCommentsCallback</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Callbackfunktion zum Verarbeiten der Rückgabewerte</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="util_dbam.js.html">util/dbam.js</a>, <a href="util_dbam.js.html#line317">line 317</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+    <dt class="tag-todo">To Do:</dt>
+    <dd class="tag-todo">
+        <ul>
+            <li><strong>Implementieren</strong></li>
+        </ul>
+    </dd>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".countUserProjects"><span class="type-signature">(static) </span>countUserProjects<span class="signature">(userId, callback)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Zählt die Projekte und Projektupdates eines Benutzers
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>userId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Die ID des Benutzers</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">countProjectsCallback</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Callbackfunktion zum Verarbeiten der Rückgabewerte</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="util_dbam.js.html">util/dbam.js</a>, <a href="util_dbam.js.html#line226">line 226</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".findUserByEmail"><span class="type-signature">(static) </span>findUserByEmail<span class="signature">(email, callback)</span><span class="type-signature"> &rarr; {object}</span></h4>
 
     
 
@@ -215,6 +684,29 @@
         </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">findUserByEmailCallback</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Callbackfunktion zum Verarbeiten der Rückgabewerte</td>
+        </tr>
+
+    
     </tbody>
 </table>
 
@@ -252,7 +744,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="util_dbam.js.html">util/dbam.js</a>, <a href="util_dbam.js.html#line81">line 81</a>
+        <a href="util_dbam.js.html">util/dbam.js</a>, <a href="util_dbam.js.html#line144">line 144</a>
     </li></ul></dd>
     
 
@@ -260,13 +752,6 @@
 
     
 
-    
-    <dt class="tag-todo">To Do:</dt>
-    <dd class="tag-todo">
-        <ul>
-            <li><strong>Implementieren</strong></li>
-        </ul>
-    </dd>
     
 </dl>
 
@@ -312,14 +797,14 @@
 
     
 
-    <h4 class="name" id="~DBAM::getCredentialsFromJson"><span class="type-signature">(inner) </span>DBAM::getCredentialsFromJson<span class="signature">()</span><span class="type-signature"> &rarr; {object}</span></h4>
+    <h4 class="name" id="~DBAM::executeSingleQuery"><span class="type-signature">(inner) </span>DBAM::executeSingleQuery<span class="signature">(sql, values, callback)</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    Entnimmt der im System hinterlegten Konfigurationsdatei die Zugangsdaten für die Datenbank
+    Führt eine einzelne Datenbankabfrage aus.
 </div>
 
 
@@ -328,6 +813,101 @@
 
 
 
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>sql</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Der Query-String in SQL, möglicherweise mit Parametern</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>values</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Werte-Array für parametrisierbare Query-Strings</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">singleQueryCallback</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Callbackfunktion zum Verarbeiten der Return-Wertes</td>
+        </tr>
+
+    
+    </tbody>
+</table>
 
 
 
@@ -363,7 +943,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="util_dbam.js.html">util/dbam.js</a>, <a href="util_dbam.js.html#line100">line 100</a>
+        <a href="util_dbam.js.html">util/dbam.js</a>, <a href="util_dbam.js.html#line39">line 39</a>
     </li></ul></dd>
     
 
@@ -386,28 +966,6 @@
 
 
 
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    JSON-Objekt mit Login-Credentials für die Datenbank
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">object</span>
-
-
-    </dd>
-</dl>
-
-    
 
 
 
@@ -467,7 +1025,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="util_dbam.js.html">util/dbam.js</a>, <a href="util_dbam.js.html#line21">line 21</a>
+        <a href="util_dbam.js.html">util/dbam.js</a>, <a href="util_dbam.js.html#line68">line 68</a>
     </li></ul></dd>
     
 
@@ -570,7 +1128,7 @@
             <td class="type">
             
                 
-<span class="param-type">callback</span>
+<span class="param-type">trySignupCallback</span>
 
 
             
@@ -580,7 +1138,7 @@
 
             
 
-            <td class="description last">Callbackfunktion zum Verarbeiten der Return-Werte</td>
+            <td class="description last">Callbackfunktion zum Verarbeiten der Return-Wertes</td>
         </tr>
 
     
@@ -621,7 +1179,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="util_dbam.js.html">util/dbam.js</a>, <a href="util_dbam.js.html#line32">line 32</a>
+        <a href="util_dbam.js.html">util/dbam.js</a>, <a href="util_dbam.js.html#line87">line 87</a>
     </li></ul></dd>
     
 
@@ -660,8 +1218,1017 @@
 
 
         
+            
+
     
 
+    <h4 class="name" id="~getCredentialsFromJson"><span class="type-signature">(inner) </span>getCredentialsFromJson<span class="signature">()</span><span class="type-signature"> &rarr; {object}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Entnimmt der im System hinterlegten Konfigurationsdatei die Zugangsdaten für die Datenbank
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="util_dbam.js.html">util/dbam.js</a>, <a href="util_dbam.js.html#line25">line 25</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    JSON-Objekt mit Login-Credentials für die Datenbank
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+    
+
+    
+        <h3 class="subsection-title">Type Definitions</h3>
+
+        
+                
+
+    
+
+    <h4 class="name" id="~checkForNewMessagesCallback"><span class="type-signature"></span>checkForNewMessagesCallback<span class="signature">(error, count)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Callbackfunktion für das Prüfen von neuen Nachrichten
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>error</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Fehler-Objekt, falls ein Fehler aufgetreten ist</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>count</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Anzahl von ungelesenen Nachrichten</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="util_dbam.js.html">util/dbam.js</a>, <a href="util_dbam.js.html#line177">line 177</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+                
+
+    
+
+    <h4 class="name" id="~countCommentsCallback"><span class="type-signature"></span>countCommentsCallback<span class="signature">(error, count)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Callbackfunktion für Zählung von Benutzerkommentaren
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>error</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Fehler-Objekt, falls ein Fehler aufgetreten ist</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>count</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Ergebnis aus Abfrage</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="util_dbam.js.html">util/dbam.js</a>, <a href="util_dbam.js.html#line303">line 303</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+                
+
+    
+
+    <h4 class="name" id="~countProjectsCallback"><span class="type-signature"></span>countProjectsCallback<span class="signature">(error, results)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Callbackfunktion für Zählung von Projekten und Updates
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>error</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Fehler-Objekt, falls ein Fehler aufgetreten ist</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>results</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Ergebnis aus Abfrage</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="util_dbam.js.html">util/dbam.js</a>, <a href="util_dbam.js.html#line213">line 213</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+                
+
+    
+
+    <h4 class="name" id="~findUserByEmailCallback"><span class="type-signature"></span>findUserByEmailCallback<span class="signature">(error, results)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Callbackfunktion für Suche via Email
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>error</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Fehler-Objekt, falls ein Fehler aufgetreten ist</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>results</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Ergebnis aus Abfrage</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="util_dbam.js.html">util/dbam.js</a>, <a href="util_dbam.js.html#line130">line 130</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+                
+
+    
+
+    <h4 class="name" id="~singleQueryCallback"><span class="type-signature"></span>singleQueryCallback<span class="signature">(error, results)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Callback-Funktion für Einzelabfragen
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>error</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Fehler-Objekt, falls ein Fehler aufgetreten ist</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>results</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Ergebnisse der Abfrage</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="util_dbam.js.html">util/dbam.js</a>, <a href="util_dbam.js.html#line31">line 31</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+                
+
+    
+
+    <h4 class="name" id="~trySignupCallback"><span class="type-signature"></span>trySignupCallback<span class="signature">(error)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Callback-Funktion für Registrierungsversuch
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>error</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Fehler-Objekt, falls ein Fehler aufgetreten ist</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="util_dbam.js.html">util/dbam.js</a>, <a href="util_dbam.js.html#line80">line 80</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
     
 
     
@@ -675,13 +2242,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-main_server.html">main/server</a></li><li><a href="module-routing_ProfilesController.html">routing/ProfilesController</a></li><li><a href="module-util_dbam.html">util/dbam</a></li><li><a href="module-util_reputation.html">util/reputation</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-main_server.html">main/server</a></li><li><a href="module-routing_CommentsController.html">routing/CommentsController</a></li><li><a href="module-routing_MessagesController.html">routing/MessagesController</a></li><li><a href="module-routing_ProfilesController.html">routing/ProfilesController</a></li><li><a href="module-routing_ProjectsController.html">routing/ProjectsController</a></li><li><a href="module-routing_ProjectUpdatesController.html">routing/ProjectUpdatesController</a></li><li><a href="module-routing_SponsoringController.html">routing/SponsoringController</a></li><li><a href="module-routing_UpvotesController.html">routing/UpvotesController</a></li><li><a href="module-util_dbam.html">util/dbam</a></li><li><a href="module-util_reputation.html">util/reputation</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Wed Jun 28 2017 23:47:39 GMT+0200 (Mitteleuropäische Sommerzeit)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Sun Jul 02 2017 17:37:20 GMT+0200 (Mitteleuropäische Sommerzeit)
 </footer>
 
 <script> prettyPrint(); </script>
