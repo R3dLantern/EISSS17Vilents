@@ -5,7 +5,7 @@ import java.security.NoSuchAlgorithmException;
 
 /**
  * Hilfsklasse für Funktionen rund ums Passwort
- * @author Léon
+ * @author Leonid Vilents
  *
  */
 public class PasswordUtil {

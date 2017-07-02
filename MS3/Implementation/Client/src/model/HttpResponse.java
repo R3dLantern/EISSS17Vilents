@@ -1,7 +1,7 @@
 package model;
 
 /**
- * Model eines HTTP Response.
+ * Model eines simplifizierten HTTP Response.
  * @author Léon
  *
  */

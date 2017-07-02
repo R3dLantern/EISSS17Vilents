@@ -6,8 +6,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Hilfesklasse für Validierung von Form-ähnlichen Objekten
- * @author Léon
+ * Hilfesklasse für Validierung von Eingabemasken
+ * @author Leonid Vilents
  *
  */
 public class FormValidator {
@@ -17,6 +17,7 @@ public class FormValidator {
 	private final String regexPassword = "^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9])(?=.*[a-z]).{8,}";
 	private final String regexPdf = "^.+.([pP][dD][fF])$";
 	
+	// Fehlermeldungen
 	private final String alertPasswordSemanticallyWeak = "Das Passwort sollte aus Klein- und Großbuchstaben, Zahlen und Sonderzeichen bestehen.";
 	private final String alertPasswordTooShort = "Das Passwort sollte mindestens aus 8 Zeichen bestehen.";
 	

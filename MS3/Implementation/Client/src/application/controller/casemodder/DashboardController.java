@@ -10,9 +10,8 @@ import javafx.scene.layout.Pane;
 import model.HttpResponse;
 
 /**
- * 
- * @author Léon
- *
+ * Controller-Klasse für das Casemodder-Dashboard
+ * @author Leonid Vilents
  */
 public class DashboardController {
 	
@@ -24,12 +23,18 @@ public class DashboardController {
 	@FXML
 	private Label repLabel;
 	
+	/**
+	 * Initialisiert das Dashboard-Element mit der Gesamtreputation des Benutzers,
+	 * sowie möglicher Benachrichtigungen rund um den Benutzer
+	 */
 	@FXML
 	protected void initialize()
 	{
 		ServerRequest req = new ServerRequest(DASHBOARD_STRING);
 		
 		HttpResponse res = req.get();
+		
+		//TODO Events implementieren
 		
 		try {
 			JSONObject content = new JSONObject(res.getContent());

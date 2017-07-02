@@ -19,8 +19,8 @@ import javafx.scene.control.TextField;
 import model.HttpResponse;
 
 /**
- * Controller-Klasse für login.fxml
- * @author Léon
+ * Controller-Klasse für den Loginbildschirm
+ * @author Leonid Vilents
  */
 public class LoginController implements ISignInUpHandling{
 	
@@ -41,6 +41,9 @@ public class LoginController implements ISignInUpHandling{
 	@FXML
 	private Hyperlink signupLink;
 	
+	/**
+	 * Führe Login aus.
+	 */
 	@FXML
 	protected void handleLoginButton()
 	{	
@@ -92,6 +95,9 @@ public class LoginController implements ISignInUpHandling{
 		}
 	}
 	
+	/**
+	 * Wechsle zum Registrierungsbildschirm für Casemodder.
+	 */
 	@FXML
 	protected void handleSignupLink()
 	{

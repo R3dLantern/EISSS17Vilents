@@ -13,7 +13,7 @@ import javafx.stage.Stage;
 
 /**
  * Management-Klasse für Scene-Loading
- * @author Léon
+ * @author Leonid Vilents
  */
 public class SceneLoader {
 	
@@ -23,7 +23,7 @@ public class SceneLoader {
 	private Stage primaryStage;
 	
 	/**
-	 * SceneLoader constructor
+	 * Konstruktor
 	 * @param primaryStage
 	 */
 	public SceneLoader(Stage primaryStage)
@@ -33,12 +33,10 @@ public class SceneLoader {
 	
 	
 	/**
-	 * Initialisiert die erste Scene.
-	 * @throws IOException
+	 * Lädt die Loginmaske und erzeugt das Primärfenster
 	 */
 	public void init()
 	{
-		// TODO: Session-Checking
 		try {
 			Parent content = FXMLLoader.load(getClass().getResource(FXML_PATH + "login.fxml"));
 			Scene scene = new Scene(content);
@@ -51,9 +49,8 @@ public class SceneLoader {
 	
 	
 	/**
-	 * Lädt eine Scene.
+	 * Lädt eine neue Scene ins Primärfenster und zeigt dieses.
 	 * @param fxml Der Dateiname der zur Scene zugehörigen FXML-Datei, ohne Dateiendung
-	 * @throws IOException Die Datei konnte nicht gefunden werden
 	 */
 	public void loadScene(String fxml)
 	{
@@ -68,7 +65,12 @@ public class SceneLoader {
 		}
 	}
 	
-	
+	/**
+	 * Gibt ein Content-Element für die Benutzeroberfläche zurück.
+	 * @param isSnippet Flag für Snippet-Elemente
+	 * @param fxml Dateiname der zugehörigen Datei (ohne Dateiendung)
+	 * @return Das vom FXMLLoader geladene Element
+	 */
 	public Parent getElement(boolean isSnippet, String fxml)
 	{
 		String fullPath = (isSnippet ? FXML_SNIPPET_PATH : FXML_PATH) + fxml + ".fxml";
@@ -101,6 +103,11 @@ public class SceneLoader {
 	}
 	
 	
+	/**
+	 * Lädt die Layout-Scene für die Benutzeroberfläche
+	 * @param email Email-Adresse des Benutzers
+	 * @param isSponsor Flag für Benutzertyp-Überprüfung
+	 */
 	public void loadLayout(String email, boolean isSponsor)
 	{
 		FXMLLoader loader = new FXMLLoader(
@@ -114,7 +121,7 @@ public class SceneLoader {
 		try {
 			this.primaryStage.setScene(new Scene((Pane) loader.load()));
 			LayoutController controller = loader.<LayoutController>getController();
-			controller.setUsernameLabel(email);
+			controller.setUsernameLabelText(email);
 			this.primaryStage.show();
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -2,8 +2,8 @@
 "use strict";
 
 /**
- * Router-Middleware für Benutzerkonten-Handling, Login und Session-Handling
- * @module routing/ProfilesController
+ * Router-Middleware für Login, Logout und Registrierung
+ * @module routing/LoginController
  * @requires express
  * @requires util/dbam
  * @requires util/reputation

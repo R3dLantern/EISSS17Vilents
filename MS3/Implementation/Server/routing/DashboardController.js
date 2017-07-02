@@ -2,8 +2,8 @@
 "use strict";
 
 /**
- * Router-Middleware für Benutzerkonten-Handling, Login und Session-Handling
- * @module routing/ProfilesController
+ * Router-Middleware für Dashboard-Aufrufe
+ * @module routing/DashboardController
  * @requires express
  * @requires util/dbam
  * @requires util/reputation
@@ -46,7 +46,6 @@ dashboardController.get('/dashboard', requireLogin, function (req, res) {
     console.log("[DBCO] Request auf /dashboard!");
     reputation.getTotalReputationForUser(req.user.id, function (error, totalRep) {
         if (error) {
-            
             console.log("[DBCO] GetTotalRep failed");
             res.status(500).end();
             throw error;

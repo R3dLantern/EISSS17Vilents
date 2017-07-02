@@ -1,5 +1,7 @@
 application
 application.controller
 application.controller.casemodder
+application.controller.fxml
+application.controller.fxml.snippet
 application.util
 model

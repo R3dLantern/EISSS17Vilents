@@ -11,6 +11,10 @@ import java.net.URL;
 import application.Main;
 import model.HttpResponse;
 
+/**
+ * Handler-Klasse für HTTP-Kommunikation
+ * @author Leonid Vilents
+ */
 public class ServerRequest {
 	
 	private final String HTTP_METHOD_GET = "GET";
@@ -24,6 +28,10 @@ public class ServerRequest {
 	
 	private URL url;
 	
+	/**
+	 * Konstruktor
+	 * @param url Die Ziel-URL des Requests
+	 */
 	public ServerRequest(String url)
 	{		
 		try{
@@ -78,6 +86,10 @@ public class ServerRequest {
 		return res;
 	}
 	
+	/**
+	 * Setzt die URL dieser Instanz neu.
+	 * @param url
+	 */
 	public void setURL(String url)
 	{		
 		try{
@@ -88,7 +100,7 @@ public class ServerRequest {
 	}
 	
 	/**
-	 * Behandelt die Serverantwort und gibt ein simplifiziertes HttpResponse-Objekt zurück;
+	 * Behandelt die Serverantwort und gibt ein simplifiziertes HttpResponse-Objekt zurück.
 	 * @return
 	 */
 	private HttpResponse handleResponse()
@@ -109,10 +121,5 @@ public class ServerRequest {
 		} finally {
 			Main.conn.disconnect();
 		}
-	}
-	
-	public void SetUrl(String url)
-	{
-		
 	}
 }

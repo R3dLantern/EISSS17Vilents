@@ -20,6 +20,11 @@ import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import model.HttpResponse;
 
+/**
+ * Controller für die Sponsoren-Registrierungsmaske.
+ * @author Leonid Vilents
+ *
+ */
 public class SignupSponsorController implements ISignInUpHandling {
 	
 	@FXML
@@ -49,18 +54,27 @@ public class SignupSponsorController implements ISignInUpHandling {
 	@FXML
 	private Hyperlink backToLoginLink;
 	
+	/**
+	 * Zur Login-Maske wechseln
+	 */
 	@FXML
 	protected void handleBackToLoginLink()
 	{
 		Main.sceneLoader.loadScene(FILENAME_LOGIN);
 	}
 	
+	/**
+	 * Zur Casemodder-Registrierungsmaske wechseln
+	 */
 	@FXML
 	protected void handleSignupCasemodderLink()
 	{
 		Main.sceneLoader.loadScene(FILENAME_SIGNUP_CASEMODDER);
 	}
 	
+	/**
+	 * Auswahlbildschirm für Datei-Upload zeigen, nach erfolgreicher Auswahl den absoluten Dateipfad anzeigen
+	 */
 	@FXML
 	protected void handleFileChoice()
 	{
@@ -71,6 +85,9 @@ public class SignupSponsorController implements ISignInUpHandling {
         }
 	}
 	
+	/**
+	 * Registrierungvorgang
+	 */
 	@FXML
 	protected void handleSignupButton()
 	{
@@ -115,6 +132,10 @@ public class SignupSponsorController implements ISignInUpHandling {
 		}
 	}
 	
+	/**
+	 * Verpackt die angegebenen Daten aus der Maske in ein JSONObject.
+	 * @return das erzeugte JSONObject, oder null, falls ein Fehler aufgetreten ist.
+	 */
 	private String getSignupData()
 	{
 		JSONObject obj = new JSONObject();

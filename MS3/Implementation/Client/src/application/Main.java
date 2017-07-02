@@ -27,7 +27,9 @@ public class Main extends Application
 	public static SceneLoader sceneLoader;
 	
 	
-	
+	/**
+	 * Konfiguriert Primärfenster und Sceneloader, und initialisiert diesen.
+	 */
 	@Override
 	public void start(Stage primaryStage)
 	{
@@ -40,6 +42,10 @@ public class Main extends Application
 		}
 	}
 	
+	/**
+	 * Hauptfunktion
+	 * @param args Startargumente für Kommandozeile - obsolet
+	 */
 	public static void main(String[] args)
 	{
 		CookieHandler.setDefault(new CookieManager());

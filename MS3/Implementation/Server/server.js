@@ -12,7 +12,14 @@
  * @requires util/dbam
  * @requires routing/LoginController
  * @requires routing/ProfilesController
- * 
+ * @requires routing/DashboardController
+ * @requires routing/MessagesController
+ * @requires routing/ProjectsController
+ * @requires routing/ProjectUpdatesController
+ * @requires routing/SponsoringController
+ * @requires routing/CommentsController
+ * @requires routing/UpvotesController
+ *           
  * @author Leonid Vilents <lvilents@smail.th-koeln.de>
  */
 
@@ -60,7 +67,7 @@ app.use(session({
 
 /**
  * @function
- * @name checkSessionMiddleware
+ * @name Main::checkSession
  * @desc Überprüft bei jedem HTTP Request den Status der Session.
  * @param {function(req, res, next)} middleware - Callbackfunktion mit Request-, Response- und next-Objekt
  */

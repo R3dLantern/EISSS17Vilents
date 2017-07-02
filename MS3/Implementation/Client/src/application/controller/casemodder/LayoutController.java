@@ -12,6 +12,10 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import model.HttpResponse;
 
+/**
+ * Controller-Klasse für das Casemodder-Layout
+ * @author Leonid Vilents
+ */
 public class LayoutController implements ISignInUpHandling {
 	
 	@FXML
@@ -35,6 +39,10 @@ public class LayoutController implements ISignInUpHandling {
 	@FXML
 	private Button logoutButton;
 	
+	/**
+	 * Versieht die Tabs mit Eventhandlern, die deren Inhalt beim Abwählen
+	 * löschen und beim Anwählen erneut vom Server anfordern.
+	 */
 	@FXML
 	protected void initialize()
 	{
@@ -49,6 +57,8 @@ public class LayoutController implements ISignInUpHandling {
                 );
             }
         });
+		
+		//TODO: FXML-Dateien implementieren
 		
 		/*tabProfile.setOnSelectionChanged(new EventHandler<Event>() {
 			@Override
@@ -84,6 +94,9 @@ public class LayoutController implements ISignInUpHandling {
 		});*/
 	}
 	
+	/**
+	 * Loggt den Benutzer aus und leitet zurück auf die Login-Maske.
+	 */
 	@FXML
 	protected void handleLogoutButton()
 	{
@@ -107,7 +120,7 @@ public class LayoutController implements ISignInUpHandling {
 	 * Setzt den Text von usernameLabel
 	 * @param email zu setzender Text
 	 */
-	public void setUsernameLabel(String email)
+	public void setUsernameLabelText(String email)
 	{
 		usernameLabel.setText(email);
 	}

@@ -20,8 +20,8 @@ import javafx.scene.control.TextField;
 import model.HttpResponse;
 
 /**
- * Controller-Klasse für signup_casemodder.fxml
- * @author Léon
+ * Controller-Klasse für die Casemodder-Registrierungsmaske
+ * @author Leonid Vilents
  */
 public class SignupController implements ISignInUpHandling{
 	
@@ -46,18 +46,27 @@ public class SignupController implements ISignInUpHandling{
 	@FXML
 	private Hyperlink backToLoginLink;
 	
+	/**
+	 * Zur Loginmaske wechseln
+	 */
 	@FXML
 	protected void handleBackToLoginLink()
 	{
 		Main.sceneLoader.loadScene(FILENAME_LOGIN);
 	}
 	
+	/**
+	 * Zur Registrierungsmaske für Sponsoren wechseln
+	 */
 	@FXML
 	protected void handleSignupSponsorLink()
 	{
 		Main.sceneLoader.loadScene(FILENAME_SIGNUP_SPONSOR);
 	}
 	
+	/**
+	 * Registrierungsvorgang
+	 */
 	@FXML
 	protected void handleSignupButton()
 	{
@@ -98,6 +107,10 @@ public class SignupController implements ISignInUpHandling{
 		}
 	}
 	
+	/**
+	 * Verpackt die Maskendaten in ein JSONObject.
+	 * @return das erzeugte JSONObject, oder null
+	 */
 	private String getSignupData()
 	{
 		JSONObject obj = new JSONObject();
