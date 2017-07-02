@@ -2,7 +2,7 @@ package application.util;
 
 import java.io.IOException;
 
-import application.controller.LayoutController;
+import application.controller.casemodder.LayoutController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -18,7 +18,7 @@ import javafx.stage.Stage;
 public class SceneLoader {
 	
 	private static final String FXML_PATH = "/application/controller/fxml/";
-	private static final String FXML_SNIPPET_PATH = "application/controller/fxml/snippet/";
+	private static final String FXML_SNIPPET_PATH = "/application/controller/fxml/snippet/";
 	
 	private Stage primaryStage;
 	

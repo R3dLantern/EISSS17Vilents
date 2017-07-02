@@ -1,4 +1,4 @@
-package application.controller;
+package application.controller.casemodder;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -9,6 +9,11 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import model.HttpResponse;
 
+/**
+ * 
+ * @author Léon
+ *
+ */
 public class DashboardController {
 	
 	private final String DASHBOARD_STRING = "http://%s:%s/dashboard";

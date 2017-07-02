@@ -1,4 +1,4 @@
-package application.controller;
+package application.controller.casemodder;
 
 import java.io.IOException;
 
@@ -6,6 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import application.Main;
+import application.controller.ISignInUpHandling;
 import application.util.FormValidator;
 import application.util.PasswordUtil;
 import application.util.ServerRequest;
@@ -22,7 +23,7 @@ import model.HttpResponse;
  * Controller-Klasse für signup_casemodder.fxml
  * @author Léon
  */
-public class SignupCasemodderController implements ISignInUpHandling{
+public class SignupController implements ISignInUpHandling{
 	
 	@FXML
 	private Hyperlink signUpAsSponsorLink;

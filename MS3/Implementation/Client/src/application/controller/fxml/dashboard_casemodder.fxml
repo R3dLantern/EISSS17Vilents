@@ -5,7 +5,7 @@
 <?import javafx.scene.text.Font?>
 
 
-<Pane prefHeight="520.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.DashboardController">
+<Pane prefHeight="520.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.casemodder.DashboardController">
    <children>
       <Pane fx:id="eventPane" layoutX="32.0" layoutY="27.0" prefHeight="465.0" prefWidth="460.0" />
       <Label layoutX="557.0" layoutY="193.0" text="Deine Gesamtreputation:">
