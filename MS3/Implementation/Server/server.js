@@ -20,9 +20,15 @@ var bodyParser          = require('body-parser');
 
 var dbam                = require('./util/dbam.js');
 
-var loginController     = require('./routing/LoginController.js');
-var profilesController  = require('./routing/ProfilesController.js');
-var dashboardController = require('./routing/DashboardController.js');
+var loginController             = require('./routing/LoginController.js');
+var profilesController          = require('./routing/ProfilesController.js');
+var dashboardController         = require('./routing/DashboardController.js');
+var messagesController          = require('./routing/MessagesController.js');
+var projectsController          = require('./routing/ProjectsController.js');
+var projectUpdatesController    = require('./routing/ProjectUpdatesController.js');
+var sponsoringController        = require('./routing/SponsoringController.js');
+var commentsController          = require('./routing/CommentsController.js');
+var upvotesController           = require('./routing/UpvotesController.js');
 
 var port                = process.env.PORT || 8000;
 var app                 = express();
@@ -47,6 +53,12 @@ app.use(session({
 app.use(loginController);
 app.use(dashboardController);
 app.use('/profiles', profilesController);
+app.use('/messages', messagesController);
+app.use('/projects', projectsController);
+app.use('/projectupdates', projectUpdatesController);
+app.use('/sponsoring', sponsoringController);
+app.use('/comment', commentsController);
+app.use('/upvote', upvotesController);
 
 /** Session-Objekt */
 var sess;
