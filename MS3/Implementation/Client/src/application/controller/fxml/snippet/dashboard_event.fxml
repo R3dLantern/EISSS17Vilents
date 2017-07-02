@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="420.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label fx:id="eventLabel" alignment="CENTER" layoutY="-1.0" prefHeight="30.0" prefWidth="210.0" text="&lt;eventLabel&gt;">
+         <font>
+            <Font name="Calibri" size="15.0" />
+         </font>
+      </Label>
+      <Hyperlink fx:id="eventLink" alignment="CENTER" layoutX="210.0" layoutY="1.0" prefHeight="30.0" prefWidth="210.0" text="&lt;link&gt;">
+         <font>
+            <Font name="Calibri" size="15.0" />
+         </font>
+      </Hyperlink>
+   </children>
+</AnchorPane>

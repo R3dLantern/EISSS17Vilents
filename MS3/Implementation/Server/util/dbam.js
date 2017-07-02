@@ -111,12 +111,26 @@ exports.findUserByEmail = function (email, callback) {
             callback(connectionError, null);
         }
         console.log("[DBAM] Connected with ID " + conn.threadId);
-        conn.query('SELECT * FROM benutzer WHERE email = ?', [email], function (selectError, results, fields) {
-            conn.release();
+        conn.query('SELECT * FROM benutzer WHERE email = ? LIMIT 1', [email], function (selectError, results, fields) {
             if (selectError) {
+                conn.release();
                 callback(selectError, null);
+            }
+            if (results) {
+                conn.query('SELECT * FROM casemodder WHERE user_id = ? LIMIT 1', [results[0].id], function (typeSelectError, typeResults, typeFields) {
+                    conn.release();
+                    if (typeSelectError) {
+                        callback(typeSelectError, null);
+                    }
+                    if (typeResults) {
+                        results[0].type = "casemodder";
+                    } else {
+                        results[0].type = "sponsor";
+                    }
+                    callback(null, results);
+                });
             } else {
-                callback(null, results);
+                callback(null, null);
             }
         });
     });

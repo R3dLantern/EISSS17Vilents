@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.CookieHandler;
+import java.net.CookieManager;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -27,6 +29,8 @@ public class ServerRequest {
 	
 	public ServerRequest(String url)
 	{
+		CookieHandler.setDefault(new CookieManager());
+		
 		try{
 			this.url = new URL(String.format(url,  Main.SERVER_IP, Main.SERVER_PORT));
 		} catch (MalformedURLException e) {
@@ -38,6 +42,7 @@ public class ServerRequest {
 	 * Führt einen HTTP POST-Request auf den Server aus.
 	 * @param postData die zu übertragenden POST-Daten
 	 * @return Die Antwort des Servers 
+	 * @throws IOException 
 	 */
 	public HttpResponse post(String postData) throws IOException
 	{
@@ -87,17 +92,27 @@ public class ServerRequest {
 		}
 	}
 	
-	private HttpResponse handleResponse() throws IOException
+	/**
+	 * Behandelt die Serverantwort und gibt ein simplifiziertes HttpResponse-Objekt zurück;
+	 * @return
+	 */
+	private HttpResponse handleResponse()
 	{
 		StringBuilder sb = new StringBuilder();
-	    InputStream is = Main.conn.getInputStream();
-	    BufferedReader br = new BufferedReader(new InputStreamReader(is));
-	    String line = null;
-	    while((line = br.readLine() ) != null) {
-	        sb.append(line);
-	    }
-	    HttpResponse res = new HttpResponse(Main.conn.getResponseCode(), sb.toString());
-	    Main.conn.disconnect();
-	    return res;
+		try {
+		    InputStream is = Main.conn.getInputStream();
+		    BufferedReader br = new BufferedReader(new InputStreamReader(is));
+		    String line = null;
+		    while((line = br.readLine() ) != null) {
+		        sb.append(line);
+		    }
+		    HttpResponse res = new HttpResponse(Main.conn.getResponseCode(), sb.toString());
+		    return res;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			Main.conn.disconnect();
+		}
 	}
 }

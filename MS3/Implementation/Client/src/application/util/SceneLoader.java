@@ -2,11 +2,13 @@ package application.util;
 
 import java.io.IOException;
 
+import application.controller.LayoutController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 /**
@@ -16,6 +18,8 @@ import javafx.stage.Stage;
 public class SceneLoader {
 	
 	private static final String FXML_PATH = "/application/controller/fxml/";
+	@SuppressWarnings("unused")
+	private static final String FXML_SNIPPET_PATH = "application/controller/fxml/snippet/";
 	
 	private Stage primaryStage;
 	
@@ -83,5 +87,27 @@ public class SceneLoader {
 	public Stage getPrimaryStage()
 	{
 		return this.primaryStage;
+	}
+	
+	
+	public void loadLayout(String email, boolean isSponsor)
+	{
+		FXMLLoader loader = new FXMLLoader(
+				getClass()
+				.getResource(
+						isSponsor
+						? FXML_PATH + "layout_sponsor.fxml"
+						: FXML_PATH + "layout_casemodder.fxml"
+						)
+				);
+		try {
+			this.primaryStage.setScene(new Scene((Pane) loader.load()));
+			LayoutController controller = loader.<LayoutController>getController();
+			controller.setUsernameLabel(email);
+			controller.loadDashboard();
+			this.primaryStage.show();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

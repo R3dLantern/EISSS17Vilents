@@ -28,7 +28,7 @@ function requireLogin(req, res, next) {
     if (req.user) {
         next();
     } else {
-        res.status(401).end();
+        res.status(403).end();
     }
 }
 
@@ -41,28 +41,9 @@ function requireLogin(req, res, next) {
  * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
  * @todo <strong>Implementieren</strong>
  */
-dashboardController.get('/dashboard', /*requireLogin,*/ function (req, res) {
+dashboardController.get('/dashboard', requireLogin, function (req, res) {
     /** @todo für Produktivumgebung entfernen! */
     console.log("[LGCO] Request auf /dashboard!");
-    
-    /** @todo ZU TESTZWECKEN; SPÄTER DRINGEND ERSETZEN! */
-    var email = "max.mustermann@email.de";
-    dbam.findUserByEmail(email, function (error, results) {
-        if (error) {
-            res.status(500).end();
-        }
-        if (results) {
-            var data = {
-                email: results[0].email,
-                name: results[0].nachname,
-                vorname: results[0].vorname
-            };
-            res.status(200).end(JSON.stringify(data));
-        } else {
-            console.log("[DBCO] 404");
-            res.status(404).end();
-        }
-    });
 });
     
 module.exports = dashboardController;

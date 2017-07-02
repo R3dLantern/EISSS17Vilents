@@ -6,8 +6,13 @@
  * Prototyps im Rahmen der EIS-Veranstaltung im Sommersemester 2017
  * @module main/server
  * @requires express
+ * @requires express-session
+ * @requires body-parser
+ * @requires uid2
  * @requires util/dbam
+ * @requires routing/LoginController
  * @requires routing/ProfilesController
+ * 
  * @author Leonid Vilents <lvilents@smail.th-koeln.de>
  */
 
@@ -17,6 +22,7 @@ console.log("[MAIN] Main module loaded.");
 var express             = require('express');
 var session             = require('express-session');
 var bodyParser          = require('body-parser');
+var uid2                = require('uid2');
 
 var dbam                = require('./util/dbam.js');
 
@@ -42,13 +48,39 @@ app.use(bodyParser.json()); // for parsing application/json
 
 // Set session cookie
 app.use(session({
-    cookieName: "session",
+    name: "session",
     secret: "eisss2017vilents",
-    duration: 30 * 60 * 1000,
-    activeDuration: 5 * 60 * 1000,
-    secure: true,
-    ephemeral: true
+    resave: false,
+    saveUnitialized: true,
+    cookie: {
+        secure: true,
+        maxAge: 60000
+    }
 }));
+
+app.use(function (req, res, next) {
+    console.log("[MAIN] Checking Session");
+    if (req.session && req.session.user) {
+        dbam.findUserByEmail(req.session.user.email, function (error, statusCode, results) {
+            if (error) {
+                res.statusCode(500).end();
+            }
+            if (results) {
+                var userSessionData = {
+                    id: results[0].id,
+                    email: results[0].id,
+                    type: resulte[0].type
+                };
+                req.user = userSessionData;
+                req.session.user = userSessionData;
+                req.locals.user = userSessionData;
+            }
+            next();
+        });
+    } else {
+        next();
+    }
+});
 
 app.use(loginController);
 app.use(dashboardController);
@@ -60,16 +92,6 @@ app.use('/sponsoring', sponsoringController);
 app.use('/comment', commentsController);
 app.use('/upvote', upvotesController);
 
-/** Session-Objekt */
-var sess;
-
-app.getSess = function () {
-    return sess;
-};
-
-app.setSess = function (newSess) {
-    sess = newSess;
-};
 
 /**
  * @function
@@ -92,25 +114,5 @@ app.listen(port, function () {
     console.log("[MAIN] Server listens on port %d", port);
 });
 
-
-/*app.use(function (req, res, next) {
-    console.log("[MAIN] Checking Session");
-    if (sess && sess.user) {
-        dbam.findUserByEmail(sess.user.email, function (error, statusCode, results) {
-            if (error) {
-                res.statusCode(500).end();
-            }
-            if (results) {
-                req.user = results;
-                delete req.user.passwort;
-                req.session.user = results;
-                req.locals.user = results;
-            }
-            next();
-        });
-    } else {
-        next();
-    }
-});*/
 
 module.exports = app;

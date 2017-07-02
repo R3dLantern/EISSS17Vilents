@@ -66,3 +66,5 @@ messagesController.route('/:id')
     .delete(function (req, res) {
     
     });
+
+module.exports = messagesController;

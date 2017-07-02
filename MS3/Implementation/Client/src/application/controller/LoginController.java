@@ -7,6 +7,9 @@ import application.util.ServerRequest;
 
 import java.io.IOException;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
@@ -61,8 +64,8 @@ public class LoginController implements ISignInUpHandling{
 		try {
 			HttpResponse res = req.post(String.format(LOGINDATA_STRING, email.getText(), pwdHashStr));
 			if(res.getStatusCode() == 200) {
-				System.out.println(Main.conn.getHeaderFields().values().toString());
-				Main.sceneLoader.loadScene("layout_casemodder");
+				JSONObject resContent = new JSONObject(res.getContent());
+				Main.sceneLoader.loadLayout(email.getText(), resContent.getString("type") == "sponsor" ? true : false);
 				return;
 			}
 			switch (res.getStatusCode()) {
@@ -78,6 +81,10 @@ public class LoginController implements ISignInUpHandling{
 				return;
 			}
 		} catch (IOException e) {
+			e.printStackTrace();
+			errorLabel.setText("IOException");
+			return;
+		} catch (JSONException e) {
 			e.printStackTrace();
 			errorLabel.setText("JSONException");
 			return;
