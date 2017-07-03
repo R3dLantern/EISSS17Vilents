@@ -11,6 +11,8 @@ import application.util.FormValidator;
 import application.util.PasswordUtil;
 import application.util.ServerRequest;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Hyperlink;
@@ -96,9 +98,13 @@ public class SignupController implements ISignInUpHandling{
 				errorLabel.setText(ERROR_500);
 			case 201:
 			default:
-				//TODO: Weiterleitungslogik implementieren
-				System.out.println(res.getContent());
-				break;
+				Alert alert = new Alert(AlertType.INFORMATION);
+				alert.setTitle("Registrierung");
+				alert.setHeaderText("Registrierung erfolgreich!");
+				alert.setContentText("Sie können Sich jetzt mit ihren Benutzerdaten einloggen.");
+
+				alert.showAndWait();
+				Main.sceneLoader.loadScene(FILENAME_LOGIN);
 			}
 			return;
 		} catch (IOException e) {

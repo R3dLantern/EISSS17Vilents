@@ -76,28 +76,34 @@ console.log("[REPM] Reputation module loaded.");
  */
 exports.getTotalReputationForUser = function (userId, callback) {
     var totalRep = 0.0;
+    
+    // Reputation aus Projekten
     dbam.countUserProjects(userId, function (projectsError, projectsResult) {
         if (projectsError) {
             callback(projectsError, null);
+            return;
         }
         if (projectsResult) {
-            totalRep += projectsResult.projects * FACTOR_PROJECTS;
-            totalRep += projectsResult.projectUpdates * FACTOR_PROJECT_UPDATES;
-            totalRep += projectsResult.projectUpvotes * FACTOR_PROJECT_UPVOTES;
-            totalRep += projectsResult.projectUpdateUpvotes * FACTOR_PROJECT_UPDATE_UPVOTES;
+            console.log(projectsResult);
+            totalRep += (projectsResult.projects.toFixed() * FACTOR_PROJECTS);
+            totalRep += (projectsResult.projectUpdates.toFixed() * FACTOR_PROJECT_UPDATES);
+            totalRep += (projectsResult.projectUpvotes.toFixed() * FACTOR_PROJECT_UPVOTES);
+            totalRep += (projectsResult.projectUpdateUpvotes.toFixed() * FACTOR_PROJECT_UPDATE_UPVOTES);
         }
+        
+        // Reputation aus Kommentaren
+        dbam.countUserComments(userId, function (error, result) {
+            if (error) {
+                callback(error, null);
+                return;
+            }
+            if (result) {
+                totalRep += result.comments * FACTOR_COMMENTS;
+                totalRep += result.commentUpvotes * FACTOR_COMMENTS_UPVOTES;
+            }
+            callback(null, Math.floor(totalRep));
+        });
     });
-    dbam.countUserComments(userId, function (error, result) {
-        if (error) {
-            callback(error, null);
-        }
-        if (result) {
-            totalRep += result.comments * FACTOR_COMMENTS;
-            totalRep += result.commentUpvotes * FACTOR_COMMENTS_UPVOTES;
-        }
-        callback(null, totalRep);
-    });
-    
 };
 
 module.exports = exports;

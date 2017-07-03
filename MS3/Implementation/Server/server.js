@@ -60,7 +60,7 @@ app.use(session({
     cookie: {
         path: "/",
         secure: false,
-        maxAge: 60000
+        maxAge: 600000
     }
 }));
 

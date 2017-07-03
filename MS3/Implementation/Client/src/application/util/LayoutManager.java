@@ -69,7 +69,7 @@ public class LayoutManager implements IFXMLLoader {
 			Pane content = (Pane) loader.load();
 			if (isCasemodder) {
 				ProjectsController controller = loader.<ProjectsController>getController();
-				controller.initWithData(userId);
+				controller.initWithData();
 			} else {
 				//TODO: ProjectsController für Sponsoren implementieren
 			}

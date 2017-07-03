@@ -18,6 +18,20 @@ var projectsController = express.Router();
 console.log("[PJCO] ProjectsController loaded.");
 
 /**
+ * Überprüft, ob es eine Login-Session gibt.
+ * @param {object} req - HTTP Request-Objekt
+ * @param {object} res - HTTP Response-Objekt
+ * @param {object} next - Weiterleitung
+ */
+projectsController.use(function (req, res, next) {
+    if (req.user) {
+        next();
+    } else {
+        res.status(403).end();
+    }
+});
+
+/**
  * @function
  * @name ProjectsController::index
  * @desc Holt Projekte zur Einsicht
@@ -25,8 +39,17 @@ console.log("[PJCO] ProjectsController loaded.");
  * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
  * @todo <strong>Implementieren</strong>
  */
-projectsController.get('/index', /*requireLogin,*/ function (req, res) {
-    
+projectsController.get('/index/:page', function (req, res) {
+    var id = req.user.id,
+        type = req.user.type,
+        page = req.params.page;
+    dbam.getProjectsOverviewData(id, type, page, function (error, resObj) {
+        if (error) {
+            res.status(500).end();
+            throw error;
+        }
+        res.status(200).end(JSON.stringify(resObj));
+    });
 });
 
 
@@ -38,7 +61,7 @@ projectsController.get('/index', /*requireLogin,*/ function (req, res) {
  * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
  * @todo <strong>Implementieren</strong>
  */
-projectsController.post('/new', /*requireLogin,*/ function (req, res) {
+projectsController.post('/new', function (req, res) {
     
 });
 

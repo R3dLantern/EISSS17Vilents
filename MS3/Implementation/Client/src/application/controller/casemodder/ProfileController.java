@@ -48,7 +48,9 @@ public class ProfileController {
 		
 		try{
 			JSONObject content = new JSONObject(res.getContent());
-			nameLabel.setText(String.format("%s %s", content.getString("vorname"), content.getString("nachname")));
+			if((!content.isNull("vorname")) && (!content.isNull("nachname"))){
+				nameLabel.setText(String.format("%s %s", content.getString("vorname"), content.getString("nachname")));
+			}
 			descriptionLabel.setText(content.getString("beschreibung"));
 			repLabel.setText(Integer.toString(content.getInt("totalRep")));
 			if(content.getBoolean("userOwnsProfile") == true) {
