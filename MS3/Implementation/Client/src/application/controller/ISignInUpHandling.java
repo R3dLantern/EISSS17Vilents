@@ -19,9 +19,4 @@ public interface ISignInUpHandling {
 	public static final boolean IS_NOT_LOGIN = false;
 	public static final boolean IS_SPONSOR = true;
 	public static final boolean IS_NOT_SPONSOR = false;
-	
-	public static final String ERROR_500 = "Es ist ein Serverfehler aufgetreten.";
-	public static final String ERROR_400 = "Es ist ein Fehler aufgetreten";
-	public static final String ERROR_404 = "Nicht gefunden";
-	public static final String ERROR_401 = "Login fehlgeschlagen";
 }

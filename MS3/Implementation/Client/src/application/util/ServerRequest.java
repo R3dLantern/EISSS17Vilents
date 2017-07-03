@@ -9,6 +9,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import application.Main;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import model.HttpResponse;
 
 /**
@@ -25,6 +27,23 @@ public class ServerRequest {
 	private final String HTTP_METHOD_DELETE = "DELETE";
 	
 	private final String CONNECTION_ERROR = "Verbindungsfehler";
+	
+	private final String HEADER_400 = "HTTP 400 Bad Request";
+	private final String HEADER_401 = "HTTP 401 Permission Denied";
+	private final String HEADER_403 = "HTTP 403 Forbidden";
+	private final String HEADER_404 = "HTTP 404 Not found";
+	
+	public static final String ERROR_400 = "Es ist ein Fehler aufgetreten";
+	public static final String ERROR_401 = "Authentifizierung fehlgeschlagen";
+	public static final String ERROR_403 = "Der Zugriff auf dieses Element wurde verweigert.";
+	public static final String ERROR_404 = "Das angeforderte Element wurde nicht gefunden.";
+	
+	private final String HEADER_500 = "HTTP 500 Internal Server Error";
+	
+	public static final String ERROR_500 = "Es ist ein interner Fehler aufgetreten.";
+
+
+
 	
 	private URL url;
 	
@@ -103,10 +122,11 @@ public class ServerRequest {
 	 * Behandelt die Serverantwort und gibt ein simplifiziertes HttpResponse-Objekt zurück.
 	 * @return
 	 */
-	private HttpResponse handleResponse()
+	private HttpResponse handleResponse() throws IOException
 	{	
 		StringBuilder sb = new StringBuilder();
 		try {
+			
 		    InputStream is = Main.conn.getInputStream();
 		    BufferedReader br = new BufferedReader(new InputStreamReader(is));
 		    String line = null;
@@ -115,11 +135,40 @@ public class ServerRequest {
 		    }
 		    HttpResponse res = new HttpResponse(Main.conn.getResponseCode(), sb.toString());
 		    return res;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
+		} catch (IOException a) {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle(CONNECTION_ERROR);
+			switch(Main.conn.getResponseCode()) {
+			case 400:
+				alert.setHeaderText(HEADER_400);
+				alert.setContentText(ERROR_400);
+				break;
+			case 401:
+				alert.setHeaderText(HEADER_401);
+				alert.setContentText(ERROR_401);
+				break;
+			case 403:
+				alert.setHeaderText(HEADER_403);
+				alert.setContentText(ERROR_403);
+				break;
+			case 404:
+				alert.setHeaderText(HEADER_404);
+				alert.setContentText(ERROR_404);
+				break;
+			case 500:
+				alert.setHeaderText(HEADER_500);
+				alert.setContentText(ERROR_500);
+			default:
+				alert.setHeaderText("Unbekannter Fehler");
+				alert.setContentText("Keine Ahnung was hier abgeht...");
+				break;
+			}
+			alert.showAndWait();
+			//a.printStackTrace();
+			return new HttpResponse(Main.conn.getResponseCode(), sb.toString());
 		} finally {
 			Main.conn.disconnect();
+			
 		}
 	}
 }

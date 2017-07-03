@@ -66,6 +66,16 @@ function executeSingleQuery(sql, values, callback) {
 }
 
 /**
+ * Hilfsfunktion zur Erstellung von inneren Queries bei der Projektabfrage
+ * für Sponsoren
+ * @param   {string} index Teampositionsnummer
+ * @returns {string} das fertige Subquery
+ */
+function sponsorTeamSubquery(index){
+    return "(SELECT casemodder" + index + "_id FROM sponsor WHERE id = ?)";
+}
+
+/**
  * @function
  * @name DBAM:Exports:initializeConnection
  * @desc Erstellt eine Verbindung zum Datenbankserver.
@@ -328,6 +338,7 @@ exports.getProjectsOverviewData = function (userId, userType, page, callback) {
                         callback(latestError, null);
                         return;
                     }
+                    console.log(latestResults);
                     resObj.latestProjects = latestResults;
                 }
             );
@@ -346,10 +357,26 @@ exports.getProjectsOverviewData = function (userId, userType, page, callback) {
                 }
             );
         } else {
+            latestProjectsSQL = "SELECT * FROM project WHERE casemodder_id NOT IN (" + this.sponsorTeamQuery("1") + ", " + this.sponsorTeamQuery("2") + ", " + this.sponsorTeamQuery("3") + ") ORDER BY erstellt_am DESC LIMIT ?, ?";
             conn.query(
-                "SELECT * FROM projekt WHERE casemodder_id IN (SELECT casemodder1_id, casemodder2_id, casemodder3_id FROM team WHERE sponsor_id = ?)",
-                [userId],
+                latestProjectsSQL,
+                [userId, userId, userId, userId, ((page * 5) - 5), ((page * 5) + 5)],
+                function (latestError, latestResults, latestFields) {
+                    console.log(conn.query.sql);
+                    if (latestError) {
+                        conn.release();
+                        callback(latestError, null);
+                        return;
+                    }
+                    resObj.latestProjects = latestResults;
+                }
+            );
+            teamProjectsSQL = "SELECT * FROM projekt WHERE casemodder_id IN (" + this.sponsorTeamQuery("1") + ", " + this.sponsorTeamQuery("2") + ", " + this.sponsorTeamQuery("3") + ")";
+            conn.query(
+                teamProjectsSQL
+                [userId, userId, userId],
                 function (teamError, teamResults, teamFields) {
+                    console.log(conn.query.sql);
                     conn.release();
                     if (teamError) {
                         callback(teamError, null);

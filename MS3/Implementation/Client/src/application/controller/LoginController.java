@@ -72,18 +72,6 @@ public class LoginController implements ISignInUpHandling{
 				Main.sceneLoader.loadLayout(email.getText(), resContent.getInt("id"), resContent.getString("type") == "sponsor" ? true : false);
 				return;
 			}
-			switch (res.getStatusCode()) {
-			case 401:
-				errorLabel.setText(ERROR_401);
-				return;
-			case 404:
-				errorLabel.setText(ERROR_404);
-				return;
-			case 500:
-			default:
-				errorLabel.setText(ERROR_500);
-				return;
-			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			errorLabel.setText("IOException");

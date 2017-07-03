@@ -1,20 +1,18 @@
 package application.controller.casemodder;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import application.util.ServerRequest;
+import application.util.SnippetLoader;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.util.Callback;
-import model.HttpResponse;
 
 /**
  * Controllerklasse für die Casemodder-Projektwelt
@@ -23,6 +21,8 @@ import model.HttpResponse;
 public class ProjectsController {
 	
 	private final String PROJECTS_STRING = "http://%s:%s/projects/index/1";
+	
+	private SnippetLoader loader;
 	
 	@FXML
 	private TextField searchField;
@@ -47,44 +47,65 @@ public class ProjectsController {
 		return 3;
 	}
 	
-	@FXML
-	protected void initialize()
-	{
-		/*fonts = Font.getFamilies().toArray(fonts);
-		projectsPagination.setStyle("-fx-border-color:red;");
-		projectsPagination.setPageFactory(new Callback<Integer, Node>() {
-			
-			@Override
-			public Node call(Integer pageIndex)
-			{
-				return createPage(pageIndex);
-			}
-		});
-		AnchorPane anchor = new AnchorPane();
-        AnchorPane.setTopAnchor(projectsPagination, 10.0);
-        AnchorPane.setRightAnchor(projectsPagination, 10.0);
-        AnchorPane.setBottomAnchor(projectsPagination, 10.0);
-        AnchorPane.setLeftAnchor(projectsPagination, 10.0);
-        anchor.getChildren().addAll(projectsPagination);*/
-	}
-	
+	/**
+	 * Initialisier den Controller mit Daten.
+	 */
 	public void initWithData(){
+		loader = new SnippetLoader();
+		
 		ServerRequest req = new ServerRequest(PROJECTS_STRING);
 		
 		try {
 			JSONObject content = new JSONObject(req.get().getContent());
-			projectsPagination.setPageCount((Integer) (content.getJSONArray("latestProjects").length() / getItemsPerPage()) + 1);
-			ownProjectsPagination.setPageCount((Integer) (content.getJSONArray("ownedProjects").length() / getItemsPerPage()) + 1);
-			System.out.println(content.toString());
+			
+			JSONArray latest = content.getJSONArray("latestProjects");
+			JSONArray owned = content.getJSONArray("ownedProjects");
+			
+			int latestLen =  latest.length();
+			int ownLen = owned.length();
+			
+			projectsPagination.setPageCount((Integer) (latestLen / getItemsPerPage()) + 1);
+			ownProjectsPagination.setPageCount((Integer) (ownLen / getItemsPerPage()) + 1);
+			
+			projectsPagination.setPageFactory((Integer pageIndex) -> createPage(pageIndex, latest));
+			ownProjectsPagination.setPageFactory((Integer pageIndex) -> createPage(pageIndex, owned));
+			
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return;
 		}
 	}
 	
-	
-	/*private VBox createPage(int pageIndex)
+	/**
+	 * Erzeugt eine Seite für die Pagination einer Projektliste.
+	 * @param pageIndex Seitenindex
+	 * @param array JSONArray mit Projekten
+	 * @return VBox mit fertigen Teillisten
+	 */
+	private VBox createPage(int pageIndex, JSONArray array)
 	{
-		
-	}*/
+		if(array == null){
+			return new VBox();
+		}
+		VBox box = new VBox();
+		int page = pageIndex * getItemsPerPage();
+		try {
+			for (int i = page; i < Math.min((page + getItemsPerPage()), array.length()); i++) {
+				if(array.getJSONObject(i) != null) {
+					JSONObject project = array.optJSONObject(i);
+					System.out.println(project.toString());
+					Pane pOverview = this.loader.getProjectOverviewSnippet(
+						project.getInt("id"),
+						project.getString("titel")
+					);
+					System.out.println("pOverview: " + pOverview.toString());
+					box.getChildren().add(pOverview);
+				}
+			}
+			return box;
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 }

@@ -94,15 +94,12 @@ public class SignupController implements ISignInUpHandling{
 		try {
 			HttpResponse res = req.post(getSignupData());
 			switch (res.getStatusCode()) {
-			case 500:
-				errorLabel.setText(ERROR_500);
 			case 201:
 			default:
 				Alert alert = new Alert(AlertType.INFORMATION);
 				alert.setTitle("Registrierung");
 				alert.setHeaderText("Registrierung erfolgreich!");
 				alert.setContentText("Sie können Sich jetzt mit ihren Benutzerdaten einloggen.");
-
 				alert.showAndWait();
 				Main.sceneLoader.loadScene(FILENAME_LOGIN);
 			}
