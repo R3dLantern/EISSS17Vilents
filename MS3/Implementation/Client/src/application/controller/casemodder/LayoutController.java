@@ -2,9 +2,10 @@ package application.controller.casemodder;
 
 import application.Main;
 import application.controller.ISignInUpHandling;
+import application.util.LayoutManager;
 import application.util.ServerRequest;
-import javafx.event.Event;
-import javafx.event.EventHandler;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -39,60 +40,39 @@ public class LayoutController implements ISignInUpHandling {
 	@FXML
 	private Button logoutButton;
 	
-	/**
-	 * Versieht die Tabs mit Eventhandlern, die deren Inhalt beim Abwählen
-	 * löschen und beim Anwählen erneut vom Server anfordern.
-	 */
-	@FXML
-	protected void initialize()
-	{
+	private int userId;
+	
+	private LayoutManager manager;
+	
+	
+	public void initializeWithLayoutManager() {
+		this.manager = new LayoutManager(this.userId);
 		tabDashboard.setContent(Main.sceneLoader.getElement(false, "dashboard_casemodder"));
-		tabDashboard.setOnSelectionChanged(new EventHandler<Event>() {
-            @Override
-            public void handle(Event t) {
-                tabDashboard.setContent(
-                	tabDashboard.isSelected()
-                	? Main.sceneLoader.getElement(false, "dashboard_casemodder")
-                	: null
-                );
-            }
-        });
-		
-		//TODO: FXML-Dateien implementieren
-		
-		/*tabProfile.setOnSelectionChanged(new EventHandler<Event>() {
-			@Override
-			public void handle(Event t) {
-				tabProfile.setContent(
-					tabProfile.isSelected()
-					? Main.sceneLoader.getElement(false, "profile_casemodder")
-					: null
-				);
+		tabs.getSelectionModel().selectedItemProperty().addListener(
+			new ChangeListener<Tab>() {
+				@Override
+				public void changed(ObservableValue<? extends Tab> ov, Tab deselected, Tab selected) {
+					deselected.setContent(null);
+					switch(selected.getId()) {
+					default:
+					case "tabDashboard":
+						selected.setContent(Main.sceneLoader.getElement(false, "dashboard_casemodder"));
+						break;
+					case "tabProfile":
+						selected.setContent(manager.getProfileTabContent(true));
+						break;
+					case "tabMessages":
+						//selected.setContent(manager.getMessagesContent());
+						break;
+					case "tabProjects":
+						selected.setContent(manager.getProjectIndexPane(true));
+						break;
+					}
+				}
 			}
-		});*/
-		
-		/*tabMessages.setOnSelectionChanged(new EventHandler<Event>() {
-			@Override
-			public void handle(Event t) {
-				tabMessages.setContent(
-					tabMessages.isSelected()
-					? Main.sceneLoader.getElement(false, "messages")
-					: null
-				);
-			}
-		});*/
-		
-		/*tabProjects.setOnSelectionChanged(new EventHandler<Event>() {
-			@Override
-			public void handle(Event t) {
-				tabProjects.setContent(
-					tabProjects.isSelected()
-					? Main.sceneLoader.getElement(false, "projects_casemodder")
-					: null
-				);
-			}
-		});*/
+		);
 	}
+		
 	
 	/**
 	 * Loggt den Benutzer aus und leitet zurück auf die Login-Maske.
@@ -113,9 +93,6 @@ public class LayoutController implements ISignInUpHandling {
 		}
 	}
 	
-	 
-	
-	
 	/**
 	 * Setzt den Text von usernameLabel
 	 * @param email zu setzender Text
@@ -123,5 +100,21 @@ public class LayoutController implements ISignInUpHandling {
 	public void setUsernameLabelText(String email)
 	{
 		usernameLabel.setText(email);
+	}
+	
+	/**
+	 * userId Setter
+	 * @param id neue ID
+	 */
+	public void setUserId(int id) {
+		this.userId = id;
+	}
+	
+	/**
+	 * userId Getter
+	 * @return gesetzte userId
+	 */
+	public int getUserId() {
+		return this.userId;
 	}
 }

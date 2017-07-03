@@ -17,7 +17,19 @@ var messagesController = express.Router();
 
 console.log("[MSCO] MessagesController loaded.");
 
-
+/**
+ * Überprüft, ob es eine Login-Session gibt.
+ * @param {object} req - HTTP Request-Objekt
+ * @param {object} res - HTTP Response-Objekt
+ * @param {object} next - Weiterleitung
+ */
+messagesController.use(function (req, res, next) {
+    if (req.user) {
+        next();
+    } else {
+        res.status(403).end();
+    }
+});
 /**
  * @function
  * @name MessagesController::index
@@ -26,7 +38,7 @@ console.log("[MSCO] MessagesController loaded.");
  * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
  * @todo <strong>Implementieren</strong>
  */
-messagesController.get('/index', /*requireLogin,*/ function (req, res) {
+messagesController.get('/index', function (req, res) {
     
 });
 
@@ -39,7 +51,7 @@ messagesController.get('/index', /*requireLogin,*/ function (req, res) {
  * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
  * @todo <strong>Implementieren</strong>
  */
-messagesController.post('/new', /*requireLogin,*/ function (req, res) {
+messagesController.post('/new', function (req, res) {
     
 });
 

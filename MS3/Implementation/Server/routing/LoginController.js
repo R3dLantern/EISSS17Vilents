@@ -67,7 +67,10 @@ loginController.post('/login', function (req, res) {
                     email: results[0].email,
                     type: results[0].type
                 };
-                res.status(200).end(JSON.stringify({ type: results[0].type }));
+                res.status(200).end(JSON.stringify({
+                    id: results[0].id,
+                    type: results[0].type
+                }));
             } else {
                 res.status(401).end();
             }

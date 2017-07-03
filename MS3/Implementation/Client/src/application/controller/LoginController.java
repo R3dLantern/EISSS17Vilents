@@ -69,7 +69,7 @@ public class LoginController implements ISignInUpHandling{
 			
 			if(res.getStatusCode() == 200) {
 				JSONObject resContent = new JSONObject(res.getContent());
-				Main.sceneLoader.loadLayout(email.getText(), resContent.getString("type") == "sponsor" ? true : false);
+				Main.sceneLoader.loadLayout(email.getText(), resContent.getInt("id"), resContent.getString("type") == "sponsor" ? true : false);
 				return;
 			}
 			switch (res.getStatusCode()) {

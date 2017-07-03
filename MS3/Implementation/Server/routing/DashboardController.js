@@ -44,14 +44,20 @@ function requireLogin(req, res, next) {
 dashboardController.get('/dashboard', requireLogin, function (req, res) {
     /** @todo für Produktivumgebung entfernen! */
     console.log("[DBCO] Request auf /dashboard!");
-    reputation.getTotalReputationForUser(req.user.id, function (error, totalRep) {
-        if (error) {
-            console.log("[DBCO] GetTotalRep failed");
-            res.status(500).end();
-            throw error;
-        }
-        res.status(200).end(JSON.stringify({value: totalRep}));
-    });
+    /** @todo Benachrichtigungen einbinden */
+    if (req.user.type === "casemodder") {
+        reputation.getTotalReputationForUser(req.user.id, function (error, totalRep) {
+            if (error) {
+                console.log("[DBCO] GetTotalRep failed");
+                res.status(500).end();
+                throw error;
+            }
+            res.status(200).end(JSON.stringify({
+                rep: totalRep,
+                id: req.user.id
+            }));
+        });
+    }
 });
     
 module.exports = dashboardController;

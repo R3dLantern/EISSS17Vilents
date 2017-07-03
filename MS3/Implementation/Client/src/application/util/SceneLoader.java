@@ -15,10 +15,7 @@ import javafx.stage.Stage;
  * Management-Klasse für Scene-Loading
  * @author Leonid Vilents
  */
-public class SceneLoader {
-	
-	private static final String FXML_PATH = "/application/controller/fxml/";
-	private static final String FXML_SNIPPET_PATH = "/application/controller/fxml/snippet/";
+public class SceneLoader implements IFXMLLoader{
 	
 	private Stage primaryStage;
 	
@@ -108,7 +105,7 @@ public class SceneLoader {
 	 * @param email Email-Adresse des Benutzers
 	 * @param isSponsor Flag für Benutzertyp-Überprüfung
 	 */
-	public void loadLayout(String email, boolean isSponsor)
+	public void loadLayout(String email, int userId, boolean isSponsor)
 	{
 		FXMLLoader loader = new FXMLLoader(
 				getClass()
@@ -122,6 +119,8 @@ public class SceneLoader {
 			this.primaryStage.setScene(new Scene((Pane) loader.load()));
 			LayoutController controller = loader.<LayoutController>getController();
 			controller.setUsernameLabelText(email);
+			controller.setUserId(userId);
+			controller.initializeWithLayoutManager();
 			this.primaryStage.show();
 		} catch (IOException e) {
 			e.printStackTrace();

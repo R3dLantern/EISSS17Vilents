@@ -38,7 +38,8 @@ public class DashboardController {
 		
 		try {
 			JSONObject content = new JSONObject(res.getContent());
-			repLabel.setText(Integer.toString(content.getInt("value")));
+			repLabel.setText(Integer.toString(content.getInt("rep")));
+			
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

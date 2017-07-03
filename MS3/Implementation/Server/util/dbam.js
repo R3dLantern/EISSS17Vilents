@@ -142,7 +142,6 @@ exports.trySignup = function (newUser, callback) {
  * @returns {object} JSON-Objekt mit öffentlichen Benutzerdaten
  */
 exports.findUserByEmail = function (email, callback) {
-    console.log("[DBAM] findUserByEmail");
     this.pool.getConnection(function (connectionError, conn) {
         if (connectionError) {
             callback(connectionError, null);
@@ -152,24 +151,105 @@ exports.findUserByEmail = function (email, callback) {
             if (selectError) {
                 conn.release();
                 callback(selectError, null);
+                return;
             }
             if (results) {
                 conn.query('SELECT * FROM casemodder WHERE user_id = ? LIMIT 1', [results[0].id], function (typeSelectError, typeResults, typeFields) {
                     conn.release();
                     if (typeSelectError) {
                         callback(typeSelectError, null);
+                        return;
                     }
-                    if (typeResults) {
-                        results[0].type = "casemodder";
-                    } else {
-                        results[0].type = "sponsor";
-                    }
+                    results[0].type = typeResults ? "casemodder" : "sponsor";
                     callback(null, results);
+                    return;
                 });
             } else {
                 callback(null, null);
+                return;
             }
         });
+    });
+};
+
+
+/**
+ * Callbackfunktion für das Abrufen von Profildaten
+ * 
+ * @callback profileDateCallback
+ * @param {object} error - Fehler-Objekt, falls ein Fehler aufgetreten ist
+ * @param {object} results - Profildaten als Objekt
+ */
+
+/**
+ * Ruft die Profildaten eines Benutzers ab
+ * @param {int} userId - ID des Benutzers
+ * @param {string} userType - Benutzertyp
+ * @param {profileDataCallback} callback - Callbackfunktion zum Verarbeiten der Rückgabewerte
+ */
+exports.getProfileData = function (userId, userType, callback) {
+    this.pool.getConnection(function (connError, conn) {
+        if (connError) {
+            conn.release();
+            callback(connError, null);
+            return;
+        }
+        console.log("Connected with ID " + conn.threadId);
+        var returnData = userType === "casemodder"
+                        ? {
+                    nachname: "",
+                    vorname: "",
+                    suchstatus: false,
+                    wohnort: "",
+                    beschreibung: ""
+                }
+                        : {
+                    nachname: "",
+                    vorname: "",
+                    firma: "",
+                    beschreibung: ""
+                };
+        conn.query(
+            "SELECT * FROM benutzer WHERE id = ? LIMIT 1",
+            [userId],
+            function (userError, userResults, userFields) {
+                if (userError) {
+                    conn.release();
+                    callback(userError, null);
+                    return;
+                }
+                if (userResults) {
+                    returnData.nachname = userResults[0].nachname;
+                    returnData.vorname = userResults[0].vorname;
+                    conn.query(
+                        "SELECT * FROM ?? WHERE user_id = ?",
+                        [userType, userId],
+                        function (typeError, typeResults, typeFields) {
+                            conn.release();
+                            if (typeError) {
+                                callback(typeError, null);
+                            }
+                            if (typeResults) {
+                                switch (userType) {
+                                case "casemodder":
+                                    returnData.suchstatus = typeResults[0].suchstatus;
+                                    returnData.wohnort = typeResults[0].wohnort;
+                                    returnData.beschreibung = typeResults[0].beschreibung;
+                                    break;
+                                case "sponsor":
+                                    returnData.firma = typeResults[0].firma;
+                                    returnData.beschreibung = typeResults[0].beschreibung;
+                                    break;
+                                default:
+                                    break;
+                                }
+                                callback(null, returnData);
+                            }
+                        }
+                    );
+                }
+            }
+        );
     });
 };
 
@@ -188,7 +268,6 @@ exports.findUserByEmail = function (email, callback) {
  * @param {checkForNewMessagesCallback} callback - Callbackfunktion zum Verarbeiten der Rückgabewerte
  */
 exports.checkForNewMessages = function (userId, callback) {
-    console.log("[DBAM] checkForNewMessages");
     this.pool.getConnection(function (connError, conn) {
         if (connError) {
             callback(connError, null);
@@ -200,9 +279,11 @@ exports.checkForNewMessages = function (userId, callback) {
             function (queryError, results, fields) {
                 if (queryError) {
                     callback(queryError, null);
+                    return;
                 } else {
                     console.log(results);
                     callback(null, results);
+                    return;
                 }
             }
         );
@@ -234,6 +315,7 @@ exports.countUserProjects = function (userId, callback) {
     this.pool.getConnection(function (connectionError, conn) {
         if (connectionError) {
             callback(connectionError, null);
+            return;
         }
         console.log("[DBAM] Connected with ID " + conn.threadId);
         conn.query('SELECT * FROM projekt WHERE casemodder_id = ?', [userId], function (selectError, results, fields) {
@@ -282,18 +364,22 @@ exports.countUserProjects = function (userId, callback) {
                             conn.release();
                             if (puUpvoteError) {
                                 callback(puUpvoteError, null);
+                                return;
                             }
                             resObj.projectUpdateUpvotes = puUpvoteResults[0];
                             callback(null, resObj);
+                            return;
                         });
                         
                     } else {
                         callback(null, resObj);
+                        return;
                     }
                 });
             } else {
                 conn.release();
                 callback(null, resObj);
+                return;
             }
         });
     });
@@ -323,7 +409,7 @@ exports.countUserComments = function (userId, callback) {
     this.pool.getConnection(function (connectionError, conn) {
         if (connectionError) {
             callback(connectionError, null);
-            
+            return;
         }
         console.log("[DBAM] Connected with ID " + conn.threadId);
         conn.query('SELECT * FROM kommentar WHERE benutzer_id = ?', [userId], function (selectError, results, fields) {
@@ -345,15 +431,18 @@ exports.countUserComments = function (userId, callback) {
                     conn.release();
                     if (upvoteError) {
                         callback(upvoteError, null);
+                        return;
                     }
                     if (upvoteResults) {
                         resObj.commentUpvotes = upvoteResults[0];
                     }
                     callback(null, resObj);
+                    return;
                 });
             } else {
                 conn.release();
                 callback(null, resObj);
+                return;
             }
         });
     });
