@@ -4,9 +4,8 @@ import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.HttpURLConnection;
 
-
-import application.util.SceneLoader;
-import application.util.SnippetLoader;
+import application.util.ui.SceneLoader;
+import application.util.ui.SnippetLoader;
 import javafx.application.Application;
 import javafx.stage.Stage;
 

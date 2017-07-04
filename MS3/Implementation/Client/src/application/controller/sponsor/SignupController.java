@@ -1,4 +1,4 @@
-package application.controller;
+package application.controller.sponsor;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,6 +10,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import application.Main;
+import application.util.EBoolean;
+import application.util.EFXML;
+import application.util.EURI;
 import application.util.FormValidator;
 import application.util.PasswordUtil;
 import application.util.ServerRequest;
@@ -28,9 +31,8 @@ import model.HttpResponse;
 /**
  * Controller für die Sponsoren-Registrierungsmaske.
  * @author Leonid Vilents
- *
  */
-public class SignupSponsorController implements ISignInUpHandling {
+public class SignupController {
 	
 	private File file;
 	
@@ -67,7 +69,7 @@ public class SignupSponsorController implements ISignInUpHandling {
 	@FXML
 	protected void handleBackToLoginLink()
 	{
-		Main.sceneLoader.loadScene(FILENAME_LOGIN);
+		Main.sceneLoader.loadScene(EFXML.LOGIN.fxml());
 	}
 	
 	/**
@@ -76,7 +78,7 @@ public class SignupSponsorController implements ISignInUpHandling {
 	@FXML
 	protected void handleSignupCasemodderLink()
 	{
-		Main.sceneLoader.loadScene(FILENAME_SIGNUP_CASEMODDER);
+		Main.sceneLoader.loadScene(EFXML.CM_SIGNUP.fxml());
 	}
 	
 	/**
@@ -101,17 +103,17 @@ public class SignupSponsorController implements ISignInUpHandling {
 	{
 		FormValidator validator = new FormValidator();
 		
-		errorLabel.setText(validator.validateEmail(email.getText(), IS_NOT_LOGIN));
+		errorLabel.setText(validator.validateEmail(email.getText(), EBoolean.NOT_LOGIN.value()));
 		if (!errorLabel.getText().isEmpty()) {
 			return;
 		}
 		
-		errorLabel.setText(validator.validatePassword(password.getText(), IS_NOT_LOGIN));
+		errorLabel.setText(validator.validatePassword(password.getText(), EBoolean.NOT_LOGIN.value()));
 		if (!errorLabel.getText().isEmpty()) {
 			return;
 		}
 		
-		errorLabel.setText(validator.valiateDateOfBirth(dateOfBirth.getValue(), IS_SPONSOR));
+		errorLabel.setText(validator.valiateDateOfBirth(dateOfBirth.getValue(), EBoolean.NOT_CASEMODDER.value()));
 		if (!errorLabel.getText().isEmpty()) {
 			return;
 		}
@@ -122,7 +124,7 @@ public class SignupSponsorController implements ISignInUpHandling {
 		}
 		
 		
-		ServerRequest req = new ServerRequest(SIGNUP_URI);
+		ServerRequest req = new ServerRequest(EURI.SIGNUP.uri());
 		
 		try {
 			HttpResponse res = req.post(getSignupData());
@@ -133,7 +135,7 @@ public class SignupSponsorController implements ISignInUpHandling {
 				alert.setHeaderText("Registrierung erfolgreich!");
 				alert.setContentText("Sie können Sich jetzt mit ihren Benutzerdaten einloggen.");
 				alert.showAndWait();
-				Main.sceneLoader.loadScene(FILENAME_LOGIN);
+				Main.sceneLoader.loadScene(EFXML.LOGIN.fxml());
 			default:
 				break;
 			}
@@ -161,8 +163,6 @@ public class SignupSponsorController implements ISignInUpHandling {
 			obj.put("type", "sponsor");
 			obj.put("dateOfBirth", dateOfBirth.getValue().toString());
 			obj.put("accreditFile", convertFileToString());
-			
-			Main.log(obj.toString());
 			return obj;
 		} catch (JSONException e){
 			e.printStackTrace();

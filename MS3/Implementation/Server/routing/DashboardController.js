@@ -45,18 +45,20 @@ dashboardController.get('/dashboard', requireLogin, function (req, res) {
     /** @todo für Produktivumgebung entfernen! */
     console.log("[DBCO] Request auf /dashboard!");
     /** @todo Benachrichtigungen einbinden */
-    if (req.user.type === "casemodder") {
+    if (req.user.isCasemodder) {
         reputation.getTotalReputationForUser(req.user.id, function (error, totalRep) {
             if (error) {
                 console.log("[DBCO] GetTotalRep failed");
                 res.status(500).end();
                 throw error;
             }
-            res.status(200).end(JSON.stringify({
+            res.status(200).json({
                 rep: totalRep,
                 id: req.user.id
-            }));
+            });
         });
+    } else {
+        res.status(500).end();
     }
 });
     

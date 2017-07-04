@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import application.Main;
+import application.util.EURI;
 import application.util.ServerRequest;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -22,26 +23,31 @@ import model.HttpResponse;
  */
 public class MessagesController {
 	
-	private final String MESSAGES_OVERVIEW_STRING = "%smessages/index";
-	
 	@FXML
 	private ScrollPane overviewContent;
 	
+	/**
+	 * Ziegt das Erstellungsinterface für eine neue Nachricht.
+	 * @param event
+	 */
 	@FXML
 	protected void composeNewMessage(ActionEvent event) {
 		
 	}
 	
+	/**
+	 * Initialisiert die Nachrichtenübersicht mit den Nachrichten des Benutzers.
+	 */
 	@FXML
 	protected void initialize()
 	{
-		ServerRequest req = new ServerRequest(MESSAGES_OVERVIEW_STRING);
+		ServerRequest req = new ServerRequest(EURI.MESSAGES.uri());
 		
 		HttpResponse res = req.get();
 		
 		if(res.getStatusCode() == 200) {
 			try {
-				JSONArray content = new JSONArray(req.get().getContent());
+				JSONArray content = res.getContent().getJSONArray("messages");
 				
 				// VBox als Content-Träger für einzelne Nachrichten
 				VBox box = new VBox();

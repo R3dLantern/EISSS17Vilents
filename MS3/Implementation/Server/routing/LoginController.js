@@ -45,21 +45,25 @@ loginController.post('/signup', function (req, res) {
  * @todo <strong>Implementieren</strong>
  */
 loginController.post('/login', function (req, res) {
-    dbam.findUserByEmail(req.body.email, function (error, results) {
+    console.log("[LGCO] POST /login");
+    dbam.findUserByEmail(req.body.email, function (error, result) {
         if (error) {
             res.status(500).end();
         }
-        if (results) {
-            if (results[0].passwort === req.body.password) {
+        if (result) {
+            result = JSON.parse(result);
+            if (result.passwort === req.body.password) {
                 req.session.user = {
-                    id: results[0].id,
-                    email: results[0].email,
-                    type: results[0].type
+                    id: result.id,
+                    email: result.email,
+                    type: result.type
                 };
-                res.status(200).end(JSON.stringify({
-                    id: results[0].id,
-                    type: results[0].type
-                }));
+                delete result.passwort;
+                delete result.email;
+                delete result.geburtsdatum;
+                delete result.vorname;
+                delete result.nachname;
+                res.status(200).json(result);
             } else {
                 res.status(401).end();
             }
@@ -81,7 +85,6 @@ loginController.get('/logout', function (req, res) {
     req.session.destroy(function (err) {
         if (err) {
             console.log(err);
-            
         }
         res.status(204).end();
     });

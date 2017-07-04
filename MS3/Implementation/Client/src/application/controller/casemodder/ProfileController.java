@@ -1,8 +1,10 @@
 package application.controller.casemodder;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
+import application.controller.IProfileController;
+import application.util.EBoolean;
+import application.util.EURI;
 import application.util.ServerRequest;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -15,9 +17,7 @@ import model.HttpResponse;
  * Controllerklasse für die Casemodder-Profilübersicht
  * @author Leonid Vilents
  */
-public class ProfileController {
-
-	private final String PROFILE_STRING = "%sprofiles/casemodder/";
+public class ProfileController implements IProfileController{
 	
 	@FXML
 	private ImageView profilePicture;
@@ -40,28 +40,23 @@ public class ProfileController {
 	@FXML
 	private Button contactButton;
 	
-	@FXML
-	protected void initialize(){
-		
-	}
-	
-	/**
-	 * Befüllt das FXML-Element mit Daten
-	 * @param id Benutzer-ID
+	/*
+	 * (non-Javadoc)
+	 * @see application.controller.IProfileController#initWithData(int)
 	 */
+	@Override
 	public void initWithData(int id) {
-		ServerRequest req = new ServerRequest(PROFILE_STRING + id);
+		ServerRequest req = new ServerRequest(EURI.PROFILE_CM.uri(), id);
 		
 		HttpResponse res = req.get();
 		
 		try{
-			JSONObject content = new JSONObject(res.getContent());
-			if((!content.isNull("vorname")) && (!content.isNull("nachname"))){
-				nameLabel.setText(String.format("%s %s", content.getString("vorname"), content.getString("nachname")));
+			if((!res.getContent().isNull("vorname")) && (!res.getContent().isNull("nachname"))){
+				nameLabel.setText(String.format("%s %s", res.getContent().getString("vorname"), res.getContent().getString("nachname")));
 			}
-			descriptionLabel.setText(content.getString("beschreibung"));
-			repLabel.setText(Integer.toString(content.getInt("totalRep")));
-			if(content.getBoolean("userOwnsProfile") == true) {
+			descriptionLabel.setText(res.getContent().getString("beschreibung"));
+			repLabel.setText(Integer.toString(res.getContent().getInt("totalRep")));
+			if(res.getContent().getBoolean("userOwnsProfile") == EBoolean.PROFILE_OWNER.value()) {
 				contactButton.setVisible(false);
 			} else {
 				editButton.setVisible(false);

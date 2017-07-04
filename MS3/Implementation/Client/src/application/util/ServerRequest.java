@@ -5,15 +5,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import application.Main;
-import application.controller.ISignInUpHandling;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import model.HttpResponse;
@@ -24,35 +24,8 @@ import model.HttpResponse;
  */
 public class ServerRequest {
 	
-	private final String HTTP_PREFIX = "http://%s:%s/";
-	
-	private final String HTTP_METHOD_GET = "GET";
-	private final String HTTP_METHOD_POST = "POST";
-	@SuppressWarnings("unused")
-	private final String HTTP_METHOD_PUT = "PUT";
-	@SuppressWarnings("unused")
-	private final String HTTP_METHOD_DELETE = "DELETE";
-	
-	private final String CONNECTION_ERROR = "Verbindungsfehler";
-	
-	private final String HEADER_400 = "HTTP 400 Bad Request";
-	private final String HEADER_401 = "HTTP 401 Permission Denied";
-	private final String HEADER_403 = "HTTP 403 Forbidden";
-	private final String HEADER_404 = "HTTP 404 Not found";
-	
-	public static final String ERROR_400 = "Es ist ein Fehler aufgetreten";
-	public static final String ERROR_401 = "Authentifizierung fehlgeschlagen";
-	public static final String ERROR_403 = "Der Zugriff auf dieses Element wurde verweigert.";
-	public static final String ERROR_404 = "Das angeforderte Element wurde nicht gefunden.";
-	
-	private final String HEADER_500 = "HTTP 500 Internal Server Error";
-	
-	public static final String ERROR_500 = "Es ist ein interner Fehler aufgetreten.";
-
-
-
-	
 	private URL url;
+	
 	
 	/**
 	 * Konstruktor
@@ -61,7 +34,6 @@ public class ServerRequest {
 	public ServerRequest(String url)
 	{	
 		String fullURL = String.format(url, getFullPrefix());
-		Main.log(fullURL);
 		try{
 			this.url = new URL(fullURL);
 		} catch (MalformedURLException e) {
@@ -69,18 +41,36 @@ public class ServerRequest {
 		}
 	}
 	
+	
+	/**
+	 * Konstruktor mit Identifikator
+	 * @param urlWithId Ziel-URL des Requests, mit Integer-Formatierungszeichen
+	 * @param id ID einer Ressource
+	 */
+	public ServerRequest(String urlWithId, int id)
+	{
+		String fullURL = String.format(urlWithId, getFullPrefix(), id);
+		Main.log(fullURL);
+		try {
+			this.url = new URL(fullURL);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+	}
+
 	/**
 	 * Führt einen HTTP POST-Request auf den Server aus.
 	 * @param postData die zu übertragenden POST-Daten
 	 * @return Die Antwort des Servers 
-	 * @throws IOException 
+	 * @throws IOException Bei Fehlern mit der HttpURLConnection
 	 */
 	public HttpResponse post(JSONObject postData) throws IOException
 	{
 		Main.conn = (HttpURLConnection) url.openConnection();
-		Main.conn.setRequestMethod(HTTP_METHOD_POST);
+		Main.conn.setRequestMethod(EHttp.HTTP_POST.val());
 		Main.conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
 		Main.conn.setRequestProperty("Content-length", Integer.toString(postData.length()));
+		Main.conn.setRequestProperty("Accept", "application/json; charset=UTF-8");
 		Main.conn.setDoOutput(true);
 			
 		OutputStream out = Main.conn.getOutputStream();
@@ -97,21 +87,15 @@ public class ServerRequest {
 	 */
 	public HttpResponse get()
 	{
-		HttpResponse res = null;
 		try {
 			Main.conn = (HttpURLConnection) url.openConnection();
-			Main.conn.setRequestMethod(HTTP_METHOD_GET);
-			res = this.handleResponse();
+			Main.conn.setRequestMethod(EHttp.HTTP_GET.val());
+			Main.conn.setRequestProperty("Accept", "application/json; charset=UTF-8");
+			return this.handleResponse();
 		} catch (IOException a) {
 			a.printStackTrace();
-			try {
-				res = new HttpResponse(Main.conn.getResponseCode(), CONNECTION_ERROR);
-			} catch (IOException e) {
-				e.printStackTrace();
-				res = new HttpResponse(500, CONNECTION_ERROR);
-			}
+			return this.safeExceptionLogout();
 		}
-		return res;
 	}
 	
 	/**
@@ -135,38 +119,43 @@ public class ServerRequest {
 	{	
 		StringBuilder sb = new StringBuilder();
 		try {
-			
 		    InputStream is = Main.conn.getInputStream();
-		    BufferedReader br = new BufferedReader(new InputStreamReader(is));
+		    BufferedReader br = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
 		    String line = null;
 		    while((line = br.readLine() ) != null) {
 		        sb.append(line);
 		    }
-		    HttpResponse res = new HttpResponse(Main.conn.getResponseCode(), sb.toString());
-		    return res;
+		    // Wenn ein leerer String in den JSONObject-Konstruktor übergeben wird,
+		    // wird eine JSON-Exception geworfen.
+		    if(sb.length() > 0){
+		    	JSONObject content = new JSONObject(sb.toString());
+		    	return new HttpResponse(Main.conn.getResponseCode(), content);
+		    } else {
+		    	return new HttpResponse(Main.conn.getResponseCode());
+		    }
 		} catch (IOException a) {
 			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle(CONNECTION_ERROR);
+			alert.setTitle(EHttp.CONNECTION_ERROR.val());
 			switch(Main.conn.getResponseCode()) {
 			case 400:
-				alert.setHeaderText(HEADER_400);
-				alert.setContentText(ERROR_400);
+				alert.setHeaderText(EHttp.HEADER_400.val());
+				alert.setContentText(EHttp.ERROR_400.val());
 				break;
 			case 401:
-				alert.setHeaderText(HEADER_401);
-				alert.setContentText(ERROR_401);
+				alert.setHeaderText(EHttp.HEADER_401.val());
+				alert.setContentText(EHttp.ERROR_401.val());
 				break;
 			case 403:
-				alert.setHeaderText(HEADER_403);
-				alert.setContentText(ERROR_403);
+				alert.setHeaderText(EHttp.HEADER_400.val());
+				alert.setContentText(EHttp.ERROR_403.val());
 				break;
 			case 404:
-				alert.setHeaderText(HEADER_404);
-				alert.setContentText(ERROR_404);
+				alert.setHeaderText(EHttp.HEADER_404.val());
+				alert.setContentText(EHttp.ERROR_404.val());
 				break;
 			case 500:
-				alert.setHeaderText(HEADER_500);
-				alert.setContentText(ERROR_500);
+				alert.setHeaderText(EHttp.HEADER_500.val());
+				alert.setContentText(EHttp.ERROR_500.val());
 				break;
 			default:
 				alert.setHeaderText("Unbekannter Fehler");
@@ -175,20 +164,42 @@ public class ServerRequest {
 			}
 			alert.showAndWait();
 			a.printStackTrace();
-			// "Sicheres Logout" bei Fehler
+			return this.safeExceptionLogout();
 			
-			String logoutURL = String.format(ISignInUpHandling.LOGOUT_URI, getFullPrefix());
-			this.url = new URL(logoutURL);
-			Main.sceneLoader.init();
-			return this.get();
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return new HttpResponse(Main.conn.getResponseCode());
+			
 		} finally {
 			Main.conn.disconnect();
 			
 		}
 	}
 	
+	/**
+	 * Wird im Catch-Block der handleResponse ausgeführt.
+	 * @return Leere HTTP Response und Umleitung auf Login.
+	 * @throws MalformedURLException
+	 */
+	private HttpResponse safeExceptionLogout()
+	{
+		String logoutURL = String.format(EURI.LOGOUT.uri(), getFullPrefix());
+		try {
+			this.url = new URL(logoutURL);
+			Main.sceneLoader.init();
+			return this.get();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			return new HttpResponse(400, new JSONObject());
+		}	
+	}
+	
+	/**
+	 * Gibt den formatierten URL-Präfix (Protokoll, IP und Port) zurück.
+	 * @return String
+	 */
 	private String getFullPrefix()
 	{
-		return String.format(HTTP_PREFIX, Main.SERVER_IP, Main.SERVER_PORT);
+		return String.format(EHttp.HTTP_PREFIX.val(), Main.SERVER_IP, Main.SERVER_PORT);
 	}
 }

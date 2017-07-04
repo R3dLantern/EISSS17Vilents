@@ -26,7 +26,7 @@ console.log("[PUCO] ProjectUpdatesController loaded.");
  * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
  * @todo <strong>Implementieren</strong>
  */
-projectUpdatesController.post('/create', /*requireLogin,*/ function (req, res) {
+projectUpdatesController.post('/new', /*requireLogin,*/ function (req, res) {
     
 });
 

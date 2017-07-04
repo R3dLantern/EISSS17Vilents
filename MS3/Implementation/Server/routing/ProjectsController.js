@@ -41,8 +41,8 @@ projectsController.use(function (req, res, next) {
  */
 projectsController.get('/index', function (req, res) {
     var id = req.user.id,
-        type = req.user.type;
-    dbam.getProjectsOverviewData(id, type, function (error, resObj) {
+        isCasemodder = req.user.isCasemodder;
+    dbam.getProjectsOverviewData(id, isCasemodder, function (error, resObj) {
         if (error) {
             res.status(500).end();
             throw error;

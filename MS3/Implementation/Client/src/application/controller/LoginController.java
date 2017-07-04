@@ -1,6 +1,9 @@
 package application.controller;
 
 import application.Main;
+import application.util.EBoolean;
+import application.util.EFXML;
+import application.util.EURI;
 import application.util.FormValidator;
 import application.util.PasswordUtil;
 import application.util.ServerRequest;
@@ -22,7 +25,7 @@ import model.HttpResponse;
  * Controller-Klasse für den Loginbildschirm
  * @author Leonid Vilents
  */
-public class LoginController implements ISignInUpHandling{
+public class LoginController {
 	
 	@FXML
 	private TextField email;
@@ -48,31 +51,32 @@ public class LoginController implements ISignInUpHandling{
 		errorLabel.setText("");
 		FormValidator validator = new FormValidator();
 		
-		errorLabel.setText(validator.validateEmail(email.getText(), IS_LOGIN));
+		errorLabel.setText(validator.validateEmail(email.getText(), EBoolean.LOGIN.value()));
 		if(!errorLabel.getText().isEmpty()){
 			return;
 		}
 		
-		errorLabel.setText(validator.validatePassword(password.getText(), IS_LOGIN));
+		errorLabel.setText(validator.validatePassword(password.getText(), EBoolean.LOGIN.value()));
 		if(!errorLabel.getText().isEmpty()){
 			return;
 		}
 		
 		String pwdHashStr = PasswordUtil.getHash(PasswordUtil.ALGORITHM_SHA256, password.getText());
 		
-		ServerRequest req = new ServerRequest(LOGIN_URI);
+		ServerRequest req = new ServerRequest(EURI.LOGIN.uri());
 		
 		try {
-			
 			JSONObject loginData = new JSONObject();
 			loginData.put("email", email.getText());
 			loginData.put("password", pwdHashStr);
 			
 			HttpResponse res = req.post(loginData);
-			
 			if(res.getStatusCode() == 200) {
-				JSONObject resContent = new JSONObject(res.getContent());
-				Main.sceneLoader.loadLayout(email.getText(), resContent.getInt("id"), resContent.getString("type") == "sponsor" ? true : false);
+				Main.sceneLoader.loadLayout(
+					email.getText(),
+					res.getContent().getInt("id"),
+					res.getContent().getBoolean("isCasemodder")
+				);
 				return;
 			}
 		} catch (IOException e) {
@@ -92,6 +96,6 @@ public class LoginController implements ISignInUpHandling{
 	@FXML
 	protected void handleSignupLink()
 	{
-		Main.sceneLoader.loadScene(FILENAME_SIGNUP_CASEMODDER);
+		Main.sceneLoader.loadScene(EFXML.CM_SIGNUP.fxml());
 	}
 }

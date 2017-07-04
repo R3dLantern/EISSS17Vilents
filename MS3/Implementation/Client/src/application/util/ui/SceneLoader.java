@@ -1,8 +1,9 @@
-package application.util;
+package application.util.ui;
 
 import java.io.IOException;
 
-import application.controller.casemodder.LayoutController;
+import application.controller.ILayoutController;
+import application.util.EFXML;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -15,7 +16,7 @@ import javafx.stage.Stage;
  * Management-Klasse für Scene-Loading
  * @author Leonid Vilents
  */
-public class SceneLoader implements IFXMLLoader{
+public class SceneLoader {
 	
 	private Stage primaryStage;
 	
@@ -35,7 +36,7 @@ public class SceneLoader implements IFXMLLoader{
 	public void init()
 	{
 		try {
-			Parent content = FXMLLoader.load(getClass().getResource(FXML_PATH + "login.fxml"));
+			Parent content = FXMLLoader.load(getClass().getResource(EFXML.LOGIN.fxml()));
 			Scene scene = new Scene(content);
 			this.primaryStage.setScene(scene);
 			this.primaryStage.show();
@@ -47,14 +48,12 @@ public class SceneLoader implements IFXMLLoader{
 	
 	/**
 	 * Lädt eine neue Scene ins Primärfenster und zeigt dieses.
-	 * @param fxml Der Dateiname der zur Scene zugehörigen FXML-Datei, ohne Dateiendung
+	 * @param fxml Voller Dateipfad, im Bestfall ein String aus dem EFXML-Enum.
 	 */
 	public void loadScene(String fxml)
 	{
-		String fullPath = SceneLoader.FXML_PATH + fxml + ".fxml";
-		
 		try{
-			Parent content = FXMLLoader.load(getClass().getResource(fullPath));
+			Parent content = FXMLLoader.load(getClass().getResource(fxml));
 			this.primaryStage.getScene().setRoot(content);
 			this.primaryStage.show();
 		} catch (IOException e) {
@@ -62,22 +61,6 @@ public class SceneLoader implements IFXMLLoader{
 		}
 	}
 	
-	/**
-	 * Gibt ein Content-Element für die Benutzeroberfläche zurück.
-	 * @param isSnippet Flag für Snippet-Elemente
-	 * @param fxml Dateiname der zugehörigen Datei (ohne Dateiendung)
-	 * @return Das vom FXMLLoader geladene Element
-	 */
-	public Parent getElement(boolean isSnippet, String fxml)
-	{
-		String fullPath = (isSnippet ? FXML_SNIPPET_PATH : FXML_PATH) + fxml + ".fxml";
-		try {
-			return FXMLLoader.load(getClass().getResource(fullPath));
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
 	
 	/**
 	 * Gibt die Stage zurück, in der ein ActionEvent ausgeführt wurde
@@ -89,6 +72,7 @@ public class SceneLoader implements IFXMLLoader{
 		Scene scene = ((Node) event.getSource()).getScene();
 		return (Stage) scene.getWindow();
 	}
+	
 	
 	/**
 	 * Gibt die in diesem SceneLoader hinterlegte primaryStage zurück
@@ -104,22 +88,23 @@ public class SceneLoader implements IFXMLLoader{
 	 * Lädt die Layout-Scene für die Benutzeroberfläche
 	 * @param email Email-Adresse des Benutzers
 	 * @param userId Benutzer-ID
-	 * @param isSponsor Flag für Benutzertyp-Überprüfung
+	 * @param isUserCasemodder Flag für Benutzertyp-Überprüfung
 	 */
-	public void loadLayout(String email, int userId, boolean isSponsor)
+	public void loadLayout(String email, int userId, boolean isUserCasemodder)
 	{
 		FXMLLoader loader = new FXMLLoader(
+				
 				getClass()
 				.getResource(
-						isSponsor
-						? FXML_PATH + "layout_sponsor.fxml"
-						: FXML_PATH + "layout_casemodder.fxml"
+						isUserCasemodder
+						? EFXML.CM_LAYOUT.fxml()
+						: EFXML.SP_LAYOUT.fxml()
 						)
 				);
 		try {
 			this.primaryStage.setScene(new Scene((Pane) loader.load()));
-			LayoutController controller = loader.<LayoutController>getController();
-			controller.setUsernameLabelText(email);
+			ILayoutController controller = loader.<ILayoutController>getController();
+			controller.setUsername(email);
 			controller.setUserId(userId);
 			controller.initializeWithLayoutManager();
 			this.primaryStage.show();

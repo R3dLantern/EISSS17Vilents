@@ -29,12 +29,14 @@ function getCredentialsFromJson() {
     return JSON.parse(content);
 }
 
+
 /**
  * Callback-Funktion für INSERT-Abfragen
  * 
  * @callback insertCallback
  * @param {object} error - Fehler-Objekt, falls ein Fehler aufgetreten ist
  */
+
 
 /**
  * Callback-Funktion für SELECT-Abfragen
@@ -43,6 +45,7 @@ function getCredentialsFromJson() {
  * @param {object} error - Fehler-Objekt, falls ein Fehler aufgetreten ist
  * @param {object} results - Ergebnisse aus Abfrage
  */
+
 
 /**
  * @function
@@ -79,6 +82,7 @@ var executeSingleQuery = function (sql, values, callback) {
     });
 };
 
+
 /**
  * Hilfsfunktion zur Erstellung von inneren Queries bei der Projektabfrage
  * für Sponsoren
@@ -88,6 +92,7 @@ var executeSingleQuery = function (sql, values, callback) {
 var sponsorTeamSubquery = function (index) {
     return "(SELECT casemodder" + index + "_id FROM sponsor WHERE id = ?)";
 };
+
 
 /**
  * @function
@@ -180,9 +185,6 @@ exports.trySignup = function (newUser, callback) {
         });
     });
 };
-
-
-
 
 
 /**
@@ -305,22 +307,22 @@ exports.findUserByEmail = function (email, callback) {
         if (connectionError) {
             callback(connectionError, null);
         }
-        console.log("[DBAM] Connected with ID " + conn.threadId);
+        console.log("[DBAM] findUser:Connected with ID " + conn.threadId);
         conn.query('SELECT * FROM benutzer WHERE email = ? LIMIT 1', [email], function (selectError, results, fields) {
             if (selectError) {
                 conn.release();
                 callback(selectError, null);
                 return;
             }
-            if (results) {
-                conn.query('SELECT * FROM casemodder WHERE user_id = ? LIMIT 1', [results[0].id], function (typeSelectError, typeResults, typeFields) {
+            if (results.length === 1) {
+                conn.query('SELECT * FROM casemodder WHERE user_id = ? LIMIT 1', [results[0].id], function (typeSelectError, isCasemodderResults, typeFields) {
                     conn.release();
                     if (typeSelectError) {
                         callback(typeSelectError, null);
                         return;
                     }
-                    results[0].type = typeResults ? "casemodder" : "sponsor";
-                    callback(null, results);
+                    results[0].isCasemodder = isCasemodderResults ? true : false;
+                    callback(null, JSON.stringify(results[0]));
                     return;
                 });
             } else {
@@ -345,7 +347,7 @@ exports.getProfileData = function (userId, userType, callback) {
             callback(connError, null);
             return;
         }
-        console.log("Connected with ID " + conn.threadId);
+        console.log("[DBAM] getProfile:Connected with ID " + conn.threadId);
         var returnData = userType === "casemodder"
                         ? {
                     nachname: "",
@@ -414,7 +416,7 @@ exports.checkForNewMessages = function (userId, callback) {
         if (connError) {
             callback(connError, null);
         }
-        console.log("Connected with ID " + conn.threadId);
+        console.log("[DBAM] checkNewMessages: Connected with ID " + conn.threadId);
         conn.query(
             "SELECT COUNT(*) FROM nachricht WHERE empfanger_id = ? AND gelesen = 0",
             [userId],
@@ -438,14 +440,14 @@ exports.checkForNewMessages = function (userId, callback) {
  * @param {int} page - Setnummer
  * @param {selectCallback} callback - Callbackfunktion zum Verarbeiten der Rückgabewerte
  */
-exports.getProjectsOverviewData = function (userId, userType, callback) {
+exports.getProjectsOverviewData = function (userId, isCasemodder, callback) {
     console.log("[DBAM] getLatestProjects");
     this.pool.getConnection(function (connError, conn) {
         if (connError) {
             callback(connError, null);
             return;
         }
-        console.log("Connected with ID " + conn.threadId);
+        console.log("[DBAM] getLatestProjects: Connected with ID " + conn.threadId);
         // SQL für Sponsor-Abfragen zu Gunsten von JSLint bereits hier eingebungen.
         var resObj = {
                 latestProjects: null
@@ -453,9 +455,9 @@ exports.getProjectsOverviewData = function (userId, userType, callback) {
             casemodder1_substr = sponsorTeamSubquery("1"),
             casemodder2_substr = sponsorTeamSubquery("2"),
             casemodder3_substr = sponsorTeamSubquery("3"),
-            latestProjectsSQL = "SELECT * FROM project WHERE casemodder_id NOT IN (" + casemodder1_substr + ", " + casemodder2_substr + ", " + casemodder3_substr + ") ORDER BY erstellt_am DESC",
+            latestProjectsSQL = "SELECT * FROM projekt WHERE casemodder_id NOT IN (" + casemodder1_substr + ", " + casemodder2_substr + ", " + casemodder3_substr + ") ORDER BY erstellt_am DESC",
             teamProjectsSQL = "SELECT * FROM projekt WHERE casemodder_id IN (" + casemodder1_substr + ", " + casemodder2_substr + ", " + casemodder3_substr + ")";
-        if (userType === "casemodder") {
+        if (isCasemodder) {
             conn.query(
                 "SELECT * FROM projekt WHERE casemodder_id != ? ORDER BY erstellt_am DESC",
                 [userId],
@@ -465,7 +467,7 @@ exports.getProjectsOverviewData = function (userId, userType, callback) {
                         callback(latestError, null);
                         return;
                     }
-                    resObj.latestProjects = latestResults;
+                    resObj.latestProjects = JSON.parse(JSON.stringify(latestResults));
                 }
             );
             conn.query(
@@ -477,7 +479,7 @@ exports.getProjectsOverviewData = function (userId, userType, callback) {
                         callback(ownedError, null);
                         return;
                     }
-                    resObj.ownedProjects = ownedResults;
+                    resObj.ownedProjects = JSON.parse(JSON.stringify(ownedResults));
                     callback(null, resObj);
                     return;
                 }
@@ -527,14 +529,18 @@ exports.getMessagesOverviewData = function (userId, callback) {
             callback(connError, null);
             return;
         }
-        console.log('Connected with ID ' + conn.threadId);
+        console.log('[DBAM] getMessages: Connected with ID ' + conn.threadId);
         conn.query('SELECT n.id as n_id, n.zeitstempel, n.ungelesen, b.id as b_id, b.vorname, b.nachname FROM nachricht n JOIN benutzer b ON n.absender_id = b.id WHERE empfanger_id = ? ORDER BY n.zeitstempel DESC', [userId], function (error, results, fields) {
             conn.release();
             if (error) {
                 callback(error, null);
                 return;
             }
-            callback(null, JSON.parse(JSON.stringify(results)));
+            var data = {
+                messages: JSON.parse(JSON.stringify(results))
+            };
+            console.log(data);
+            callback(null, data);
             return;
         });
     });

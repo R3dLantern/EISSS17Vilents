@@ -5,6 +5,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import application.Main;
+import application.util.EURI;
 import application.util.ServerRequest;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -19,8 +20,6 @@ import javafx.scene.layout.VBox;
  * @author Léon
  */
 public class ProjectsController {
-	
-	private final String PROJECTS_STRING = "%sprojects/index";
 	
 	@FXML
 	private TextField searchField;
@@ -45,13 +44,16 @@ public class ProjectsController {
 		return 3;
 	}
 	
+	/**
+	 * Fordert Projekte-Daten vom Server an und befüllt die FXML mit diesen.
+	 */
 	@FXML
 	public void initialize() {
 		
-		ServerRequest req = new ServerRequest(PROJECTS_STRING);
+		ServerRequest req = new ServerRequest(EURI.PROJECTS.uri());
 		
 		try {
-			JSONObject content = new JSONObject(req.get().getContent());
+			JSONObject content = req.get().getContent();
 			
 			JSONArray latest = content.getJSONArray("latestProjects");
 			JSONArray owned = content.getJSONArray("ownedProjects");

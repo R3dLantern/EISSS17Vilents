@@ -6,9 +6,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Hilfesklasse für Validierung von Eingabemasken
+ * Hilfsklasse für Validierung von Eingabemasken
  * @author Leonid Vilents
- *
  */
 public class FormValidator {
 	

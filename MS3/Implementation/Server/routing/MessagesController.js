@@ -24,6 +24,7 @@ console.log("[MSCO] MessagesController loaded.");
  * @param {object} next - Weiterleitung
  */
 messagesController.use(function (req, res, next) {
+    console.log("[MSCO] Checking User");
     if (req.user) {
         next();
     } else {
@@ -39,8 +40,8 @@ messagesController.use(function (req, res, next) {
  * @todo <strong>Implementieren</strong>
  */
 messagesController.get('/index', function (req, res) {
-    console.log("[MSCO] GET index");
     var id = req.user.id;
+    console.log("[MSCO] GET /index");
     dbam.getMessagesOverviewData(id, function (error, results) {
         if (error) {
             console.log(error);
@@ -48,9 +49,10 @@ messagesController.get('/index', function (req, res) {
             throw error;
         }
         if (results) {
-            console.log(results);
-            res.status(200).end(JSON.stringify(results));
+            res.status(200).json(results);
+            return;
         }
+        res.status(200).end();
     });
 });
 

@@ -1,26 +1,33 @@
-package application.util;
+package application.util.ui;
 
 import java.io.IOException;
 import java.util.Date;
 
 import application.controller.snippet.MessageOverviewController;
 import application.controller.snippet.ProjectOverviewController;
+import application.util.EFXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.LoadException;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 
 /**
- * Hilfsklasse für das Laden von Snippets
+ * Hilfsklasse für das Laden von FXML-Snippets
  * @author Leonid Vilents
  */
-public class SnippetLoader implements IFXMLLoader{
+public class SnippetLoader{
 	
+	/**
+	 * Initialisiert ein Projekt-Snippet für die Projektwelt und gibt es zurück.
+	 * @param pId	Projekt-ID
+	 * @param title	Projekttitel
+	 * @return initialisiertes AnchorPane-Objekt.
+	 */
 	public Pane getProjectOverviewSnippet(int pId, String title)
 	{
 		FXMLLoader loader = new FXMLLoader(
 			getClass()
-			.getResource(FXML_SNIPPET_PATH + "project_overview.fxml")
+			.getResource(EFXML.O_PROJECT.fxml())
 		);
 		try {
 			Pane content = loader.load();
@@ -33,10 +40,20 @@ public class SnippetLoader implements IFXMLLoader{
 		}	
 	}
 	
+	/**
+	 * Initialisiert dynamisch ein Nachrichten-Snippet für die Nachrichtenübersicht und gibt es zurück.
+	 * @param isUnread	Flag für Ungelesen-Status
+	 * @param mId		Nachricht-ID
+	 * @param sId		Absender-ID
+	 * @param date		Zeitstempel der Nachricht
+	 * @param firstName	Vorname des Absenders
+	 * @param lastName	Nachname des Absenders
+	 * @return initialisiertes AnchorPane-Objekt.
+	 */
 	public AnchorPane getMessageOverviewSnippet(boolean isUnread, int mId, int sId, Date date, String firstName, String lastName) {
 		FXMLLoader loader = new FXMLLoader(
 			getClass()
-			.getResource(FXML_SNIPPET_PATH + "message_overview.fxml") 
+			.getResource(EFXML.O_MESSAGE.fxml()) 
 		);
 		try {
 			AnchorPane content = loader.load();

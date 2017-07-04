@@ -3,6 +3,7 @@ package application.controller.casemodder;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import application.util.EURI;
 import application.util.ServerRequest;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -14,8 +15,6 @@ import model.HttpResponse;
  * @author Leonid Vilents
  */
 public class DashboardController {
-	
-	private final String DASHBOARD_STRING = "%sdashboard";
 	
 	@FXML
 	private Pane eventPane;
@@ -30,14 +29,14 @@ public class DashboardController {
 	@FXML
 	protected void initialize()
 	{
-		ServerRequest req = new ServerRequest(DASHBOARD_STRING);
+		ServerRequest req = new ServerRequest(EURI.DASHBOARD.uri());
 		
 		HttpResponse res = req.get();
 		
 		//TODO Events implementieren
 		
 		try {
-			JSONObject content = new JSONObject(res.getContent());
+			JSONObject content = res.getContent();
 			repLabel.setText(Integer.toString(content.getInt("rep")));
 			
 		} catch (JSONException e) {

@@ -1,9 +1,12 @@
 package application.controller.casemodder;
 
 import application.Main;
-import application.controller.ISignInUpHandling;
-import application.util.LayoutManager;
+import application.controller.ILayoutController;
+import application.util.EBoolean;
+import application.util.EFXML;
+import application.util.EURI;
 import application.util.ServerRequest;
+import application.util.ui.LayoutManager;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -17,7 +20,7 @@ import model.HttpResponse;
  * Controller-Klasse für das Casemodder-Layout
  * @author Leonid Vilents
  */
-public class LayoutController implements ISignInUpHandling {
+public class LayoutController implements ILayoutController {
 	
 	@FXML
 	private TabPane tabs;
@@ -44,10 +47,15 @@ public class LayoutController implements ISignInUpHandling {
 	
 	private LayoutManager manager;
 	
-	
-	public void initializeWithLayoutManager() {
-		this.manager = new LayoutManager(this.userId);
-		tabDashboard.setContent(Main.sceneLoader.getElement(false, "dashboard_casemodder"));
+	/*
+	 * (non-Javadoc)
+	 * @see application.controller.ILayoutController#initializeWithLayoutManager()
+	 */
+	@Override
+	public void initializeWithLayoutManager()
+	{
+		this.manager = new LayoutManager(this.userId, EBoolean.CASEMODDER.value());
+		tabDashboard.setContent(manager.getDashboardTabContent());
 		tabs.getSelectionModel().selectedItemProperty().addListener(
 			new ChangeListener<Tab>() {
 				@Override
@@ -56,16 +64,16 @@ public class LayoutController implements ISignInUpHandling {
 					switch(selected.getId()) {
 					default:
 					case "tabDashboard":
-						selected.setContent(Main.sceneLoader.getElement(false, "dashboard_casemodder"));
+						selected.setContent(manager.getDashboardTabContent());
 						break;
 					case "tabProfile":
-						selected.setContent(manager.getProfileTabContent(true));
+						selected.setContent(manager.getProfileTabContent(EBoolean.CASEMODDER.value()));
 						break;
 					case "tabMessages":
 						selected.setContent(manager.getMessagesTabContent());
 						break;
 					case "tabProjects":
-						selected.setContent(manager.getProjectTabContent(true));
+						selected.setContent(manager.getProjectTabContent());
 						break;
 					}
 				}
@@ -80,38 +88,40 @@ public class LayoutController implements ISignInUpHandling {
 	@FXML
 	protected void handleLogoutButton()
 	{
-		ServerRequest req = new ServerRequest(LOGOUT_URI);
+		ServerRequest req = new ServerRequest(EURI.LOGOUT.uri());
 		
 		HttpResponse res = req.get();
 		
 		switch (res.getStatusCode()) {
 		case 204:
-			Main.sceneLoader.loadScene(FILENAME_LOGIN);
+			Main.sceneLoader.loadScene(EFXML.LOGIN.fxml());
 			return;
 		default:
 			return;
 		}
 	}
 	
-	/**
-	 * Setzt den Text von usernameLabel
-	 * @param email zu setzender Text
+	/*
+	 * (non-Javadoc)
+	 * @see application.controller.ILayoutController#setUsername(java.lang.String)
 	 */
-	public void setUsernameLabelText(String email)
+	@Override
+	public void setUsername(String email)
 	{
 		usernameLabel.setText(email);
 	}
 	
-	/**
-	 * userId Setter
-	 * @param id neue ID
+	/*
+	 * (non-Javadoc)
+	 * @see application.controller.ILayoutController#setUserId(int)
 	 */
+	@Override
 	public void setUserId(int id) {
 		this.userId = id;
 	}
 	
 	/**
-	 * userId Getter
+	 * Getter für userId
 	 * @return gesetzte userId
 	 */
 	public int getUserId() {

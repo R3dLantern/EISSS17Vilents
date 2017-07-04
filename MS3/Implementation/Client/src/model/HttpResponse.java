@@ -1,5 +1,7 @@
 package model;
 
+import org.json.JSONObject;
+
 /**
  * Model eines simplifizierten HTTP Response.
  * @author Léon
@@ -9,7 +11,7 @@ public class HttpResponse {
 	
 	private int statusCode;
 	
-	private String content;
+	private JSONObject content;
 	
 	/**
 	 * Konstruktor ohne Content
@@ -18,15 +20,15 @@ public class HttpResponse {
 	public HttpResponse(int statusCode)
 	{
 		this.statusCode = statusCode;
-		this.content = "";
+		this.content = null;
 	}
 	
 	/**
 	 * Konstruktor
 	 * @param statusCode HTTP-Statuscode der Antwort
-	 * @param content Der Content der Antwort als String
+	 * @param content Der Content der Antwort als JSON-Objekt
 	 */
-	public HttpResponse(int statusCode, String content)
+	public HttpResponse(int statusCode, JSONObject content)
 	{
 		this.statusCode = statusCode;
 		this.content = content;
@@ -45,7 +47,7 @@ public class HttpResponse {
 	 * content Getter
 	 * @return content
 	 */
-	public String getContent()
+	public JSONObject getContent()
 	{
 		return this.content;
 	}

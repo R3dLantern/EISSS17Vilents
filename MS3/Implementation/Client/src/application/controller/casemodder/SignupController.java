@@ -6,7 +6,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import application.Main;
-import application.controller.ISignInUpHandling;
+import application.util.EBoolean;
+import application.util.EFXML;
+import application.util.EURI;
 import application.util.FormValidator;
 import application.util.PasswordUtil;
 import application.util.ServerRequest;
@@ -25,7 +27,7 @@ import model.HttpResponse;
  * Controller-Klasse für die Casemodder-Registrierungsmaske
  * @author Leonid Vilents
  */
-public class SignupController implements ISignInUpHandling{
+public class SignupController {
 	
 	@FXML
 	private Hyperlink signUpAsSponsorLink;
@@ -54,7 +56,7 @@ public class SignupController implements ISignInUpHandling{
 	@FXML
 	protected void handleBackToLoginLink()
 	{
-		Main.sceneLoader.loadScene(FILENAME_LOGIN);
+		Main.sceneLoader.loadScene(EFXML.LOGIN.fxml());
 	}
 	
 	/**
@@ -63,7 +65,7 @@ public class SignupController implements ISignInUpHandling{
 	@FXML
 	protected void handleSignupSponsorLink()
 	{
-		Main.sceneLoader.loadScene(FILENAME_SIGNUP_SPONSOR);
+		Main.sceneLoader.loadScene(EFXML.SP_SIGNUP.fxml());
 	}
 	
 	/**
@@ -74,22 +76,22 @@ public class SignupController implements ISignInUpHandling{
 	{
 		FormValidator validator = new FormValidator();
 		
-		errorLabel.setText(validator.validateEmail(email.getText(), IS_NOT_LOGIN));
+		errorLabel.setText(validator.validateEmail(email.getText(), EBoolean.NOT_LOGIN.value()));
 		if(!errorLabel.getText().isEmpty()){
 			return;
 		}
 		
-		errorLabel.setText(validator.validatePassword(password.getText(), IS_NOT_LOGIN));
+		errorLabel.setText(validator.validatePassword(password.getText(), EBoolean.NOT_LOGIN.value()));
 		if(!errorLabel.getText().isEmpty()){
 			return;
 		}
 		
-		errorLabel.setText(validator.valiateDateOfBirth(dateOfBirth.getValue(), IS_NOT_SPONSOR));
+		errorLabel.setText(validator.valiateDateOfBirth(dateOfBirth.getValue(), EBoolean.NOT_CASEMODDER.value()));
 		if(!errorLabel.getText().isEmpty()){
 			return;
 		}
 		
-		ServerRequest req = new ServerRequest(SIGNUP_URI);
+		ServerRequest req = new ServerRequest(EURI.SIGNUP.uri());
 		
 		try {
 			HttpResponse res = req.post(getSignupData());
@@ -101,7 +103,7 @@ public class SignupController implements ISignInUpHandling{
 				alert.setHeaderText("Registrierung erfolgreich!");
 				alert.setContentText("Sie können Sich jetzt mit ihren Benutzerdaten einloggen.");
 				alert.showAndWait();
-				Main.sceneLoader.loadScene(FILENAME_LOGIN);
+				Main.sceneLoader.loadScene(EFXML.LOGIN.fxml());
 			}
 			return;
 		} catch (IOException e) {

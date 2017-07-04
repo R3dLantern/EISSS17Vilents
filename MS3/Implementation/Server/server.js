@@ -69,20 +69,22 @@ app.use(session({
  * @function
  * @name Main::checkSession
  * @desc Überprüft bei jedem HTTP Request den Status der Session.
- * @param {function(req, res, next)} middleware - Callbackfunktion mit Request-, Response- und next-Objekt
+ * @param {function(req, next)} middleware - Callbackfunktion mit Request-, Response- und next-Objekt
  */
 app.use(function (req, res, next) {
+    console.log("[MAIN] Checking Session");
     if (req.session && req.session.user) {
         var email = req.session.user.email;
-        dbam.findUserByEmail(email, function (error, results) {
+        dbam.findUserByEmail(email, function (error, result) {
             if (error) {
                 res.statusCode(500).end();
             }
-            if (results) {
+            if (result) {
+                result = JSON.parse(result);
                 var userSessionData = {
-                    id: results[0].id,
-                    email: results[0].email,
-                    type: results[0].type
+                    id: result.id,
+                    email: result.email,
+                    isCasemodder: result.isCasemodder
                 };
                 req.user = userSessionData;
                 req.session.user = userSessionData;
@@ -114,7 +116,7 @@ app.use(function (err, req, res, next) {
 
 app.use(loginController);
 app.use(dashboardController);
-app.use('/profiles', profilesController);
+app.use('/profile', profilesController);
 app.use('/messages', messagesController);
 app.use('/projects', projectsController);
 app.use('/projectupdates', projectUpdatesController);

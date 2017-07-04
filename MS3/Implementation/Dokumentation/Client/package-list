@@ -1,1 +1,12 @@
+application
+application.controller
+application.controller.casemodder
+application.controller.snippet
+application.controller.sponsor
 application.util
+application.util.ui
+fxml
+fxml.casemodder
+fxml.snippet
+fxml.sponsor
+model
