@@ -10,9 +10,10 @@
  * @author Leonid Vilents <lvilents@smail.th-koeln.de>
  */
 
-var mysql   = require('mysql');
-var fs      = require('fs');
-var pool    = null;
+var mysql       = require('mysql');
+var fs          = require('fs');
+var fileManager = require('./filemanager.js');
+var pool        = null;
 
 
 /** @todo für Produktivumgebung entfernen! */
@@ -28,13 +29,19 @@ function getCredentialsFromJson() {
     return JSON.parse(content);
 }
 
+/**
+ * Callback-Funktion für INSERT-Abfragen
+ * 
+ * @callback insertCallback
+ * @param {object} error - Fehler-Objekt, falls ein Fehler aufgetreten ist
+ */
 
 /**
- * Callback-Funktion für Einzelabfragen
+ * Callback-Funktion für SELECT-Abfragen
  * 
- * @callback singleQueryCallback
+ * @callback selectCallback
  * @param {object} error - Fehler-Objekt, falls ein Fehler aufgetreten ist
- * @param {object} results - Ergebnisse der Abfrage
+ * @param {object} results - Ergebnisse aus Abfrage
  */
 
 /**
@@ -43,7 +50,7 @@ function getCredentialsFromJson() {
  * @desc Führt eine einzelne Datenbankabfrage aus.
  * @param {string} sql - Der Query-String in SQL, möglicherweise mit Parametern
  * @param {array} values - Werte-Array für parametrisierbare Query-Strings
- * @param {singleQueryCallback} callback - Callbackfunktion zum Verarbeiten der Return-Wertes
+ * @param {selectCallback} callback - Callbackfunktion zum Verarbeiten der Return-Wertes
  */
 var executeSingleQuery = function (sql, values, callback) {
     this.pool.getConnection(function (connError, conn) {
@@ -95,18 +102,11 @@ exports.initializeConnection = function () {
 
 
 /**
- * Callback-Funktion für Registrierungsversuch
- * 
- * @callback trySignupCallback
- * @param {object} error - Fehler-Objekt, falls ein Fehler aufgetreten ist
- */
-
-/**
  * @function
  * @name DBAM:Exports:trySignUp
- * @desc Versucht, einen User in der Datenbank anzulegen. Bei Erfolg, wird der Typ des Users in der Datenbank bestimmt, und 0 zurückgegeben.
+ * @desc Versucht, einen User in der Datenbank anzulegen. Bei Erfolg, wird der Typ des Users in der Datenbank bestimmt.
  * @param {object} newUser - Ein newUser-Objekt, bestehend aus den Werten email, type, password und dateOfBirth
- * @param {trySignupCallback} callback - Callbackfunktion zum Verarbeiten der Return-Wertes
+ * @param {insertCallback} callback - Callbackfunktion zum Verarbeiten der Return-Wertes
  * @throws Fehler bei MySQL
  */
 exports.trySignup = function (newUser, callback) {
@@ -114,30 +114,181 @@ exports.trySignup = function (newUser, callback) {
     this.pool.getConnection(function (connectionError, conn) {
         if (connectionError) {
             callback(connectionError);
+            return;
         }
         console.log("[DBAM] Connected with ID " + conn.threadId);
         
-        conn.query({
-            sql: "INSERT INTO benutzer (email, passwort, geburtsdatum) VALUES(?, ?, ?)",
-            values: [newUser.email, newUser.password, newUser.dateOfBirth]
-        }, function (insertError, results, fields) {
-            if (insertError) {
-                callback(insertError);
+        conn.beginTransaction(function (transactionError) {
+            if (transactionError) {
+                callback(transactionError);
+                return;
             }
-            console.log("[DBAM] Insert 1 successful");
-            var sql2 = "INSERT INTO ";
-            if (newUser.type === "casemodder") {
-                sql2 += "casemodder (user_id) VALUES (?)";
-            } else {
-                sql2 += "sponsor (user_id) VALUES (?)";
-            }
-            conn.query(sql2, [results.insertId], function (insertError2, results2, fields2) {
-                conn.release();
-                if (insertError2) {
-                    callback(insertError2);
+            conn.query({
+                sql: "INSERT INTO benutzer (email, passwort, geburtsdatum) VALUES(?, ?, ?)",
+                values: [newUser.email, newUser.password, newUser.dateOfBirth]
+            }, function (error, results, fields) {
+                if (error) {
+                    return conn.rollback(function () {
+                        conn.release();
+                        callback(error);
+                        return;
+                    });
                 }
-                console.log("[DBAM] Insert 2 successful");
-                callback(null);
+                console.log("[DBAM] Insert 1 successful");
+                
+                conn.query({
+                    sql: "INSERT INTO ?? (user_id) VALUES (?)",
+                    values: [newUser.type, results.insertId]
+                }, function (typeError, typeResults, typeFields) {
+                    if (typeError) {
+                        return conn.rollback(function () {
+                            conn.release();
+                            callback(typeError);
+                            return;
+                        });
+                    }
+                    console.log("[DBAM] Insert 2 successful");
+                    conn.commit(function (commitError) {
+                        conn.release();
+                        if (commitError) {
+                            return conn.rollback(function () {
+                                callback(commitError);
+                                return;
+                            });
+                        }
+                        console.log("[DBAM] Commit succesful");
+                        
+                        if (newUser.type === "sponsor" && newUser.accreditFile) {
+                            fileManager.handleAccreditFileUpload(
+                                newUser.email,
+                                results.insertId,
+                                newUser.accreditFile,
+                                function (fileUploadError) {
+                                    if (fileUploadError) {
+                                        callback(fileUploadError);
+                                        return;
+                                    } else {
+                                        callback(null);
+                                        return;
+                                    }
+                                }
+                            );
+                        }
+                    });
+                });
+            });
+        });
+    });
+};
+
+
+
+
+
+/**
+ * Fügt der Datenbank Referenzen zu einer Datei hinzu.
+ * @param   {object}   options  Optionen-Objekt. Enthält eine Relationsreferenz, den Dateipfad und den Dateityp.
+ * @param   {insertCallback} callback Callbackfunktion
+ */
+exports.insertFile = function (options, callback) {
+    console.log("[DBAM] insertFile");
+    
+    var invalidOptions = (!options.relation || !options.path || !options.type);
+    if (invalidOptions) {
+        callback(new Error("[DBAM] Invalid options object"));
+        return;
+    }
+    
+    this.pool.getConnection(function (connError, conn) {
+        if (connError) {
+            callback(connError);
+            return;
+        }
+        console.log("Connected with ID " + conn.threadId);
+        
+        conn.beginTransaction(function (transactionError) {
+            if (transactionError) {
+                conn.release();
+                callback(transactionError);
+                return;
+            }
+            
+            conn.query({
+                sql: "INSERT INTO datei (pfad, dateityp) VALUES(?, ?);",
+                values: [options.path, options.type]
+            }, function (error, results, fields) {
+                if (error) {
+                    return conn.rollback(function () {
+                        conn.release();
+                        callback(error);
+                        return;
+                    });
+                }
+                
+                console.log("[DBAM] Insert 1 successful");
+                var validRelationOptions = (
+                    options.relation.user || options.relation.project || options.relation.projectupdate
+                ),
+                    values = [];
+                if (!validRelationOptions) {
+                    return conn.rollback(function () {
+                        conn.release();
+                        callback(new Error("Invalid Relation Option"));
+                        return;
+                    });
+                }
+                
+                //SQL-Parameter setzen
+                if (options.relation.user) {
+                    values = [
+                        "datei_benutzer",
+                        "benutzer_id",
+                        options.relation.user,
+                        results.insertId
+                    ];
+                } else if (options.relation.project) {
+                    values = [
+                        "datei_projekt",
+                        "projekt_id",
+                        options.relation.project,
+                        results.insertId
+                    ];
+                } else if (options.relation.projectupdate) {
+                    values = [
+                        "datei_projektupdate",
+                        "projektupdate_id",
+                        options.relation.projectupdate,
+                        results.insertId
+                    ];
+                }
+                
+                conn.query({
+                    sql: "INSERT INTO ?? (??, datei_id) VALUES (?, ?)",
+                    values: values
+                }, function (relationError, relationResults, relationFields) {
+                    if (relationError) {
+                        return conn.rollback(function () {
+                            conn.release();
+                            callback(relationError);
+                            return;
+                        });
+                    }
+                    
+                    console.log("[DBAM] relation insert succesful");
+                    conn.commit(function (commitError) {
+                        conn.release();
+                        if (commitError) {
+                            return conn.rollback(function () {
+                                callback(commitError);
+                                return;
+                            });
+                        } else {
+                            console.log("[DBAM] commit succesful");
+                            callback(null);
+                            return;
+                        }
+                    });
+                });
             });
         });
     });
@@ -145,18 +296,9 @@ exports.trySignup = function (newUser, callback) {
 
 
 /**
- * Callbackfunktion für Suche via Email
- * 
- * @callback findUserByEmailCallback
- * @param {object} error - Fehler-Objekt, falls ein Fehler aufgetreten ist
- * @param {object} results - Ergebnis aus Abfrage
- */
-
-/**
  * Sucht in der Datenbank einen Benutzer nach Email-Adresse.
  * @param {string} email - Email-Adresse des Benutzers
- * @param {findUserByEmailCallback} callback - Callbackfunktion zum Verarbeiten der Rückgabewerte
- * @returns {object} JSON-Objekt mit öffentlichen Benutzerdaten
+ * @param {selectCallback} callback - Callbackfunktion zum Verarbeiten der Rückgabewerte
  */
 exports.findUserByEmail = function (email, callback) {
     this.pool.getConnection(function (connectionError, conn) {
@@ -191,18 +333,10 @@ exports.findUserByEmail = function (email, callback) {
 
 
 /**
- * Callbackfunktion für das Abrufen von Profildaten
- * 
- * @callback profileDateCallback
- * @param {object} error - Fehler-Objekt, falls ein Fehler aufgetreten ist
- * @param {object} results - Profildaten als Objekt
- */
-
-/**
  * Ruft die Profildaten eines Benutzers ab
  * @param {int} userId - ID des Benutzers
  * @param {string} userType - Benutzertyp
- * @param {profileDataCallback} callback - Callbackfunktion zum Verarbeiten der Rückgabewerte
+ * @param {selectCallback} callback - Callbackfunktion zum Verarbeiten der Rückgabewerte
  */
 exports.getProfileData = function (userId, userType, callback) {
     this.pool.getConnection(function (connError, conn) {
@@ -270,19 +404,10 @@ exports.getProfileData = function (userId, userType, callback) {
     });
 };
 
-
-/**
- * Callbackfunktion für das Prüfen von neuen Nachrichten
- * 
- * @callback checkForNewMessagesCallback
- * @param {object} error - Fehler-Objekt, falls ein Fehler aufgetreten ist
- * @param {int} count - Anzahl von ungelesenen Nachrichten
- */
-
 /**
  * Sucht nach ungelesenen Nachrichten im Postfach des Benutzers
  * @param {int} userId - ID des Benutzers
- * @param {checkForNewMessagesCallback} callback - Callbackfunktion zum Verarbeiten der Rückgabewerte
+ * @param {selectCallback} callback - Callbackfunktion zum Verarbeiten der Rückgabewerte
  */
 exports.checkForNewMessages = function (userId, callback) {
     this.pool.getConnection(function (connError, conn) {
@@ -307,20 +432,11 @@ exports.checkForNewMessages = function (userId, callback) {
     });
 };
 
-
-/**
- * Callbackfunktion für aktuelle Projekte
- * 
- * @callback getProjectsCallback
- * @param {object} error - Fehler-Objekt, falls ein Fehler aufgetreten ist
- * @param {object} results - Ergebnis aus Abfrage
- */
-
 /**
  * Holt seitengerecht jeweils 8 Projekte aus der Datenbank,
  * sortiert absteigend nach Erstellungsdatum
  * @param {int} page - Setnummer
- * @param {getProjectsCallback} callback - Callbackfunktion zum Verarbeiten der Rückgabewerte
+ * @param {selectCallback} callback - Callbackfunktion zum Verarbeiten der Rückgabewerte
  */
 exports.getProjectsOverviewData = function (userId, userType, callback) {
     console.log("[DBAM] getLatestProjects");
@@ -399,19 +515,10 @@ exports.getProjectsOverviewData = function (userId, userType, callback) {
     });
 };
 
-
-/**
- * Callbackfunktion für Nachrichtenübersicht
- * 
- * @callback messagesOverviewCallback
- * @param {object} error - Fehler-Objekt, falls ein Fehler aufgetreten ist
- * @param {object} results - Ergebnis aus Abfrage
- */
-
 /**
  * Ruft alle Nachrichten ab, bei denen der Benutzer der Empfänger ist
  * @param {int} userId - Die ID des Benutzers
- * @param {messagesOverviewCallback} callback - Callbackfunktion zum Verarbeiten der Rückgabewerte
+ * @param {selectCallback} callback - Callbackfunktion zum Verarbeiten der Rückgabewerte
  */
 exports.getMessagesOverviewData = function (userId, callback) {
     console.log('[DBAM] getMessages');
@@ -433,19 +540,10 @@ exports.getMessagesOverviewData = function (userId, callback) {
     });
 };
 
-
-/**
- * Callbackfunktion für Zählung von Projekten und Updates
- * 
- * @callback countProjectsCallback
- * @param {object} error - Fehler-Objekt, falls ein Fehler aufgetreten ist
- * @param {object} results - Ergebnis aus Abfrage
- */
-
 /**
  * Zählt die Projekte und Projektupdates eines Benutzers
  * @param {int} userId - Die ID des Benutzers
- * @param {countProjectsCallback} callback - Callbackfunktion zum Verarbeiten der Rückgabewerte
+ * @param {selectCallback} callback - Callbackfunktion zum Verarbeiten der Rückgabewerte
  */
 exports.countUserProjects = function (userId, callback) {
     console.log("[DBAM] countUserProjects");
@@ -556,18 +654,9 @@ exports.countUserProjects = function (userId, callback) {
 
 
 /**
- * Callbackfunktion für Zählung von Benutzerkommentaren
- * 
- * @callback countCommentsCallback
- * @param {object} error - Fehler-Objekt, falls ein Fehler aufgetreten ist
- * @param {int} count - Ergebnis aus Abfrage
- */
-
-/**
  * Zählt die Kommentare eines Benutzers
  * @param {int} userId - Die ID des Benutzers
- * @param {countCommentsCallback} callback - Callbackfunktion zum Verarbeiten der Rückgabewerte
- * @todo <strong>Implementieren</strong>
+ * @param {selectCallback} callback - Callbackfunktion zum Verarbeiten der Rückgabewerte
  */
 exports.countUserComments = function (userId, callback) {
     var resObj = {

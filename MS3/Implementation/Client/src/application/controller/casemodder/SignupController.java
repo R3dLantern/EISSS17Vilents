@@ -114,7 +114,7 @@ public class SignupController implements ISignInUpHandling{
 	 * Verpackt die Maskendaten in ein JSONObject.
 	 * @return das erzeugte JSONObject, oder null
 	 */
-	private String getSignupData()
+	private JSONObject getSignupData()
 	{
 		JSONObject obj = new JSONObject();
 		try{
@@ -122,7 +122,7 @@ public class SignupController implements ISignInUpHandling{
 			obj.put("password", PasswordUtil.getHash(PasswordUtil.ALGORITHM_SHA256, password.getText()));
 			obj.put("type", "casemodder");
 			obj.put("dateOfBirth", dateOfBirth.getValue().toString());
-			return obj.toString();
+			return obj;
 		} catch (JSONException e){
 			e.printStackTrace();
 			return null;

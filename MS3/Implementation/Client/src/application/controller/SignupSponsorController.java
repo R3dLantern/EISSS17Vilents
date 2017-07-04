@@ -2,6 +2,9 @@ package application.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+
+import javax.xml.bind.DatatypeConverter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -11,12 +14,14 @@ import application.util.FormValidator;
 import application.util.PasswordUtil;
 import application.util.ServerRequest;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.stage.FileChooser;
 import model.HttpResponse;
 
@@ -26,6 +31,8 @@ import model.HttpResponse;
  *
  */
 public class SignupSponsorController implements ISignInUpHandling {
+	
+	private File file;
 	
 	@FXML
 	private Hyperlink signupAsCasemodderLink;
@@ -81,6 +88,7 @@ public class SignupSponsorController implements ISignInUpHandling {
 		final FileChooser fileChooser = getFileChooser();
 		File file = fileChooser.showOpenDialog(Main.sceneLoader.getPrimaryStage());
         if (file != null) {
+        	this.file = file;
             filePath.setText(file.getAbsolutePath());
         }
 	}
@@ -113,22 +121,30 @@ public class SignupSponsorController implements ISignInUpHandling {
 			return;
 		}
 		
-		ServerRequest req = new ServerRequest(SIGNUP_URI);
 		
-		//TODO: File-Upload verarbeiten
+		ServerRequest req = new ServerRequest(SIGNUP_URI);
 		
 		try {
 			HttpResponse res = req.post(getSignupData());
 			switch (res.getStatusCode()) {
 			case 201:
+				Alert alert = new Alert(AlertType.INFORMATION);
+				alert.setTitle("Registrierung");
+				alert.setHeaderText("Registrierung erfolgreich!");
+				alert.setContentText("Sie können Sich jetzt mit ihren Benutzerdaten einloggen.");
+				alert.showAndWait();
+				Main.sceneLoader.loadScene(FILENAME_LOGIN);
 			default:
-				System.out.println(res.toString());
 				break;
 			}
 			return;
 		} catch (IOException e) {
 			e.printStackTrace();
 			errorLabel.setText("IOException");
+		} catch (NullPointerException n) {
+			n.printStackTrace();
+			errorLabel.setText("NullPointerException");
+			return;
 		}
 	}
 	
@@ -136,7 +152,7 @@ public class SignupSponsorController implements ISignInUpHandling {
 	 * Verpackt die angegebenen Daten aus der Maske in einen JSON-String.
 	 * @return JSONObject als String, oder null, falls ein Fehler aufgetreten ist.
 	 */
-	private String getSignupData()
+	private JSONObject getSignupData()
 	{
 		JSONObject obj = new JSONObject();
 		try{
@@ -144,8 +160,14 @@ public class SignupSponsorController implements ISignInUpHandling {
 			obj.put("password", PasswordUtil.getHash(PasswordUtil.ALGORITHM_SHA256, password.getText()));
 			obj.put("type", "sponsor");
 			obj.put("dateOfBirth", dateOfBirth.getValue().toString());
-			return obj.toString();
+			obj.put("accreditFile", convertFileToString());
+			
+			Main.log(obj.toString());
+			return obj;
 		} catch (JSONException e){
+			e.printStackTrace();
+			return null;
+		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -165,5 +187,16 @@ public class SignupSponsorController implements ISignInUpHandling {
 			new FileChooser.ExtensionFilter("PDF (*.pdf)", "*.pdf")
 		);
 		return fc;
+	}
+	
+	/**
+	 * Konvertiert eine Datei in einen Base64-String.
+	 * @param filePath der absolute Dateipfad
+	 * @return
+	 */
+	private String convertFileToString() throws IOException{
+		
+		byte[] bytes = Files.readAllBytes(this.file.toPath());
+		return new String(DatatypeConverter.printBase64Binary(bytes));
 	}
 }

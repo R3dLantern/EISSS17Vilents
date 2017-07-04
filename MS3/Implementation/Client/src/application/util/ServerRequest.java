@@ -4,10 +4,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import org.json.JSONObject;
+
 import application.Main;
 import application.controller.ISignInUpHandling;
 import javafx.scene.control.Alert;
@@ -57,6 +61,7 @@ public class ServerRequest {
 	public ServerRequest(String url)
 	{	
 		String fullURL = String.format(url, getFullPrefix());
+		Main.log(fullURL);
 		try{
 			this.url = new URL(fullURL);
 		} catch (MalformedURLException e) {
@@ -70,16 +75,16 @@ public class ServerRequest {
 	 * @return Die Antwort des Servers 
 	 * @throws IOException 
 	 */
-	public HttpResponse post(String postData) throws IOException
+	public HttpResponse post(JSONObject postData) throws IOException
 	{
 		Main.conn = (HttpURLConnection) url.openConnection();
 		Main.conn.setRequestMethod(HTTP_METHOD_POST);
-		Main.conn.setRequestProperty("Content-Type", "application/json");
+		Main.conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
 		Main.conn.setRequestProperty("Content-length", Integer.toString(postData.length()));
 		Main.conn.setDoOutput(true);
 			
-		OutputStreamWriter out = new OutputStreamWriter(Main.conn.getOutputStream());  
-	    out.write(postData);
+		OutputStream out = Main.conn.getOutputStream();
+	    out.write(postData.toString().getBytes("UTF-8"));
 	    out.flush();
 	    out.close();
 		    

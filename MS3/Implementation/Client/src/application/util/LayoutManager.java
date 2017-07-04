@@ -3,7 +3,6 @@ package application.util;
 import java.io.IOException;
 
 import application.controller.casemodder.ProfileController;
-import application.controller.casemodder.ProjectsController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
 

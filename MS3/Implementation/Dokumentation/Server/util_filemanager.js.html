@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: routing/DashboardController.js</title>
+    <title>JSDoc: Source: util/filemanager.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: routing/DashboardController.js</h1>
+    <h1 class="page-title">Source: util/filemanager.js</h1>
 
     
 
@@ -29,66 +29,65 @@
             <pre class="prettyprint source linenums"><code>/*jslint node:true nomen:true*/
 "use strict";
 
-/**
- * Router-Middleware für Dashboard-Aufrufe
- * @module routing/DashboardController
- * @requires express
- * @requires util/dbam
- * @requires util/reputation
+/** 
+ * Dateiverwaltungsmodul
+ * @module util/filemanager
+ * @requires fs
  * @author Leonid Vilents &lt;lvilents@smail.th-koeln.de>
  */
-var express             = require("express");
 
-var dbam                = require("../util/dbam.js");
-var reputation          = require("../util/reputation.js");
+var fs  = require('fs');
+var dbam = require('./dbam.js');
 
-var dashboardController = express.Router();
 
-console.log("[DBCO] DashboardController loaded.");
-
-/**
- * Überprüft, ob es eine Login-Session gibt.
- * @param {object} req - HTTP Request-Objekt
- * @param {object} res - HTTP Response-Objekt
- * @param {object} next - Weiterleitung
- */
-function requireLogin(req, res, next) {
-    if (req.user) {
-        next();
-    } else {
-        res.status(403).end();
-    }
-}
-
+/** @todo für Produktivumgebung entfernen! */
+console.log("[FIMA] File manager module loaded.");
 
 /**
- * @function
- * @name DashboardController::show
- * @desc Rendert das Dashboard für einen Benutzer
- * @param {string} path - Route
- * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
- * @todo &lt;strong>Implementieren&lt;/strong>
+ * Callback-Funktion für Datei-Upload
+ * 
+ * @callback fileUploadCallback
+ * @param {object} error - Fehler-Objekt, falls ein Fehler aufgetreten ist
  */
-dashboardController.get('/dashboard', requireLogin, function (req, res) {
-    /** @todo für Produktivumgebung entfernen! */
-    console.log("[DBCO] Request auf /dashboard!");
-    /** @todo Benachrichtigungen einbinden */
-    if (req.user.type === "casemodder") {
-        reputation.getTotalReputationForUser(req.user.id, function (error, totalRep) {
-            if (error) {
-                console.log("[DBCO] GetTotalRep failed");
-                res.status(500).end();
-                throw error;
-            }
-            res.status(200).end(JSON.stringify({
-                rep: totalRep,
-                id: req.user.id
-            }));
-        });
-    }
-});
-    
-module.exports = dashboardController;</code></pre>
+
+/**
+ * Decodiert den Base64-String zu einer Akkreditierungsdatei,
+ * speichert diese im Dateisystem und hinterlegt den Dateipfad in der Datenbank
+ * @param {string} userEmail Die Email des Benutzers, der die Datei hochlädt
+ * @param {string} base64fileStr Der Base64-String der Datei
+ * @param {fileUploadCallback} callback Callbackfunktion
+ * {@link http://www.hacksparrow.com/base64-encoding-decoding-in-node-js.html Teile des Original-Codes}
+ */
+exports.handleAccreditFileUpload = function (userEmail, userId, base64fileStr, callback) {
+    var bitmap = new Buffer(base64fileStr, 'Base64'),
+        fittedUserEmail = userEmail.replace("@", "AT").replace(".", "DOT"),
+        filePath = './data/doc/accredit_' + fittedUserEmail + '.pdf';
+    fs.writeFile(filePath, bitmap, function (error) {
+        if (error) {
+            callback(error);
+        } else {
+            callback(null);
+            var dbFileStr = '/doc/accredit_' + fittedUserEmail + '.pdf';
+            dbam.insertFile({
+                relation: {
+                    user: userId
+                },
+                path: dbFileStr,
+                type: "pdf"
+            }, function (error) {
+                if (error) {
+                    callback(error);
+                    return;
+                } else {
+                    callback(null);
+                    return;
+                }
+            });
+        }
+    });
+};
+
+module.exports = exports;</code></pre>
         </article>
     </section>
 

@@ -24,8 +24,6 @@ import model.HttpResponse;
  */
 public class LoginController implements ISignInUpHandling{
 	
-	private final String LOGINDATA_STRING = "{\"email\":\"%s\",\"password\":\"%s\"}";
-	
 	@FXML
 	private TextField email;
 	
@@ -65,7 +63,12 @@ public class LoginController implements ISignInUpHandling{
 		ServerRequest req = new ServerRequest(LOGIN_URI);
 		
 		try {
-			HttpResponse res = req.post(String.format(LOGINDATA_STRING, email.getText(), pwdHashStr));
+			
+			JSONObject loginData = new JSONObject();
+			loginData.put("email", email.getText());
+			loginData.put("password", pwdHashStr);
+			
+			HttpResponse res = req.post(loginData);
 			
 			if(res.getStatusCode() == 200) {
 				JSONObject resContent = new JSONObject(res.getContent());

@@ -13,6 +13,7 @@ var express             = require("express");
 
 var main                = require("../server.js");
 var dbam                = require("../util/dbam.js");
+var fileManager         = require("../util/filemanager.js");
 
 var loginController     = express.Router();
 
@@ -24,26 +25,14 @@ var loginController     = express.Router();
  * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
  */
 loginController.post('/signup', function (req, res) {
+    console.log("[LGCO] POST /signup");
     dbam.trySignup(req.body, function (err) {
         if (err) {
             console.log(err.stack);
             res.status(500).end();
         }
-        res.status(200).end();
+        res.status(201).end();
     });
-});
-
-
-/**
- * @function
- * @name LoginController::handleFileUpload
- * @desc Registriert einen Benutzer
- * @param {string} path - Route
- * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
- * @todo <strong>Implementieren</strong>
- */
-loginController.post('/signup/upload', function (req, res) {
-    
 });
 
 
