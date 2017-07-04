@@ -6,6 +6,7 @@ import java.net.HttpURLConnection;
 
 
 import application.util.SceneLoader;
+import application.util.SnippetLoader;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -26,6 +27,8 @@ public class Main extends Application
 	
 	public static SceneLoader sceneLoader;
 	
+	public static SnippetLoader snippetLoader;
+	
 	
 	/**
 	 * Konfiguriert Primärfenster und Sceneloader, und initialisiert diesen.
@@ -35,12 +38,14 @@ public class Main extends Application
 	{
 		primaryStage = this.configureStage(primaryStage);
 		this.setSceneLoader(new SceneLoader(primaryStage));
+		this.setSnippetLoader(new SnippetLoader());
 		try {
 			Main.sceneLoader.init();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
+	
 	
 	/**
 	 * Hauptfunktion
@@ -51,6 +56,7 @@ public class Main extends Application
 		CookieHandler.setDefault(new CookieManager());
 		launch(args);
 	}
+	
 	
 	/**
 	 * Basiskonfiguration für das Applikationsfenster.
@@ -68,12 +74,33 @@ public class Main extends Application
 		return target;
 	}
 	
+	
 	/**
-	 * Setter für this.sceneLoader
+	 * Setter für statischen SceneLoader
 	 * @param primaryStage zu setzenden SceneLoader
 	 */
 	private void setSceneLoader(SceneLoader sceneLoader)
 	{
 		Main.sceneLoader = sceneLoader;
+	}
+	
+	
+	/**
+	 * Setter für statischen SnippetLoader
+	 * @param snippetLoader
+	 */
+	private void setSnippetLoader(SnippetLoader snippetLoader)
+	{
+		Main.snippetLoader = snippetLoader;
+	}
+	
+	
+	/**
+	 * Verkürzte Konsolenlogger-Funktion, wird für Produktivumgebung entfernt.
+	 * @param message String für Konsolenausgabe
+	 */
+	public static void log(String message)
+	{
+		System.out.println(message);
 	}
 }

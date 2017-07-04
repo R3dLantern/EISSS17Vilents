@@ -39,7 +39,19 @@ messagesController.use(function (req, res, next) {
  * @todo <strong>Implementieren</strong>
  */
 messagesController.get('/index', function (req, res) {
-    
+    console.log("[MSCO] GET index");
+    var id = req.user.id;
+    dbam.getMessagesOverviewData(id, function (error, results) {
+        if (error) {
+            console.log(error);
+            res.status(500).end();
+            throw error;
+        }
+        if (results) {
+            console.log(results);
+            res.status(200).end(JSON.stringify(results));
+        }
+    });
 });
 
 

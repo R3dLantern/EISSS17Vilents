@@ -39,11 +39,10 @@ projectsController.use(function (req, res, next) {
  * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
  * @todo <strong>Implementieren</strong>
  */
-projectsController.get('/index/:page', function (req, res) {
+projectsController.get('/index', function (req, res) {
     var id = req.user.id,
-        type = req.user.type,
-        page = req.params.page;
-    dbam.getProjectsOverviewData(id, type, page, function (error, resObj) {
+        type = req.user.type;
+    dbam.getProjectsOverviewData(id, type, function (error, resObj) {
         if (error) {
             res.status(500).end();
             throw error;

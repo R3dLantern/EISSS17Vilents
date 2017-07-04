@@ -62,10 +62,10 @@ public class LayoutController implements ISignInUpHandling {
 						selected.setContent(manager.getProfileTabContent(true));
 						break;
 					case "tabMessages":
-						//selected.setContent(manager.getMessagesContent());
+						selected.setContent(manager.getMessagesTabContent());
 						break;
 					case "tabProjects":
-						selected.setContent(manager.getProjectIndexPane(true));
+						selected.setContent(manager.getProjectTabContent(true));
 						break;
 					}
 				}
@@ -80,12 +80,12 @@ public class LayoutController implements ISignInUpHandling {
 	@FXML
 	protected void handleLogoutButton()
 	{
-		ServerRequest req = new ServerRequest(LOGOUT_STRING);
+		ServerRequest req = new ServerRequest(LOGOUT_URI);
 		
 		HttpResponse res = req.get();
 		
 		switch (res.getStatusCode()) {
-		case 200:
+		case 204:
 			Main.sceneLoader.loadScene(FILENAME_LOGIN);
 			return;
 		default:

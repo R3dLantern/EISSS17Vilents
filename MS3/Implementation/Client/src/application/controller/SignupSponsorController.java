@@ -113,7 +113,7 @@ public class SignupSponsorController implements ISignInUpHandling {
 			return;
 		}
 		
-		ServerRequest req = new ServerRequest(SIGNUP_STRING);
+		ServerRequest req = new ServerRequest(SIGNUP_URI);
 		
 		//TODO: File-Upload verarbeiten
 		
@@ -133,8 +133,8 @@ public class SignupSponsorController implements ISignInUpHandling {
 	}
 	
 	/**
-	 * Verpackt die angegebenen Daten aus der Maske in ein JSONObject.
-	 * @return das erzeugte JSONObject, oder null, falls ein Fehler aufgetreten ist.
+	 * Verpackt die angegebenen Daten aus der Maske in einen JSON-String.
+	 * @return JSONObject als String, oder null, falls ein Fehler aufgetreten ist.
 	 */
 	private String getSignupData()
 	{

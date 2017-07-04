@@ -6,14 +6,13 @@ package application.controller;
  */
 public interface ISignInUpHandling {
 	public static final String FILENAME_LOGIN = "login";
-	public static final String FILENAME_SIGNUP_SUCCESS = "signup_success";
 	
 	public static final String FILENAME_SIGNUP_CASEMODDER = "signup_casemodder";
 	public static final String FILENAME_SIGNUP_SPONSOR = "signup_sponsor";
 	
-	public static final String SIGNUP_STRING = "http://%s:%s/signup";
-	public static final String LOGIN_STRING = "http://%s:%s/login";
-	public static final String LOGOUT_STRING = "http://%s:%s/logout";
+	public static final String SIGNUP_URI = "%ssignup";
+	public static final String LOGIN_URI = "%slogin";
+	public static final String LOGOUT_URI = "%slogout";
 	
 	public static final boolean IS_LOGIN = true;
 	public static final boolean IS_NOT_LOGIN = false;

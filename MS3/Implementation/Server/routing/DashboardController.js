@@ -52,7 +52,6 @@ dashboardController.get('/dashboard', requireLogin, function (req, res) {
                 res.status(500).end();
                 throw error;
             }
-            console.log(totalRep);
             res.status(200).end(JSON.stringify({
                 rep: totalRep,
                 id: req.user.id

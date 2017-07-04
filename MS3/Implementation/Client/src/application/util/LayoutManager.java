@@ -17,7 +17,7 @@ public class LayoutManager implements IFXMLLoader {
 	
 	/**
 	 * Konstruktor
-	 * @param userId
+	 * @param userId Benutzer-ID
 	 */
 	public LayoutManager(int userId) {
 		this.userId = userId;
@@ -25,8 +25,8 @@ public class LayoutManager implements IFXMLLoader {
 	
 	/**
 	 * Holt das Profil für einen Benutzer.
-	 * @param isCasemodder
-	 * @return
+	 * @param isCasemodder Flag für Benutzertyp
+	 * @return Pane-Objekt
 	 */
 	public Pane getProfileTabContent(boolean isCasemodder) {
 		FXMLLoader loader = new FXMLLoader(
@@ -54,7 +54,7 @@ public class LayoutManager implements IFXMLLoader {
 		}
 	}
 	
-	public Pane getProjectIndexPane(boolean isCasemodder) {
+	public Pane getProjectTabContent(boolean isCasemodder) {
 		FXMLLoader loader = new FXMLLoader(
 				getClass()
 				.getResource(
@@ -67,14 +67,26 @@ public class LayoutManager implements IFXMLLoader {
 				);
 		try {
 			Pane content = (Pane) loader.load();
-			if (isCasemodder) {
-				ProjectsController controller = loader.<ProjectsController>getController();
-				controller.initWithData();
-			} else {
-				//TODO: ProjectsController für Sponsoren implementieren
-			}
 			return content;
 		} catch(IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	
+	public Pane getMessagesTabContent() {
+		try {
+			return FXMLLoader.load(
+				getClass()
+				.getResource(
+					String.format(
+						"%smessages.fxml",
+						FXML_PATH
+						)
+					)
+				);
+		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
 		}

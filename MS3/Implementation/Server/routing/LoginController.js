@@ -94,7 +94,7 @@ loginController.get('/logout', function (req, res) {
             console.log(err);
             
         }
-        res.status(200).end();
+        res.status(204).end();
     });
 });
 

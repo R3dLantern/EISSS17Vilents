@@ -24,6 +24,7 @@ console.log("[DBAM] DBAM module loaded.");
  */
 function getCredentialsFromJson() {
     var content = fs.readFileSync('./util/config/dbam.json');
+    console.log("[DBAM] Credentials received");
     return JSON.parse(content);
 }
 
@@ -44,26 +45,32 @@ function getCredentialsFromJson() {
  * @param {array} values - Werte-Array für parametrisierbare Query-Strings
  * @param {singleQueryCallback} callback - Callbackfunktion zum Verarbeiten der Return-Wertes
  */
-function executeSingleQuery(sql, values, callback) {
-    pool.getConnection(function (connError, conn) {
+var executeSingleQuery = function (sql, values, callback) {
+    this.pool.getConnection(function (connError, conn) {
         if (connError) {
             callback(connError, null);
+            return;
         }
         console.log("Connected with ID " + conn.threadId);
+        console.log(sql);
+        console.log(values);
         conn.query(
             sql,
             values,
             function (queryError, results, fields) {
+                console.log("[DBAM] Query Callback execution");
                 if (queryError) {
                     callback(queryError, null);
+                    throw queryError;
                 } else {
                     console.log(results);
                     callback(null, results);
+                    return;
                 }
             }
         );
     });
-}
+};
 
 /**
  * Hilfsfunktion zur Erstellung von inneren Queries bei der Projektabfrage
@@ -71,9 +78,9 @@ function executeSingleQuery(sql, values, callback) {
  * @param   {string} index Teampositionsnummer
  * @returns {string} das fertige Subquery
  */
-function sponsorTeamSubquery(index){
+var sponsorTeamSubquery = function (index) {
     return "(SELECT casemodder" + index + "_id FROM sponsor WHERE id = ?)";
-}
+};
 
 /**
  * @function
@@ -301,8 +308,6 @@ exports.checkForNewMessages = function (userId, callback) {
 };
 
 
-
-
 /**
  * Callbackfunktion für aktuelle Projekte
  * 
@@ -317,7 +322,7 @@ exports.checkForNewMessages = function (userId, callback) {
  * @param {int} page - Setnummer
  * @param {getProjectsCallback} callback - Callbackfunktion zum Verarbeiten der Rückgabewerte
  */
-exports.getProjectsOverviewData = function (userId, userType, page, callback) {
+exports.getProjectsOverviewData = function (userId, userType, callback) {
     console.log("[DBAM] getLatestProjects");
     this.pool.getConnection(function (connError, conn) {
         if (connError) {
@@ -325,20 +330,25 @@ exports.getProjectsOverviewData = function (userId, userType, page, callback) {
             return;
         }
         console.log("Connected with ID " + conn.threadId);
+        // SQL für Sponsor-Abfragen zu Gunsten von JSLint bereits hier eingebungen.
         var resObj = {
                 latestProjects: null
-            };
+            },
+            casemodder1_substr = sponsorTeamSubquery("1"),
+            casemodder2_substr = sponsorTeamSubquery("2"),
+            casemodder3_substr = sponsorTeamSubquery("3"),
+            latestProjectsSQL = "SELECT * FROM project WHERE casemodder_id NOT IN (" + casemodder1_substr + ", " + casemodder2_substr + ", " + casemodder3_substr + ") ORDER BY erstellt_am DESC",
+            teamProjectsSQL = "SELECT * FROM projekt WHERE casemodder_id IN (" + casemodder1_substr + ", " + casemodder2_substr + ", " + casemodder3_substr + ")";
         if (userType === "casemodder") {
             conn.query(
-                "SELECT * FROM projekt WHERE casemodder_id != ? ORDER BY erstellt_am DESC LIMIT ?, ?",
-                [userId, ((page * 5) - 5), ((page * 5) + 5)],
+                "SELECT * FROM projekt WHERE casemodder_id != ? ORDER BY erstellt_am DESC",
+                [userId],
                 function (latestError, latestResults, latestFields) {
                     if (latestError) {
                         conn.release();
                         callback(latestError, null);
                         return;
                     }
-                    console.log(latestResults);
                     resObj.latestProjects = latestResults;
                 }
             );
@@ -357,10 +367,9 @@ exports.getProjectsOverviewData = function (userId, userType, page, callback) {
                 }
             );
         } else {
-            latestProjectsSQL = "SELECT * FROM project WHERE casemodder_id NOT IN (" + this.sponsorTeamQuery("1") + ", " + this.sponsorTeamQuery("2") + ", " + this.sponsorTeamQuery("3") + ") ORDER BY erstellt_am DESC LIMIT ?, ?";
             conn.query(
                 latestProjectsSQL,
-                [userId, userId, userId, userId, ((page * 5) - 5), ((page * 5) + 5)],
+                [userId, userId, userId, userId],
                 function (latestError, latestResults, latestFields) {
                     console.log(conn.query.sql);
                     if (latestError) {
@@ -371,9 +380,8 @@ exports.getProjectsOverviewData = function (userId, userType, page, callback) {
                     resObj.latestProjects = latestResults;
                 }
             );
-            teamProjectsSQL = "SELECT * FROM projekt WHERE casemodder_id IN (" + this.sponsorTeamQuery("1") + ", " + this.sponsorTeamQuery("2") + ", " + this.sponsorTeamQuery("3") + ")";
             conn.query(
-                teamProjectsSQL
+                teamProjectsSQL,
                 [userId, userId, userId],
                 function (teamError, teamResults, teamFields) {
                     console.log(conn.query.sql);
@@ -388,6 +396,40 @@ exports.getProjectsOverviewData = function (userId, userType, page, callback) {
                 }
             );
         }
+    });
+};
+
+
+/**
+ * Callbackfunktion für Nachrichtenübersicht
+ * 
+ * @callback messagesOverviewCallback
+ * @param {object} error - Fehler-Objekt, falls ein Fehler aufgetreten ist
+ * @param {object} results - Ergebnis aus Abfrage
+ */
+
+/**
+ * Ruft alle Nachrichten ab, bei denen der Benutzer der Empfänger ist
+ * @param {int} userId - Die ID des Benutzers
+ * @param {messagesOverviewCallback} callback - Callbackfunktion zum Verarbeiten der Rückgabewerte
+ */
+exports.getMessagesOverviewData = function (userId, callback) {
+    console.log('[DBAM] getMessages');
+    this.pool.getConnection(function (connError, conn) {
+        if (connError) {
+            callback(connError, null);
+            return;
+        }
+        console.log('Connected with ID ' + conn.threadId);
+        conn.query('SELECT n.id as n_id, n.zeitstempel, n.ungelesen, b.id as b_id, b.vorname, b.nachname FROM nachricht n JOIN benutzer b ON n.absender_id = b.id WHERE empfanger_id = ? ORDER BY n.zeitstempel DESC', [userId], function (error, results, fields) {
+            conn.release();
+            if (error) {
+                callback(error, null);
+                return;
+            }
+            callback(null, JSON.parse(JSON.stringify(results)));
+            return;
+        });
     });
 };
 
@@ -493,7 +535,7 @@ exports.countUserProjects = function (userId, callback) {
                                 return;
                             }
                             
-                            resObj.projectUpdateUpvotes = puUpvoteResults[0].count;                            
+                            resObj.projectUpdateUpvotes = puUpvoteResults[0].count;
                             callback(null, resObj);
                             return;
                         });

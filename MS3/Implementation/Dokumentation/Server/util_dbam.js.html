@@ -52,6 +52,7 @@ console.log("[DBAM] DBAM module loaded.");
  */
 function getCredentialsFromJson() {
     var content = fs.readFileSync('./util/config/dbam.json');
+    console.log("[DBAM] Credentials received");
     return JSON.parse(content);
 }
 
@@ -72,26 +73,42 @@ function getCredentialsFromJson() {
  * @param {array} values - Werte-Array für parametrisierbare Query-Strings
  * @param {singleQueryCallback} callback - Callbackfunktion zum Verarbeiten der Return-Wertes
  */
-function executeSingleQuery(sql, values, callback) {
-    pool.getConnection(function (connError, conn) {
+var executeSingleQuery = function (sql, values, callback) {
+    this.pool.getConnection(function (connError, conn) {
         if (connError) {
             callback(connError, null);
+            return;
         }
         console.log("Connected with ID " + conn.threadId);
+        console.log(sql);
+        console.log(values);
         conn.query(
             sql,
             values,
             function (queryError, results, fields) {
+                console.log("[DBAM] Query Callback execution");
                 if (queryError) {
                     callback(queryError, null);
+                    throw queryError;
                 } else {
                     console.log(results);
                     callback(null, results);
+                    return;
                 }
             }
         );
     });
-}
+};
+
+/**
+ * Hilfsfunktion zur Erstellung von inneren Queries bei der Projektabfrage
+ * für Sponsoren
+ * @param   {string} index Teampositionsnummer
+ * @returns {string} das fertige Subquery
+ */
+var sponsorTeamSubquery = function (index) {
+    return "(SELECT casemodder" + index + "_id FROM sponsor WHERE id = ?)";
+};
 
 /**
  * @function
@@ -170,7 +187,6 @@ exports.trySignup = function (newUser, callback) {
  * @returns {object} JSON-Objekt mit öffentlichen Benutzerdaten
  */
 exports.findUserByEmail = function (email, callback) {
-    console.log("[DBAM] findUserByEmail");
     this.pool.getConnection(function (connectionError, conn) {
         if (connectionError) {
             callback(connectionError, null);
@@ -180,24 +196,105 @@ exports.findUserByEmail = function (email, callback) {
             if (selectError) {
                 conn.release();
                 callback(selectError, null);
+                return;
             }
             if (results) {
                 conn.query('SELECT * FROM casemodder WHERE user_id = ? LIMIT 1', [results[0].id], function (typeSelectError, typeResults, typeFields) {
                     conn.release();
                     if (typeSelectError) {
                         callback(typeSelectError, null);
+                        return;
                     }
-                    if (typeResults) {
-                        results[0].type = "casemodder";
-                    } else {
-                        results[0].type = "sponsor";
-                    }
+                    results[0].type = typeResults ? "casemodder" : "sponsor";
                     callback(null, results);
+                    return;
                 });
             } else {
                 callback(null, null);
+                return;
             }
         });
+    });
+};
+
+
+/**
+ * Callbackfunktion für das Abrufen von Profildaten
+ * 
+ * @callback profileDateCallback
+ * @param {object} error - Fehler-Objekt, falls ein Fehler aufgetreten ist
+ * @param {object} results - Profildaten als Objekt
+ */
+
+/**
+ * Ruft die Profildaten eines Benutzers ab
+ * @param {int} userId - ID des Benutzers
+ * @param {string} userType - Benutzertyp
+ * @param {profileDataCallback} callback - Callbackfunktion zum Verarbeiten der Rückgabewerte
+ */
+exports.getProfileData = function (userId, userType, callback) {
+    this.pool.getConnection(function (connError, conn) {
+        if (connError) {
+            conn.release();
+            callback(connError, null);
+            return;
+        }
+        console.log("Connected with ID " + conn.threadId);
+        var returnData = userType === "casemodder"
+                        ? {
+                    nachname: "",
+                    vorname: "",
+                    suchstatus: false,
+                    wohnort: "",
+                    beschreibung: ""
+                }
+                        : {
+                    nachname: "",
+                    vorname: "",
+                    firma: "",
+                    beschreibung: ""
+                };
+        conn.query(
+            "SELECT * FROM benutzer WHERE id = ? LIMIT 1",
+            [userId],
+            function (userError, userResults, userFields) {
+                if (userError) {
+                    conn.release();
+                    callback(userError, null);
+                    return;
+                }
+                if (userResults) {
+                    returnData.nachname = userResults[0].nachname;
+                    returnData.vorname = userResults[0].vorname;
+                    conn.query(
+                        "SELECT * FROM ?? WHERE user_id = ?",
+                        [userType, userId],
+                        function (typeError, typeResults, typeFields) {
+                            conn.release();
+                            if (typeError) {
+                                callback(typeError, null);
+                            }
+                            if (typeResults) {
+                                switch (userType) {
+                                case "casemodder":
+                                    returnData.suchstatus = typeResults[0].suchstatus;
+                                    returnData.wohnort = typeResults[0].wohnort;
+                                    returnData.beschreibung = typeResults[0].beschreibung;
+                                    break;
+                                case "sponsor":
+                                    returnData.firma = typeResults[0].firma;
+                                    returnData.beschreibung = typeResults[0].beschreibung;
+                                    break;
+                                default:
+                                    break;
+                                }
+                                callback(null, returnData);
+                            }
+                        }
+                    );
+                }
+            }
+        );
     });
 };
 
@@ -216,7 +313,6 @@ exports.findUserByEmail = function (email, callback) {
  * @param {checkForNewMessagesCallback} callback - Callbackfunktion zum Verarbeiten der Rückgabewerte
  */
 exports.checkForNewMessages = function (userId, callback) {
-    console.log("[DBAM] checkForNewMessages");
     this.pool.getConnection(function (connError, conn) {
         if (connError) {
             callback(connError, null);
@@ -228,12 +324,140 @@ exports.checkForNewMessages = function (userId, callback) {
             function (queryError, results, fields) {
                 if (queryError) {
                     callback(queryError, null);
+                    return;
                 } else {
                     console.log(results);
                     callback(null, results);
+                    return;
                 }
             }
         );
+    });
+};
+
+
+/**
+ * Callbackfunktion für aktuelle Projekte
+ * 
+ * @callback getProjectsCallback
+ * @param {object} error - Fehler-Objekt, falls ein Fehler aufgetreten ist
+ * @param {object} results - Ergebnis aus Abfrage
+ */
+
+/**
+ * Holt seitengerecht jeweils 8 Projekte aus der Datenbank,
+ * sortiert absteigend nach Erstellungsdatum
+ * @param {int} page - Setnummer
+ * @param {getProjectsCallback} callback - Callbackfunktion zum Verarbeiten der Rückgabewerte
+ */
+exports.getProjectsOverviewData = function (userId, userType, callback) {
+    console.log("[DBAM] getLatestProjects");
+    this.pool.getConnection(function (connError, conn) {
+        if (connError) {
+            callback(connError, null);
+            return;
+        }
+        console.log("Connected with ID " + conn.threadId);
+        // SQL für Sponsor-Abfragen zu Gunsten von JSLint bereits hier eingebungen.
+        var resObj = {
+                latestProjects: null
+            },
+            casemodder1_substr = sponsorTeamSubquery("1"),
+            casemodder2_substr = sponsorTeamSubquery("2"),
+            casemodder3_substr = sponsorTeamSubquery("3"),
+            latestProjectsSQL = "SELECT * FROM project WHERE casemodder_id NOT IN (" + casemodder1_substr + ", " + casemodder2_substr + ", " + casemodder3_substr + ") ORDER BY erstellt_am DESC",
+            teamProjectsSQL = "SELECT * FROM projekt WHERE casemodder_id IN (" + casemodder1_substr + ", " + casemodder2_substr + ", " + casemodder3_substr + ")";
+        if (userType === "casemodder") {
+            conn.query(
+                "SELECT * FROM projekt WHERE casemodder_id != ? ORDER BY erstellt_am DESC",
+                [userId],
+                function (latestError, latestResults, latestFields) {
+                    if (latestError) {
+                        conn.release();
+                        callback(latestError, null);
+                        return;
+                    }
+                    resObj.latestProjects = latestResults;
+                }
+            );
+            conn.query(
+                "SELECT * FROM projekt WHERE casemodder_id = ?",
+                [userId],
+                function (ownedError, ownedResults, ownedFields) {
+                    conn.release();
+                    if (ownedError) {
+                        callback(ownedError, null);
+                        return;
+                    }
+                    resObj.ownedProjects = ownedResults;
+                    callback(null, resObj);
+                    return;
+                }
+            );
+        } else {
+            conn.query(
+                latestProjectsSQL,
+                [userId, userId, userId, userId],
+                function (latestError, latestResults, latestFields) {
+                    console.log(conn.query.sql);
+                    if (latestError) {
+                        conn.release();
+                        callback(latestError, null);
+                        return;
+                    }
+                    resObj.latestProjects = latestResults;
+                }
+            );
+            conn.query(
+                teamProjectsSQL,
+                [userId, userId, userId],
+                function (teamError, teamResults, teamFields) {
+                    console.log(conn.query.sql);
+                    conn.release();
+                    if (teamError) {
+                        callback(teamError, null);
+                        return;
+                    }
+                    resObj.teamProjects = teamResults;
+                    callback(null, resObj);
+                    return;
+                }
+            );
+        }
+    });
+};
+
+
+/**
+ * Callbackfunktion für Nachrichtenübersicht
+ * 
+ * @callback messagesOverviewCallback
+ * @param {object} error - Fehler-Objekt, falls ein Fehler aufgetreten ist
+ * @param {object} results - Ergebnis aus Abfrage
+ */
+
+/**
+ * Ruft alle Nachrichten ab, bei denen der Benutzer der Empfänger ist
+ * @param {int} userId - Die ID des Benutzers
+ * @param {messagesOverviewCallback} callback - Callbackfunktion zum Verarbeiten der Rückgabewerte
+ */
+exports.getMessagesOverviewData = function (userId, callback) {
+    console.log('[DBAM] getMessages');
+    this.pool.getConnection(function (connError, conn) {
+        if (connError) {
+            callback(connError, null);
+            return;
+        }
+        console.log('Connected with ID ' + conn.threadId);
+        conn.query('SELECT n.id as n_id, n.zeitstempel, n.ungelesen, b.id as b_id, b.vorname, b.nachname FROM nachricht n JOIN benutzer b ON n.absender_id = b.id WHERE empfanger_id = ? ORDER BY n.zeitstempel DESC', [userId], function (error, results, fields) {
+            conn.release();
+            if (error) {
+                callback(error, null);
+                return;
+            }
+            callback(null, JSON.parse(JSON.stringify(results)));
+            return;
+        });
     });
 };
 
@@ -262,66 +486,97 @@ exports.countUserProjects = function (userId, callback) {
     this.pool.getConnection(function (connectionError, conn) {
         if (connectionError) {
             callback(connectionError, null);
+            return;
         }
         console.log("[DBAM] Connected with ID " + conn.threadId);
-        conn.query('SELECT * FROM projekt WHERE casemodder_id = ?', [userId], function (selectError, results, fields) {
-            if (selectError) {
+        
+        // Alle Projekte des Casemodders
+        conn.query('SELECT * FROM projekt WHERE casemodder_id = ?', [userId], function (projectsError, projectsResults, projectsFields) {
+            // Fehler abfangen
+            if (projectsError) {
                 conn.release();
-                callback(selectError, null);
+                callback(projectsError, null);
                 return;
             }
-            if (results.length > 0) {
-                var values = [],
-                    i = 0,
-                    len = results.length;
-                for (i, len; i &lt; len; i += 1) {
-                    values[i] = results[i].id;
+            // Gibt es Projekte vom Casemodder?
+            if (projectsResults.length > 0) {
+                
+                var i = 0,
+                    projectsCount = projectsResults.length,
+                    projectUpvoteCountSQL = "SELECT COUNT(*) as count FROM projekt_upvote WHERE projekt_id IN (",
+                    projectUpdatesSQL = "SELECT * FROM projektupdate WHERE projekt_id IN (";
+                
+                // Anzahl Projekte setzen
+                resObj.projects = projectsCount;
+                
+                // SQL-Sctring konstruieren
+                for (i, projectsCount; i &lt; projectsCount; i += 1) {
+                    projectUpvoteCountSQL += projectsResults[i].id.toString() + (i === projectsCount - 1 ? "" : ", ");
+                    projectUpdatesSQL += projectsResults[i].id.toString() + (i === projectsCount - 1 ? "" : ", ");
                 }
+                projectUpvoteCountSQL += ")";
+                projectUpdatesSQL += ")";
                 
-                resObj.projects = len;
-                
-                conn.query('SELECT COUNT(*) FROM projekt_upvote WHERE projekt_id IN ?', [conn.escape(values)], function (pUpvoteError, pUpvoteResults, pUpvoteFields) {
-                    if (pUpvoteError) {
-                        callback(pUpvoteError, null);
+                // Alle Upvotes für die Projekte des Casemodders
+                conn.query(projectUpvoteCountSQL, function (pUpvoteCountError, pUpvoteCountResults, pUpvoteCountFields) {
+                    // Fehler abfangen
+                    if (pUpvoteCountError) {
+                        callback(pUpvoteCountError, null);
                         return;
                     }
-                    if (results) {
-                        resObj.projectUpvotes = results[0];
+                    // Gibt es Upvotes für die Projekte?
+                    if (pUpvoteCountResults) {
+                        resObj.projectUpvotes = pUpvoteCountResults[0].count;
                     }
                 });
                 
-                conn.query('SELECT COUNT(*) FROM projektupdate WHERE projekt_id IN ?', [conn.escape(values)], function (projectUpdateError, puResults, puFields) {
-                    if (projectUpdateError) {
+                // Alle Projektupdates der Projekte des Casemodders
+                conn.query(projectUpdatesSQL, function (projectUpdatesError, projectUpdatesResults, projectUpdatesFields) {
+                    // Fehler abfangen
+                    if (projectUpdatesError) {
                         conn.release();
-                        callback(projectUpdateError, null);
+                        callback(projectUpdatesError, null);
                         return;
                     }
-                    if (puResults) {
-                        resObj.projectUpdates = puResults[0];
+                
+                    // Gibt es Projektupdates zu den Projekten?
+                    if (projectUpdatesResults.length > 0) {
                         
-                        var puValues = [],
-                            j = 0,
-                            puLen = puResults.length;
+                        resObj.projectUpdates = projectUpdatesResults.length;
+                        
+                        var j = 0,
+                            puLen = projectUpdatesResults.length,
+                            projectUpdatesUpvoteCountSQL = "SELECT COUNT(*) as count FROM projektupdate_upvote WHERE projektupdate_id IN (";
                         for (j, puLen; j &lt; puLen; j += 1) {
-                            values[j] = puResults[j].id;
+                            projectUpdatesUpvoteCountSQL += projectUpdatesResults[j].id.toString() + (j === puLen - 1 ? "" : ", ");
                         }
+                        projectUpdatesUpvoteCountSQL += ")";
                         
-                        conn.query('SELECT COUNT(*) FROM projektupdate_upvote WHERE projektupdate_id IN ?', [conn.escape(puValues)], function (puUpvoteError, puUpvoteResults, puUpvoteFields) {
+                        // Alle Upvotes für die Projektupdates der Projekte des Casemodders
+                        conn.query(projectUpdatesUpvoteCountSQL, function (puUpvoteError, puUpvoteResults, puUpvoteFields) {
+                            // Letzte Abfrage
                             conn.release();
+                            
+                            // Fehler abfangen
                             if (puUpvoteError) {
                                 callback(puUpvoteError, null);
+                                return;
                             }
-                            resObj.projectUpdateUpvotes = puUpvoteResults[0];
+                            
+                            resObj.projectUpdateUpvotes = puUpvoteResults[0].count;
                             callback(null, resObj);
+                            return;
                         });
-                        
                     } else {
                         callback(null, resObj);
+                        return;
                     }
+                
                 });
             } else {
                 conn.release();
                 callback(null, resObj);
+                return;
             }
         });
     });
@@ -351,7 +606,7 @@ exports.countUserComments = function (userId, callback) {
     this.pool.getConnection(function (connectionError, conn) {
         if (connectionError) {
             callback(connectionError, null);
-            
+            return;
         }
         console.log("[DBAM] Connected with ID " + conn.threadId);
         conn.query('SELECT * FROM kommentar WHERE benutzer_id = ?', [userId], function (selectError, results, fields) {
@@ -373,15 +628,18 @@ exports.countUserComments = function (userId, callback) {
                     conn.release();
                     if (upvoteError) {
                         callback(upvoteError, null);
+                        return;
                     }
                     if (upvoteResults) {
                         resObj.commentUpvotes = upvoteResults[0];
                     }
                     callback(null, resObj);
+                    return;
                 });
             } else {
                 conn.release();
                 callback(null, resObj);
+                return;
             }
         });
     });
@@ -397,13 +655,13 @@ module.exports = exports;</code></pre>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-main_server.html">main/server</a></li><li><a href="module-routing_CommentsController.html">routing/CommentsController</a></li><li><a href="module-routing_MessagesController.html">routing/MessagesController</a></li><li><a href="module-routing_ProfilesController.html">routing/ProfilesController</a></li><li><a href="module-routing_ProjectsController.html">routing/ProjectsController</a></li><li><a href="module-routing_ProjectUpdatesController.html">routing/ProjectUpdatesController</a></li><li><a href="module-routing_SponsoringController.html">routing/SponsoringController</a></li><li><a href="module-routing_UpvotesController.html">routing/UpvotesController</a></li><li><a href="module-util_dbam.html">util/dbam</a></li><li><a href="module-util_reputation.html">util/reputation</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-main_server.html">main/server</a></li><li><a href="module-routing_CommentsController.html">routing/CommentsController</a></li><li><a href="module-routing_DashboardController.html">routing/DashboardController</a></li><li><a href="module-routing_LoginController.html">routing/LoginController</a></li><li><a href="module-routing_MessagesController.html">routing/MessagesController</a></li><li><a href="module-routing_ProfilesController.html">routing/ProfilesController</a></li><li><a href="module-routing_ProjectsController.html">routing/ProjectsController</a></li><li><a href="module-routing_ProjectUpdatesController.html">routing/ProjectUpdatesController</a></li><li><a href="module-routing_SponsoringController.html">routing/SponsoringController</a></li><li><a href="module-routing_UpvotesController.html">routing/UpvotesController</a></li><li><a href="module-util_dbam.html">util/dbam</a></li><li><a href="module-util_reputation.html">util/reputation</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Sun Jul 02 2017 17:37:20 GMT+0200 (Mitteleuropäische Sommerzeit)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Jul 04 2017 15:03:01 GMT+0200 (Mitteleuropäische Sommerzeit)
 </footer>
 
 <script> prettyPrint(); </script>

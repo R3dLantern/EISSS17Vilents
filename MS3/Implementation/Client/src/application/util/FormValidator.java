@@ -84,6 +84,7 @@ public class FormValidator {
 	/**
 	 * Validiert das Geburtsdatum basierend auf Sponsor- oder Casemodder-Registrierungen
 	 * @param dateOfBirth Geburtsdatum
+	 * @param isSponsor Flag für Benutzertyp
 	 * @return leeren String oder Fehlerstring
 	 */
 	public String valiateDateOfBirth(LocalDate dateOfBirth, boolean isSponsor)

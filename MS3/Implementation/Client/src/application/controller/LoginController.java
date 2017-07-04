@@ -62,7 +62,7 @@ public class LoginController implements ISignInUpHandling{
 		
 		String pwdHashStr = PasswordUtil.getHash(PasswordUtil.ALGORITHM_SHA256, password.getText());
 		
-		ServerRequest req = new ServerRequest(LOGIN_STRING);
+		ServerRequest req = new ServerRequest(LOGIN_URI);
 		
 		try {
 			HttpResponse res = req.post(String.format(LOGINDATA_STRING, email.getText(), pwdHashStr));

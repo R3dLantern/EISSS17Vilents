@@ -15,7 +15,7 @@ import model.HttpResponse;
  */
 public class DashboardController {
 	
-	private final String DASHBOARD_STRING = "http://%s:%s/dashboard";
+	private final String DASHBOARD_STRING = "%sdashboard";
 	
 	@FXML
 	private Pane eventPane;

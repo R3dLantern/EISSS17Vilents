@@ -9,6 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import application.Main;
+import application.controller.ISignInUpHandling;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import model.HttpResponse;
@@ -18,6 +19,8 @@ import model.HttpResponse;
  * @author Leonid Vilents
  */
 public class ServerRequest {
+	
+	private final String HTTP_PREFIX = "http://%s:%s/";
 	
 	private final String HTTP_METHOD_GET = "GET";
 	private final String HTTP_METHOD_POST = "POST";
@@ -52,9 +55,10 @@ public class ServerRequest {
 	 * @param url Die Ziel-URL des Requests
 	 */
 	public ServerRequest(String url)
-	{		
+	{	
+		String fullURL = String.format(url, getFullPrefix());
 		try{
-			this.url = new URL(String.format(url,  Main.SERVER_IP, Main.SERVER_PORT));
+			this.url = new URL(fullURL);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
@@ -107,7 +111,7 @@ public class ServerRequest {
 	
 	/**
 	 * Setzt die URL dieser Instanz neu.
-	 * @param url
+	 * @param url neuer URL-String
 	 */
 	public void setURL(String url)
 	{		
@@ -158,17 +162,28 @@ public class ServerRequest {
 			case 500:
 				alert.setHeaderText(HEADER_500);
 				alert.setContentText(ERROR_500);
+				break;
 			default:
 				alert.setHeaderText("Unbekannter Fehler");
 				alert.setContentText("Keine Ahnung was hier abgeht...");
 				break;
 			}
 			alert.showAndWait();
-			//a.printStackTrace();
-			return new HttpResponse(Main.conn.getResponseCode(), sb.toString());
+			a.printStackTrace();
+			// "Sicheres Logout" bei Fehler
+			
+			String logoutURL = String.format(ISignInUpHandling.LOGOUT_URI, getFullPrefix());
+			this.url = new URL(logoutURL);
+			Main.sceneLoader.init();
+			return this.get();
 		} finally {
 			Main.conn.disconnect();
 			
 		}
+	}
+	
+	private String getFullPrefix()
+	{
+		return String.format(HTTP_PREFIX, Main.SERVER_IP, Main.SERVER_PORT);
 	}
 }

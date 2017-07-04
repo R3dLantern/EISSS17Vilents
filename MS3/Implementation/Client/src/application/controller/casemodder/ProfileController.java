@@ -11,9 +11,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import model.HttpResponse;
 
+/**
+ * Controllerklasse für die Casemodder-Profilübersicht
+ * @author Leonid Vilents
+ */
 public class ProfileController {
 
-	private final String PROFILE_STRING = "http://%s:%s/profiles/casemodder/";
+	private final String PROFILE_STRING = "%sprofiles/casemodder/";
 	
 	@FXML
 	private ImageView profilePicture;
@@ -41,6 +45,10 @@ public class ProfileController {
 		
 	}
 	
+	/**
+	 * Befüllt das FXML-Element mit Daten
+	 * @param id Benutzer-ID
+	 */
 	public void initWithData(int id) {
 		ServerRequest req = new ServerRequest(PROFILE_STRING + id);
 		

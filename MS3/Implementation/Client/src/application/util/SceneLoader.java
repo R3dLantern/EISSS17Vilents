@@ -21,7 +21,7 @@ public class SceneLoader implements IFXMLLoader{
 	
 	/**
 	 * Konstruktor
-	 * @param primaryStage
+	 * @param primaryStage Stage-Objekt, welches als Primär-Stage angesehen wird.
 	 */
 	public SceneLoader(Stage primaryStage)
 	{
@@ -103,6 +103,7 @@ public class SceneLoader implements IFXMLLoader{
 	/**
 	 * Lädt die Layout-Scene für die Benutzeroberfläche
 	 * @param email Email-Adresse des Benutzers
+	 * @param userId Benutzer-ID
 	 * @param isSponsor Flag für Benutzertyp-Überprüfung
 	 */
 	public void loadLayout(String email, int userId, boolean isSponsor)

@@ -4,8 +4,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import application.Main;
 import application.util.ServerRequest;
-import application.util.SnippetLoader;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Pagination;
@@ -20,9 +20,7 @@ import javafx.scene.layout.VBox;
  */
 public class ProjectsController {
 	
-	private final String PROJECTS_STRING = "http://%s:%s/projects/index/1";
-	
-	private SnippetLoader loader;
+	private final String PROJECTS_STRING = "%sprojects/index";
 	
 	@FXML
 	private TextField searchField;
@@ -47,11 +45,8 @@ public class ProjectsController {
 		return 3;
 	}
 	
-	/**
-	 * Initialisier den Controller mit Daten.
-	 */
-	public void initWithData(){
-		loader = new SnippetLoader();
+	@FXML
+	public void initialize() {
 		
 		ServerRequest req = new ServerRequest(PROJECTS_STRING);
 		
@@ -93,12 +88,10 @@ public class ProjectsController {
 			for (int i = page; i < Math.min((page + getItemsPerPage()), array.length()); i++) {
 				if(array.getJSONObject(i) != null) {
 					JSONObject project = array.optJSONObject(i);
-					System.out.println(project.toString());
-					Pane pOverview = this.loader.getProjectOverviewSnippet(
+					Pane pOverview = Main.snippetLoader.getProjectOverviewSnippet(
 						project.getInt("id"),
 						project.getString("titel")
 					);
-					System.out.println("pOverview: " + pOverview.toString());
 					box.getChildren().add(pOverview);
 				}
 			}

@@ -1,9 +1,13 @@
 package application.util;
 
 import java.io.IOException;
+import java.util.Date;
 
+import application.controller.snippet.MessageOverviewController;
 import application.controller.snippet.ProjectOverviewController;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.LoadException;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 
 /**
@@ -26,7 +30,25 @@ public class SnippetLoader implements IFXMLLoader{
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
+		}	
+	}
+	
+	public AnchorPane getMessageOverviewSnippet(boolean isUnread, int mId, int sId, Date date, String firstName, String lastName) {
+		FXMLLoader loader = new FXMLLoader(
+			getClass()
+			.getResource(FXML_SNIPPET_PATH + "message_overview.fxml") 
+		);
+		try {
+			AnchorPane content = loader.load();
+			MessageOverviewController controller = loader.<MessageOverviewController>getController();
+			controller.initWithData(isUnread, mId, sId, date, firstName, lastName);
+			return content;
+		} catch (LoadException l) {
+			l.printStackTrace();
+			return null;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
 		}
-		
 	}
 }

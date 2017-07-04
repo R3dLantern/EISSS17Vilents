@@ -89,7 +89,7 @@ public class SignupController implements ISignInUpHandling{
 			return;
 		}
 		
-		ServerRequest req = new ServerRequest(SIGNUP_STRING);
+		ServerRequest req = new ServerRequest(SIGNUP_URI);
 		
 		try {
 			HttpResponse res = req.post(getSignupData());

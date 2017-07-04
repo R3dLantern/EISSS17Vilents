@@ -5,7 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
 /**
- * Controllerklasse für das Project Snippet aus der Projektwelt
+ * Controllerklasse für das Projektsnippets aus der Projektwelt
  * @author Leonid Vilents
  *
  */

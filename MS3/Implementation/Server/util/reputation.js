@@ -84,7 +84,6 @@ exports.getTotalReputationForUser = function (userId, callback) {
             return;
         }
         if (projectsResult) {
-            console.log(projectsResult);
             totalRep += (projectsResult.projects.toFixed() * FACTOR_PROJECTS);
             totalRep += (projectsResult.projectUpdates.toFixed() * FACTOR_PROJECT_UPDATES);
             totalRep += (projectsResult.projectUpvotes.toFixed() * FACTOR_PROJECT_UPVOTES);
