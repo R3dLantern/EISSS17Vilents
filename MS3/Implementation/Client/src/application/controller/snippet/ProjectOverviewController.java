@@ -1,5 +1,6 @@
 package application.controller.snippet;
 
+import application.Main;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -11,7 +12,6 @@ import javafx.scene.control.Label;
  */
 public class ProjectOverviewController {
 	
-	@SuppressWarnings("unused")
 	private int projectId;
 	
 	@FXML
@@ -29,6 +29,6 @@ public class ProjectOverviewController {
 	
 	@FXML
 	protected void viewProject(ActionEvent event) {
-		//TODO: FXML laden
+		Main.layoutManager.getSingleProjectTab(projectId);
 	}
 }

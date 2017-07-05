@@ -58,7 +58,8 @@ dashboardController.get('/dashboard', requireLogin, function (req, res) {
             });
         });
     } else {
-        res.status(500).end();
+        /** @todo Notifications implementieren */
+        res.status(200).end();
     }
 });
     

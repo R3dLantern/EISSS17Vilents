@@ -76,7 +76,14 @@ projectsController.route('/:id')
      * @todo <strong>Implementieren</strong>
      */
     .get(function (req, res) {
-    
+        var id = req.params.id;
+        dbam.getProject(id, req.user.id, function (error, result) {
+            if (error) {
+                res.status(500).end();
+                throw error;
+            }
+            res.status(200).json(result);
+        });
     })
     /** @function
      * @name ProjectsController::update

@@ -17,20 +17,66 @@ var reputation          = require('../util/reputation.js');
 var sponsoringController  = express.Router();
 
 /** @todo für Produktivumgebung entfernen! */
-console.log("[SPCO] SponsoringController loaded.");
+console.log('[SPCO] SponsoringController loaded.');
 
+/**
+ * Überprüft, ob es eine Login-Session gibt.
+ * @param {object} req - HTTP Request-Objekt
+ * @param {object} res - HTTP Response-Objekt
+ * @param {object} next - Weiterleitung
+ */
+sponsoringController.use(function (req, res, next) {
+    if (req.user) {
+        next();
+    } else {
+        res.status(403).end();
+    }
+});
+
+
+function getRepInLoop(userObj, i, res) {
+    reputation.getTotalReputationForUser(
+        userObj[i].id,
+        function (error, totalRep) {
+            if (error) {
+                res.status(500).end();
+                return;
+            }
+            userObj[i].rep = totalRep;
+            console.log(userObj[i]);
+        }
+    );
+}
 
 /**
  * @function
  * @name SponsoringController::index
  * @desc Holt Daten für die Übersicht über Sponsor-suchende
  * @param {string} path - Route
- * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
+ * @param {function (req, res)} middleware - HTTP-Middleware mit Request- und Response-Objekt
  * @todo <strong>Implementieren</strong>
  */
-sponsoringController.get('/index', /*requireLogin,*/ function (req, res) {
-    
+sponsoringController.get('/index', function (req, res) {
+    console.log('[SPCO] GET /index');
+    dbam.getSponsoringApplicants(function (error, resultObj) {
+        if (error) {
+            res.status(500).end();
+            return;
+        }
+        if (resultObj.length > 0) {
+            var i = 0,
+                len = resultObj.length;
+            for (i, len; i < len; i += 1) {
+                this.getRepInLopp(resultObj, i, res);
+            }
+        } else {
+            resultObj = {};
+        }
+        res.status(200).json(resultObj);
+    });
 });
+
+
 
 
 /**

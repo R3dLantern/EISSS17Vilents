@@ -12,4 +12,10 @@ public interface IProfileController {
 	 * @param id Benutzer-ID
 	 */
 	public abstract void initWithData(int id);
+	
+	/**
+	 * Holt den Namen aus dem Label.
+	 * @return
+	 */
+	public String getName();
 }

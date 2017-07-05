@@ -1,7 +1,10 @@
 package application.controller.casemodder;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import application.Main;
 import application.controller.IProfileController;
 import application.util.EBoolean;
 import application.util.EURI;
@@ -11,6 +14,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import model.HttpResponse;
 
 /**
@@ -26,19 +30,22 @@ public class ProfileController implements IProfileController{
 	private Label nameLabel;
 	
 	@FXML
+	private Label homeLabel;
+	
+	@FXML
 	private Label descriptionLabel;
 	
 	@FXML
 	private Label repLabel;
 	
 	@FXML
-	private AnchorPane scrollContent;
-	
-	@FXML
 	private Button editButton;
 	
 	@FXML
 	private Button contactButton;
+	
+	@FXML
+	private HBox projectBox;
 	
 	/*
 	 * (non-Javadoc)
@@ -51,8 +58,11 @@ public class ProfileController implements IProfileController{
 		HttpResponse res = req.get();
 		
 		try{
-			if((!res.getContent().isNull("vorname")) && (!res.getContent().isNull("nachname"))){
+			if ((!res.getContent().isNull("vorname")) && (!res.getContent().isNull("nachname"))){
 				nameLabel.setText(String.format("%s %s", res.getContent().getString("vorname"), res.getContent().getString("nachname")));
+			}
+			if (!res.getContent().isNull("wohnort")) {
+				homeLabel.setText(res.getContent().getString("wohnort"));
 			}
 			descriptionLabel.setText(res.getContent().getString("beschreibung"));
 			repLabel.setText(Integer.toString(res.getContent().getInt("totalRep")));
@@ -61,9 +71,24 @@ public class ProfileController implements IProfileController{
 			} else {
 				editButton.setVisible(false);
 			}
-			//TODO: Projekte einbinden
+			if(res.getContent().getJSONArray("projekte").length() > 0) {
+				projectBox.setPrefWidth(0);
+				JSONArray projects = res.getContent().getJSONArray("projekte");
+				for(int i = 0; i < projects.length(); i++) {
+					JSONObject object = projects.getJSONObject(i);
+					AnchorPane snippet = Main.snippetLoader.getProfileProjectSnippet(object.getInt("id"), object.getString("titel"));
+					projectBox.setPrefWidth(((i + 1) * 210));
+					projectBox.getChildren().add(snippet);
+				}
+			}
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public String getName()
+	{
+		return nameLabel.getText();
 	}
 }

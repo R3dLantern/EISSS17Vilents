@@ -1,11 +1,10 @@
-package application.controller.casemodder;
+package application.controller.sponsor;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import application.Main;
-import application.controller.IProjectsController;
 import application.util.EURI;
 import application.util.ServerRequest;
 import javafx.fxml.FXML;
@@ -16,11 +15,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
-/**
- * Controllerklasse für die Casemodder-Projektwelt
- * @author Léon
- */
-public class ProjectsController implements IProjectsController{
+public class ProjectsController {
 	
 	@FXML
 	private TextField searchField;
@@ -45,12 +40,6 @@ public class ProjectsController implements IProjectsController{
 		return 3;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see application.controller.IProjectsController#initialize()
-	 */
-	@FXML
-	@Override
 	public void initialize() {
 		
 		ServerRequest req = new ServerRequest(EURI.PROJECTS.uri());
@@ -59,23 +48,23 @@ public class ProjectsController implements IProjectsController{
 			JSONObject content = req.get().getContent();
 			
 			JSONArray latest = content.getJSONArray("latestProjects");
-			JSONArray owned = content.getJSONArray("ownedProjects");
+			JSONArray team = content.getJSONArray("teamProjects");
 			
 			int latestLen =  latest.length();
-			int ownLen = owned.length();
+			int teamLen = team.length();
 			
 			projectsPagination.setPageCount((Integer) (latestLen / getItemsPerPage()) + 1);
-			ownProjectsPagination.setPageCount((Integer) (ownLen / getItemsPerPage()) + 1);
+			ownProjectsPagination.setPageCount((Integer) (teamLen / getItemsPerPage()) + 1);
 			
 			projectsPagination.setPageFactory((Integer pageIndex) -> createPage(pageIndex, latest));
-			ownProjectsPagination.setPageFactory((Integer pageIndex) -> createPage(pageIndex, owned));
+			ownProjectsPagination.setPageFactory((Integer pageIndex) -> createPage(pageIndex, team));
 			
 		} catch (JSONException e) {
 			e.printStackTrace();
 			return;
 		}
 	}
-	
+
 	/**
 	 * Erzeugt eine Seite für die Pagination einer Projektliste.
 	 * @param pageIndex Seitenindex

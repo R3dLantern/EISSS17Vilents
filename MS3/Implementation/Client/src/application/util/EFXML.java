@@ -16,11 +16,14 @@ public enum EFXML {
 	SP_PROFILE ("/fxml/sponsor/profile.fxml"),
 	SP_PROJECTS ("/fxml/sponsor/projects.fxml"),
 	SP_DASHBOARD ("/fxml/sponsor/dashboard.fxml"),
+	SP_SPONSORING ("/fxml/sponsor/sponsoring.fxml"),
 	LOGIN ("/fxml/login.fxml"),
+	PROJECT("/fxml/project.fxml"),
 	MESSAGES ("/fxml/messages.fxml"),
 	O_PROJECT ("/fxml/snippet/project_overview.fxml"),
 	O_MESSAGE ("/fxml/snippet/message_overview.fxml"),
-	E_DASHBOARD ("/fxml/snippet/dashboard_event.fxml");
+	E_DASHBOARD ("/fxml/snippet/dashboard_event.fxml"),
+	P_PROFILE ("/fxml/snippet/profile_project.fxml");
 	
 	private final String fxml;
 	

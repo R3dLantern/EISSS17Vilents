@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.casemodder.LayoutController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.sponsor.LayoutController">
    <children>
       <TabPane fx:id="tabs" layoutY="45.0" prefHeight="555.0" prefWidth="800.0" tabClosingPolicy="ALL_TABS">
         <tabs>
@@ -15,6 +15,7 @@
           <Tab id="tabProfile" fx:id="tabProfile" closable="false" text="Mein Profil" />
           <Tab id="tabMessages" fx:id="tabMessages" closable="false" text="Nachrichten" />
           <Tab id="tabProjects" fx:id="tabProjects" closable="false" text="Projektwelt" />
+          <Tab id="tabSponsoring" fx:id="tabSponsoring" closable="false" text="Sponsoringwelt" />
         </tabs>
       </TabPane>
       <Label fx:id="usernameLabel" alignment="CENTER" layoutX="525.0" layoutY="14.0" prefHeight="17.0" prefWidth="142.0">

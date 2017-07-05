@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+
+<Pane prefHeight="520.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.sponsor.SponsoringController">
+   <children>
+      <ScrollPane layoutX="10.0" layoutY="245.0" prefHeight="267.0" prefWidth="780.0">
+         <content>
+            <HBox fx:id="applicantsContent" prefHeight="250.0" prefWidth="778.0" spacing="20.0" />
+         </content>
+      </ScrollPane>
+      <HBox fx:id="candidatesContent" layoutX="77.0" layoutY="57.0" prefHeight="149.0" prefWidth="445.0" spacing="20.0" />
+      <Label layoutX="159.0" layoutY="25.0" text="Top-Kandidaten für ein Team">
+         <font>
+            <Font name="Calibri" size="24.0" />
+         </font>
+      </Label>
+      <Button layoutX="652.0" layoutY="159.0" mnemonicParsing="false" onAction="#handleMyTeamButton" text="Mein Team">
+         <font>
+            <Font name="Calibri" size="14.0" />
+         </font>
+      </Button>
+      <Button layoutX="652.0" layoutY="84.0" mnemonicParsing="false" onAction="#handleCreateTopTeamButton" prefHeight="27.0" prefWidth="84.0" text="Erstellen!">
+         <font>
+            <Font name="Calibri" size="14.0" />
+         </font>
+      </Button>
+      <Label layoutX="288.0" layoutY="217.0" text="Auf der Suche nach Sponsoren">
+         <font>
+            <Font name="Calibri" size="18.0" />
+         </font>
+      </Label>
+   </children>
+</Pane>

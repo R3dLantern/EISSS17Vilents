@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Date;
 
 import application.controller.snippet.MessageOverviewController;
+import application.controller.snippet.ProfileProjectController;
 import application.controller.snippet.ProjectOverviewController;
 import application.util.EFXML;
 import javafx.fxml.FXMLLoader;
@@ -65,6 +66,32 @@ public class SnippetLoader{
 			return null;
 		} catch (IOException e) {
 			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	/**
+	 * Initialisiert dynamisch ein Projekt-Snippet für das Benutzerprofil und gibt dieses zurück.
+	 * @param pId	Projekt-ID
+	 * @param title	Projekttitel
+	 * @return	Initialisiertes AnchorPane-Objekt
+	 */
+	public AnchorPane getProfileProjectSnippet(int pId, String title)
+	{
+		FXMLLoader loader = new FXMLLoader(
+			getClass()
+			.getResource(EFXML.P_PROFILE.fxml())
+		);
+		try {
+			AnchorPane content = loader.load();
+			ProfileProjectController controller = loader.<ProfileProjectController>getController();
+			controller.initializeWithData(pId, title);
+			return content;
+		} catch (LoadException le) {
+			le.printStackTrace();
+			return null;
+		} catch (IOException ie) {
+			ie.printStackTrace();
 			return null;
 		}
 	}

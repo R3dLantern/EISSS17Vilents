@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -50,7 +51,6 @@ public class ServerRequest {
 	public ServerRequest(String urlWithId, int id)
 	{
 		String fullURL = String.format(urlWithId, getFullPrefix(), id);
-		Main.log(fullURL);
 		try {
 			this.url = new URL(fullURL);
 		} catch (MalformedURLException e) {
@@ -133,6 +133,14 @@ public class ServerRequest {
 		    } else {
 		    	return new HttpResponse(Main.conn.getResponseCode());
 		    }
+		} catch (ConnectException ce) {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle(EHttp.CONNECTION_ERROR.val());
+			alert.setHeaderText(EHttp.HEADER_500.val());
+			alert.setContentText(EHttp.ERROR_500.val());
+			alert.showAndWait();
+			ce.printStackTrace();
+			return null;
 		} catch (IOException a) {
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle(EHttp.CONNECTION_ERROR.val());
@@ -166,10 +174,9 @@ public class ServerRequest {
 			a.printStackTrace();
 			return this.safeExceptionLogout();
 			
-		} catch (JSONException e) {
-			e.printStackTrace();
+		} catch (JSONException je) {
+			je.printStackTrace();
 			return new HttpResponse(Main.conn.getResponseCode());
-			
 		} finally {
 			Main.conn.disconnect();
 			

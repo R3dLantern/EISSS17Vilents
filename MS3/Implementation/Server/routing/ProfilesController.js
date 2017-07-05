@@ -47,6 +47,7 @@ profilesController.route('/:type/:id')
     .get(function (req, res) {
         var id = req.params.id,
             type = req.params.type;
+        console.log(type);
         dbam.getProfileData(id, type, function (error, dbRes) {
             if (error) {
                 res.status(500).end();
@@ -55,7 +56,7 @@ profilesController.route('/:type/:id')
             if (dbRes) {
                 dbRes.userOwnsProfile = (id === req.user.id.toString()) ? true : false;
                 if (type === "sponsor") {
-                    res.status(200).end(JSON.stringify(dbRes));
+                    res.status(200).json(dbRes);
                 } else {
                     reputation.getTotalReputationForUser(id, function (repError, totalRep) {
                         if (repError) {
@@ -67,11 +68,20 @@ profilesController.route('/:type/:id')
                         } else {
                             dbRes.totalRep = 0;
                         }
-                        res.status(200).end(JSON.stringify(dbRes));
+                        dbam.getProjectsForUser(id, function (projectsError, projects) {
+                            if (projectsError) {
+                                res.status(500).end();
+                                throw projectsError;
+                            }
+                            dbRes.projekte = projects;
+                            res.status(200).json(dbRes);
+                            return;
+                        });
                     });
                 }
             } else {
                 res.status(404).end();
+                return;
             }
         });
     })

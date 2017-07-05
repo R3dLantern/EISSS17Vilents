@@ -105,4 +105,24 @@ exports.getTotalReputationForUser = function (userId, callback) {
     });
 };
 
+/**
+ * Berechnet die Gesamtreputation aus einem mitgegebenen Objekt.
+ * @param   {object}   options Enthält die Parameter, die sonst aus der Datenbank entnommen werden.
+ * @returns {int} Die Gesamtreputation
+ */
+exports.getTotalReputationViaObject = function (options) {
+    var totalRep = 0.0,
+        invalidOptions = (!options.projects || !options.projectUpdates || !options.projectUpdateUpvotes || !options.projectUpvotes || !options.comments || !options.commentUpvotes);
+    if (invalidOptions) {
+        return null;
+    }
+    totalRep += (options.projects.toFixed() * FACTOR_PROJECTS);
+    totalRep += (options.projectUpdates.toFixed() * FACTOR_PROJECT_UPDATES);
+    totalRep += (options.projectUpvotes.toFixed() * FACTOR_PROJECT_UPVOTES);
+    totalRep += (options.projectUpdateUpvotes.toFixed() * FACTOR_PROJECT_UPDATE_UPVOTES);
+    totalRep += (options.comments.toFixed() * FACTOR_COMMENTS);
+    totalRep += (options.commentUpvotes.toFixed() * FACTOR_COMMENTS_UPVOTES);
+    return Math.floor(totalRep);
+};
+
 module.exports = exports;

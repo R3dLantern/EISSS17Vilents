@@ -4,9 +4,11 @@ import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.HttpURLConnection;
 
+import application.util.ui.LayoutManager;
 import application.util.ui.SceneLoader;
 import application.util.ui.SnippetLoader;
 import javafx.application.Application;
+import javafx.scene.control.TabPane;
 import javafx.stage.Stage;
 
 
@@ -27,6 +29,8 @@ public class Main extends Application
 	public static SceneLoader sceneLoader;
 	
 	public static SnippetLoader snippetLoader;
+	
+	public static LayoutManager layoutManager;
 	
 	
 	/**
@@ -91,6 +95,18 @@ public class Main extends Application
 	private void setSnippetLoader(SnippetLoader snippetLoader)
 	{
 		Main.snippetLoader = snippetLoader;
+	}
+	
+	
+	/**
+	 * Initialisiert den LayoutManager.
+	 * @param userId		ID des aktuellen Benutzers
+	 * @param isCasemodder	Flag für Benutzertyp
+	 * @param controller	Refrenzierte Controllerklasse
+	 */
+	public static void initializeLayoutManager(int userId, boolean isCasemodder, TabPane tabPane)
+	{
+		Main.layoutManager = new LayoutManager(userId, isCasemodder, tabPane);
 	}
 	
 	

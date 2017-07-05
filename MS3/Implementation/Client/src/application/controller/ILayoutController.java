@@ -22,5 +22,4 @@ public interface ILayoutController {
 	 * @param id Benutzer-ID
 	 */
 	public abstract void setUserId(int id);
-	
 }

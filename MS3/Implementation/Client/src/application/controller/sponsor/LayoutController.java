@@ -1,4 +1,4 @@
-package application.controller.casemodder;
+package application.controller.sponsor;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -19,12 +19,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import model.HttpResponse;
 
-/**
- * Controller-Klasse für das Casemodder-Layout
- * @author Leonid Vilents
- */
 public class LayoutController implements ILayoutController {
-	
 	@FXML
 	private TabPane tabs;
 	
@@ -41,6 +36,9 @@ public class LayoutController implements ILayoutController {
 	private Tab tabProjects;
 	
 	@FXML
+	private Tab tabSponsoring;
+	
+	@FXML
 	private Label usernameLabel;
 	
 	@FXML
@@ -55,9 +53,9 @@ public class LayoutController implements ILayoutController {
 	@Override
 	public void initializeWithLayoutManager()
 	{
-		Main.initializeLayoutManager(this.userId, EBoolean.CASEMODDER.value(), tabs);
+		Main.initializeLayoutManager(this.userId, EBoolean.NOT_CASEMODDER.value(), tabs);
 		tabDashboard.setContent(Main.layoutManager.getDashboardTabContent());
-		int that_UserId = this.userId;
+		int that_userId = this.userId;
 		tabs.getSelectionModel().selectedItemProperty().addListener(
 			new ChangeListener<Tab>() {
 				@Override
@@ -68,7 +66,8 @@ public class LayoutController implements ILayoutController {
 									"tabDashboard",
 									"tabProfile",
 									"tabMessages",
-									"tabProjects"
+									"tabProjects",
+									"tabSponsoring"
 							}
 						)
 					);
@@ -80,7 +79,7 @@ public class LayoutController implements ILayoutController {
 						selected.setContent(Main.layoutManager.getDashboardTabContent());
 						break;
 					case "tabProfile":
-						selected.setContent(Main.layoutManager.getProfileTabContent(that_UserId, EBoolean.CASEMODDER.value()));
+						selected.setContent(Main.layoutManager.getProfileTabContent(that_userId, EBoolean.NOT_CASEMODDER.value()));
 						break;
 					case "tabMessages":
 						selected.setContent(Main.layoutManager.getMessagesTabContent());
@@ -88,6 +87,8 @@ public class LayoutController implements ILayoutController {
 					case "tabProjects":
 						selected.setContent(Main.layoutManager.getProjectsTabContent());
 						break;
+					case "tabSponsoring":
+						selected.setContent(Main.layoutManager.getSponsoringTabContent());
 					default:
 						break;
 					}
@@ -95,7 +96,6 @@ public class LayoutController implements ILayoutController {
 			}
 		);
 	}
-		
 	
 	/**
 	 * Loggt den Benutzer aus und leitet zurück auf die Login-Maske.

@@ -90,8 +90,53 @@ var executeSingleQuery = function (sql, values, callback) {
  * @returns {string} das fertige Subquery
  */
 var sponsorTeamSubquery = function (index) {
-    return "(SELECT casemodder" + index + "_id FROM sponsor WHERE id = ?)";
+    return "(SELECT casemodder" + index + "_id FROM team WHERE sponsor_id = ?)";
 };
+
+
+/**
+ * Holt Kommentare für ein Spezifisches Element.
+ * @param {object}         conn      DB-Verbindung
+ * @param {int}            id        Projekt-ID
+ * @param {boolean}        isProject Flag für Elementtyp
+ * @param {selectCallback} callback  Callbackfunktion
+ */
+function getComments(conn, id, isProject, callback) {
+    
+    var countSql = "(SELECT COUNT(*) FROM kommentar_upvote ku WHERE ku.kommentar_id = k.id) AS upvoteCount",
+        joinSql = "JOIN benutzer b ON b.id = k.benutzer_id ",
+        sql = "SELECT b.vorname, b.nachname, k.*, " + countSql + " FROM kommentar k " + joinSql;
+    
+    if (isProject) {
+        sql += "JOIN projekt_kommentar pk ON k.id = pk.kommentar_id WHERE pj.projekt_id = ?";
+    } else {
+        sql += "JOIN projektupdate_kommentar puk ON k.id = puk.kommentar_id WHERE puk.projekt_id = ?";
+    }
+    conn.query(sql, [id], function (error, results, fields) {
+        if (error) {
+            callback(error, null);
+            return;
+        }
+        callback(null, JSON.parse(JSON.stringify(results)));
+        return;
+    });
+}
+
+
+var getCommentsForProjectUpdates = function (conn, i, projectUpdates, callback) {
+    if (i < projectUpdates.length) {
+        getComments(conn, projectUpdates[i].id, false, function (error, result) {
+            if (error) {
+                conn.release();
+                callback(error, null);
+                return;
+            }
+            projectUpdates[i].kommentare = result;
+            getCommentsForProjectUpdates(conn, (i + 1), projectUpdates, callback);
+        });
+    }
+};
+//repeater(0)
 
 
 /**
@@ -321,7 +366,7 @@ exports.findUserByEmail = function (email, callback) {
                         callback(typeSelectError, null);
                         return;
                     }
-                    results[0].isCasemodder = isCasemodderResults ? true : false;
+                    results[0].isCasemodder = isCasemodderResults.length > 0 ? true : false;
                     callback(null, JSON.stringify(results[0]));
                     return;
                 });
@@ -343,20 +388,20 @@ exports.findUserByEmail = function (email, callback) {
 exports.getProfileData = function (userId, userType, callback) {
     this.pool.getConnection(function (connError, conn) {
         if (connError) {
-            conn.release();
             callback(connError, null);
             return;
         }
         console.log("[DBAM] getProfile:Connected with ID " + conn.threadId);
-        var returnData = userType === "casemodder"
-                        ? {
+        var isCasemodder = (userType === "casemodder"),
+            returnData = isCasemodder
+                ? {
                     nachname: "",
                     vorname: "",
                     suchstatus: false,
                     wohnort: "",
                     beschreibung: ""
                 }
-                        : {
+                : {
                     nachname: "",
                     vorname: "",
                     firma: "",
@@ -371,7 +416,7 @@ exports.getProfileData = function (userId, userType, callback) {
                     callback(userError, null);
                     return;
                 }
-                if (userResults) {
+                if (userResults.length > 0) {
                     returnData.nachname = userResults[0].nachname;
                     returnData.vorname = userResults[0].vorname;
                     conn.query(
@@ -382,7 +427,7 @@ exports.getProfileData = function (userId, userType, callback) {
                             if (typeError) {
                                 callback(typeError, null);
                             }
-                            if (typeResults) {
+                            if (typeResults.length > 0) {
                                 switch (userType) {
                                 case "casemodder":
                                     returnData.suchstatus = typeResults[0].suchstatus;
@@ -403,6 +448,29 @@ exports.getProfileData = function (userId, userType, callback) {
                 }
             }
         );
+    });
+};
+
+
+
+exports.getProjectsForUser = function (userId, callback) {
+    this.pool.getConnection(function (connError, conn) {
+        if (connError) {
+            callback(connError, null);
+            return;
+        }
+        console.log("[DBAM] getProjectsForUser: Connected with ID " + conn.threadId);
+        
+        conn.query("SELECT id, titel FROM projekt WHERE casemodder_id = ? ORDER BY erstellt_am DESC", [userId], function (error, results, fields) {
+            conn.release();
+            if (error) {
+                callback(error, null);
+                return;
+            }
+            results = JSON.parse(JSON.stringify(results));
+            callback(null, results);
+            return;
+        });
     });
 };
 
@@ -485,11 +553,11 @@ exports.getProjectsOverviewData = function (userId, isCasemodder, callback) {
                 }
             );
         } else {
+            console.log("no casemodder");
             conn.query(
                 latestProjectsSQL,
-                [userId, userId, userId, userId],
+                [userId, userId, userId],
                 function (latestError, latestResults, latestFields) {
-                    console.log(conn.query.sql);
                     if (latestError) {
                         conn.release();
                         callback(latestError, null);
@@ -502,7 +570,6 @@ exports.getProjectsOverviewData = function (userId, isCasemodder, callback) {
                 teamProjectsSQL,
                 [userId, userId, userId],
                 function (teamError, teamResults, teamFields) {
-                    console.log(conn.query.sql);
                     conn.release();
                     if (teamError) {
                         callback(teamError, null);
@@ -543,6 +610,37 @@ exports.getMessagesOverviewData = function (userId, callback) {
             callback(null, data);
             return;
         });
+    });
+};
+
+
+
+/**
+ * Holt alle Casemodder-Benutzer mit aktiviertem Suchstatus
+ * @param {selectCallback} callback Callbackfunktion
+ */
+exports.getSponsoringApplicants = function (callback) {
+    console.log("[DBAM] getSponsoringApplicatns");
+    this.pool.getConnection(function (connError, conn) {
+        if (connError) {
+            callback(connError, null);
+            return;
+        }
+        console.log("[DBAM] getSponsoringApplicants: Connected with ID " + conn.threadId);
+        
+        conn.query(
+            "SELECT b.id, b.vorname, b.nachname FROM benutzer b JOIN casemodder c ON b.id = c.user_id WHERE c.suchstatus = 1",
+            function (error, results, fields) {
+                conn.release();
+                if (error) {
+                    callback(error, null);
+                    return;
+                }
+                var resultsObj = JSON.parse(JSON.stringify(results));
+                callback(null, resultsObj);
+                return;
+            }
+        );
     });
 };
 
@@ -711,5 +809,51 @@ exports.countUserComments = function (userId, callback) {
         });
     });
 };
+
+
+/**
+ * Holt ein Projekt, seine Kommentare, Updates und alle dazugehörigen Upvotes.
+ * @param {int} pId - ID des Projektes
+ * @param {int} uId - ID des Session-Benutzers
+ * @param {selectCallback} callback - Callbackfunktion
+ */
+exports.getProject = function (pId, uId, callback) {
+    this.pool.getConnection(function (connError, conn) {
+        if (connError) {
+            callback(connError, null);
+        }
+        console.log('[DBAM] getProject: Connected with ID ' + conn.threadId);
+        var countSql = '(SELECT COUNT(*) FROM projekt_upvote pu WHERE pu.projekt_id = ?) AS upvotes',
+            sql = 'SELECT p.*, b.vorname, b.nachname, ' + countSql + ' FROM projekt p JOIN benutzer b ON p.casemodder_id = b.id WHERE p.id = ? LIMIT 1';
+        
+        conn.query(sql, [pId, pId], function (error, results, fields) {
+            if (error) {
+                callback(error, null);
+                return;
+            }
+            if (results.length === 1) {
+                var result = JSON.parse(JSON.stringify(results[0]));
+                if (result.casemodder_id === uId) {
+                    result.userOwnsProject = true;
+                } else {
+                    result.userOwnsProject = false;
+                }
+                console.log(result);
+                conn.query("SELECT * FROM projektupdate WHERE projekt_id = ?", [pId], function (puError, puResults, puFields) {
+                    conn.release();
+                    if (puError) {
+                        callback(puError, null);
+                        return;
+                    }
+                    result.updates = JSON.parse(JSON.stringify(puResults));
+                    console.log(result);
+                    callback(null, result);
+                });
+            }
+        });
+    });
+};
+
+
 
 module.exports = exports;
