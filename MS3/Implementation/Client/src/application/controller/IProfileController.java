@@ -15,7 +15,7 @@ public interface IProfileController {
 	
 	/**
 	 * Holt den Namen aus dem Label.
-	 * @return
+	 * @return Name aus Label
 	 */
 	public String getName();
 }

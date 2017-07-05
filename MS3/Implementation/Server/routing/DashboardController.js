@@ -24,13 +24,13 @@ console.log("[DBCO] DashboardController loaded.");
  * @param {object} res - HTTP Response-Objekt
  * @param {object} next - Weiterleitung
  */
-function requireLogin(req, res, next) {
-    if (req.user) {
-        next();
-    } else {
-        res.status(403).end();
-    }
-}
+dashboardController.use(function (req, res, next) {
+  if (req.user) {
+    next();
+  } else {
+    res.status(403).end();
+  }
+});
 
 
 /**
@@ -41,26 +41,38 @@ function requireLogin(req, res, next) {
  * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
  * @todo <strong>Implementieren</strong>
  */
-dashboardController.get('/dashboard', requireLogin, function (req, res) {
-    /** @todo für Produktivumgebung entfernen! */
-    console.log("[DBCO] Request auf /dashboard!");
-    /** @todo Benachrichtigungen einbinden */
-    if (req.user.isCasemodder) {
-        reputation.getTotalReputationForUser(req.user.id, function (error, totalRep) {
-            if (error) {
-                console.log("[DBCO] GetTotalRep failed");
-                res.status(500).end();
-                throw error;
-            }
-            res.status(200).json({
-                rep: totalRep,
-                id: req.user.id
-            });
-        });
-    } else {
-        /** @todo Notifications implementieren */
-        res.status(200).end();
+dashboardController.get('/dashboard', function (req, res) {
+  /** @todo für Produktivumgebung entfernen! */
+  console.log("[DBCO] Request auf /dashboard!");
+  var resObj = {
+    newMessages: 0,
+    rep: 0,
+    id: req.user.id
+  };
+  dbam.checkForNewMessages(req.user.id, function (error, result) {
+    if (error) {
+      res.status(500).end();
+      throw error;
     }
+    resObj.newMessages = result;
+    if (req.user.isCasemodder) {
+      reputation.getTotalReputationForUser(
+        req.user.id,
+        function (error, totalRep) {
+          if (error) {
+            console.log("[DBCO] GetTotalRep failed");
+            res.status(500).end();
+            throw error;
+          }
+          resObj.rep = totalRep;
+          console.log(resObj);
+          res.status(200).json(resObj);
+        }
+      );
+    } else {
+      res.status(200).end();
+    }  
+  });
 });
     
 module.exports = dashboardController;

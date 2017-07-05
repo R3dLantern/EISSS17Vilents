@@ -34,7 +34,8 @@ public class ProjectController {
 		if(resContent != null) {
 			try{
 				titleLabel.setText(resContent.getString("titel"));
-				userId = resContent.getInt("id");
+				userId = resContent.getInt("casemodder_id");
+				nameLink.setText(String.format("%s %s", resContent.getString("vorname"), resContent.getString("nachname")));
 			} catch (JSONException je) {
 				je.printStackTrace();
 				return;
@@ -44,7 +45,7 @@ public class ProjectController {
 	
 	/**
 	 * Gibt den Projekttitel aus dem Label zurück.
-	 * @return
+	 * @return Projekttitel
 	 */
 	public String getTitle()
 	{

@@ -24,64 +24,21 @@ console.log("[DBAM] DBAM module loaded.");
  * @returns {object} JSON-Objekt mit Login-Credentials für die Datenbank
  */
 function getCredentialsFromJson() {
-    var content = fs.readFileSync('./util/config/dbam.json');
-    console.log("[DBAM] Credentials received");
-    return JSON.parse(content);
+  var content = fs.readFileSync('./util/config/dbam.json');
+  console.log('[DBAM] Credentials received');
+  return JSON.parse(content);
 }
-
-
-/**
- * Callback-Funktion für INSERT-Abfragen
- * 
- * @callback insertCallback
- * @param {object} error - Fehler-Objekt, falls ein Fehler aufgetreten ist
- */
-
-
-/**
- * Callback-Funktion für SELECT-Abfragen
- * 
- * @callback selectCallback
- * @param {object} error - Fehler-Objekt, falls ein Fehler aufgetreten ist
- * @param {object} results - Ergebnisse aus Abfrage
- */
-
 
 /**
  * @function
- * @name DBAM::executeSingleQuery
- * @desc Führt eine einzelne Datenbankabfrage aus.
- * @param {string} sql - Der Query-String in SQL, möglicherweise mit Parametern
- * @param {array} values - Werte-Array für parametrisierbare Query-Strings
- * @param {selectCallback} callback - Callbackfunktion zum Verarbeiten der Return-Wertes
+ * @name DBAM:Exports:initializeConnection
+ * @desc Erstellt eine Verbindung zum Datenbankserver.
+ * Wird einmalig bei Ausführung der Serverlogik ausgeführt.
  */
-var executeSingleQuery = function (sql, values, callback) {
-    this.pool.getConnection(function (connError, conn) {
-        if (connError) {
-            callback(connError, null);
-            return;
-        }
-        console.log("Connected with ID " + conn.threadId);
-        console.log(sql);
-        console.log(values);
-        conn.query(
-            sql,
-            values,
-            function (queryError, results, fields) {
-                console.log("[DBAM] Query Callback execution");
-                if (queryError) {
-                    callback(queryError, null);
-                    throw queryError;
-                } else {
-                    console.log(results);
-                    callback(null, results);
-                    return;
-                }
-            }
-        );
-    });
+exports.initializeConnection = function () {
+  this.pool = mysql.createPool(getCredentialsFromJson());
+  console.log("[DBAM] Connection Pool created");
 };
-
 
 /**
  * Hilfsfunktion zur Erstellung von inneren Queries bei der Projektabfrage
@@ -90,9 +47,23 @@ var executeSingleQuery = function (sql, values, callback) {
  * @returns {string} das fertige Subquery
  */
 var sponsorTeamSubquery = function (index) {
-    return "(SELECT casemodder" + index + "_id FROM team WHERE sponsor_id = ?)";
+  return "(SELECT casemodder" + index + "_id FROM team WHERE sponsor_id = ?)";
 };
 
+/**
+ * Callback-Funktion für INSERT-Abfragen
+ * 
+ * @callback insertCallback
+ * @param {object} error - Fehler-Objekt, falls ein Fehler aufgetreten ist
+ */
+
+/**
+ * Callback-Funktion für SELECT-Abfragen
+ * 
+ * @callback selectCallback
+ * @param {object} error - Fehler-Objekt, falls ein Fehler aufgetreten ist
+ * @param {object} results - Ergebnisse aus Abfrage
+ */
 
 /**
  * Holt Kommentare für ein Spezifisches Element.
@@ -122,35 +93,6 @@ function getComments(conn, id, isProject, callback) {
     });
 }
 
-
-var getCommentsForProjectUpdates = function (conn, i, projectUpdates, callback) {
-    if (i < projectUpdates.length) {
-        getComments(conn, projectUpdates[i].id, false, function (error, result) {
-            if (error) {
-                conn.release();
-                callback(error, null);
-                return;
-            }
-            projectUpdates[i].kommentare = result;
-            getCommentsForProjectUpdates(conn, (i + 1), projectUpdates, callback);
-        });
-    }
-};
-//repeater(0)
-
-
-/**
- * @function
- * @name DBAM:Exports:initializeConnection
- * @desc Erstellt eine Verbindung zum Datenbankserver.
- * Wird einmalig bei Ausführung der Serverlogik ausgeführt.
- */
-exports.initializeConnection = function () {
-    this.pool = mysql.createPool(getCredentialsFromJson());
-    console.log("[DBAM] Connection Pool created");
-};
-
-
 /**
  * @function
  * @name DBAM:Exports:trySignUp
@@ -159,225 +101,235 @@ exports.initializeConnection = function () {
  * @param {insertCallback} callback - Callbackfunktion zum Verarbeiten der Return-Wertes
  * @throws Fehler bei MySQL
  */
-exports.trySignup = function (newUser, callback) {
-    console.log("[DBAM] trySignup");
-    this.pool.getConnection(function (connectionError, conn) {
-        if (connectionError) {
-            callback(connectionError);
-            return;
-        }
-        console.log("[DBAM] Connected with ID " + conn.threadId);
+exports.trySignup = function trySignup(newUser, callback) {
+  console.log("[DBAM] trySignup");
+  this.pool.getConnection(function (connectionError, conn) {
+    if (connectionError) {
+      callback(connectionError);
+      return;
+    }
+    console.log("[DBAM] Connected with ID " + conn.threadId);
         
-        conn.beginTransaction(function (transactionError) {
-            if (transactionError) {
-                callback(transactionError);
-                return;
-            }
-            conn.query({
-                sql: "INSERT INTO benutzer (email, passwort, geburtsdatum) VALUES(?, ?, ?)",
-                values: [newUser.email, newUser.password, newUser.dateOfBirth]
-            }, function (error, results, fields) {
-                if (error) {
-                    return conn.rollback(function () {
-                        conn.release();
-                        callback(error);
-                        return;
-                    });
-                }
-                console.log("[DBAM] Insert 1 successful");
-                
-                conn.query({
-                    sql: "INSERT INTO ?? (user_id) VALUES (?)",
-                    values: [newUser.type, results.insertId]
-                }, function (typeError, typeResults, typeFields) {
-                    if (typeError) {
-                        return conn.rollback(function () {
-                            conn.release();
-                            callback(typeError);
-                            return;
-                        });
-                    }
-                    console.log("[DBAM] Insert 2 successful");
-                    conn.commit(function (commitError) {
-                        conn.release();
-                        if (commitError) {
-                            return conn.rollback(function () {
-                                callback(commitError);
-                                return;
-                            });
-                        }
-                        console.log("[DBAM] Commit succesful");
-                        
-                        if (newUser.type === "sponsor" && newUser.accreditFile) {
-                            fileManager.handleAccreditFileUpload(
-                                newUser.email,
-                                results.insertId,
-                                newUser.accreditFile,
-                                function (fileUploadError) {
-                                    if (fileUploadError) {
-                                        callback(fileUploadError);
-                                        return;
-                                    } else {
-                                        callback(null);
-                                        return;
-                                    }
-                                }
-                            );
-                        }
-                    });
-                });
-            });
-        });
-    });
-};
+    conn.beginTransaction(function (transactionError) {
+      if (transactionError) {
+        callback(transactionError);
+        return;
+      }
 
+      conn.query({
+        sql: "INSERT INTO benutzer (email, passwort, geburtsdatum) VALUES(?, ?, ?)",
+        values: [newUser.email, newUser.password, newUser.dateOfBirth]
+      }, function (error, results, fields) {
+        if (error) {
+          return conn.rollback(function () {
+            conn.release();
+            callback(error);
+            return;
+          });
+        }
+        console.log("[DBAM] Insert 1 successful");
+                
+        conn.query({
+          sql: "INSERT INTO ?? (user_id) VALUES (?)",
+          values: [newUser.type, results.insertId]
+        }, function (typeError, typeResults, typeFields) {
+          if (typeError) {
+            return conn.rollback(function () {
+              conn.release();
+              callback(typeError);
+              return;
+            });
+          }
+          console.log("[DBAM] Insert 2 successful");
+            
+          conn.commit(function (commitError) {
+            conn.release();
+            if (commitError) {
+              return conn.rollback(function () {
+                callback(commitError);
+                return;
+              });
+            }
+            console.log("[DBAM] Commit succesful");
+                        
+            if (newUser.type === "sponsor" && newUser.accreditFile) {
+              fileManager.handleAccreditFileUpload(
+                newUser.email,
+                results.insertId,
+                newUser.accreditFile,
+                function (fileUploadError) {
+                  if (fileUploadError) {
+                    callback(fileUploadError);
+                    return;
+                  } else {
+                    callback(null);
+                    return;
+                  }
+                }
+              );
+            }
+          });
+        });
+      });
+    });
+  });
+};
 
 /**
  * Fügt der Datenbank Referenzen zu einer Datei hinzu.
  * @param   {object}   options  Optionen-Objekt. Enthält eine Relationsreferenz, den Dateipfad und den Dateityp.
  * @param   {insertCallback} callback Callbackfunktion
  */
-exports.insertFile = function (options, callback) {
-    console.log("[DBAM] insertFile");
+exports.insertFile = function insertFile(options, callback) {
     
-    var invalidOptions = (!options.relation || !options.path || !options.type);
-    if (invalidOptions) {
-        callback(new Error("[DBAM] Invalid options object"));
-        return;
+  var invalidOptions = (!options.relation || !options.path || !options.type);
+  if (invalidOptions) {
+    callback(new Error("[DBAM] Invalid options object"));
+    return;
+  }
+    
+  this.pool.getConnection(function (connError, conn) {
+    if (connError) {
+      callback(connError);
+      return;
     }
-    
-    this.pool.getConnection(function (connError, conn) {
-        if (connError) {
-            callback(connError);
-            return;
-        }
-        console.log("Connected with ID " + conn.threadId);
         
-        conn.beginTransaction(function (transactionError) {
-            if (transactionError) {
-                conn.release();
-                callback(transactionError);
-                return;
-            }
+    conn.beginTransaction(function (transactionError) {
+      if (transactionError) {
+        conn.release();
+        callback(transactionError);
+        return;
+      }
             
-            conn.query({
-                sql: "INSERT INTO datei (pfad, dateityp) VALUES(?, ?);",
-                values: [options.path, options.type]
-            }, function (error, results, fields) {
-                if (error) {
-                    return conn.rollback(function () {
-                        conn.release();
-                        callback(error);
-                        return;
-                    });
-                }
-                
-                console.log("[DBAM] Insert 1 successful");
-                var validRelationOptions = (
-                    options.relation.user || options.relation.project || options.relation.projectupdate
-                ),
-                    values = [];
-                if (!validRelationOptions) {
-                    return conn.rollback(function () {
-                        conn.release();
-                        callback(new Error("Invalid Relation Option"));
-                        return;
-                    });
-                }
-                
-                //SQL-Parameter setzen
-                if (options.relation.user) {
-                    values = [
-                        "datei_benutzer",
-                        "benutzer_id",
-                        options.relation.user,
-                        results.insertId
-                    ];
-                } else if (options.relation.project) {
-                    values = [
-                        "datei_projekt",
-                        "projekt_id",
-                        options.relation.project,
-                        results.insertId
-                    ];
-                } else if (options.relation.projectupdate) {
-                    values = [
-                        "datei_projektupdate",
-                        "projektupdate_id",
-                        options.relation.projectupdate,
-                        results.insertId
-                    ];
-                }
-                
-                conn.query({
-                    sql: "INSERT INTO ?? (??, datei_id) VALUES (?, ?)",
-                    values: values
-                }, function (relationError, relationResults, relationFields) {
-                    if (relationError) {
-                        return conn.rollback(function () {
-                            conn.release();
-                            callback(relationError);
-                            return;
-                        });
-                    }
-                    
-                    console.log("[DBAM] relation insert succesful");
-                    conn.commit(function (commitError) {
-                        conn.release();
-                        if (commitError) {
-                            return conn.rollback(function () {
-                                callback(commitError);
-                                return;
-                            });
-                        } else {
-                            console.log("[DBAM] commit succesful");
-                            callback(null);
-                            return;
-                        }
-                    });
-                });
-            });
-        });
-    });
-};
+      conn.query({
+        sql: "INSERT INTO datei (pfad, dateityp) VALUES(?, ?);",
+        values: [options.path, options.type]
+      }, function (error, results, fields) {
+        if (error) {
+          return conn.rollback(function () {
+            conn.release();
+            callback(error);
+            return;
+          });
+        }
 
+        var validRelationOptions = (
+          options.relation.user || options.relation.project || options.relation.projectupdate
+        ),
+            values = [];
+        if (!validRelationOptions) {
+          return conn.rollback(function () {
+            conn.release();
+            callback(new Error("Invalid Relation Option"));
+            return;
+          });
+        }
+                
+        //SQL-Parameter setzen
+        if (options.relation.user) {
+          values = [
+            "datei_benutzer",
+            "benutzer_id",
+            options.relation.user,
+            results.insertId
+          ];
+        } else if (options.relation.project) {
+          values = [
+            "datei_projekt",
+            "projekt_id",
+            options.relation.project,
+            results.insertId
+          ];
+        } else if (options.relation.projectupdate) {
+          values = [
+            "datei_projektupdate",
+            "projektupdate_id",
+            options.relation.projectupdate,
+            results.insertId
+          ];
+        }
+                
+        conn.query({
+          sql: "INSERT INTO ?? (??, datei_id) VALUES (?, ?)",
+          values: values
+        }, function (relationError, relationResults, relationFields) {
+
+          if (relationError) {
+            return conn.rollback(function () {
+              conn.release();
+              callback(relationError);
+              return;
+            });
+          }
+
+          conn.commit(function (commitError) {
+            conn.release();
+            if (commitError) {
+              return conn.rollback(function () {
+                callback(commitError);
+                return;
+              });
+            } else {
+              callback(null);
+              return;
+            }
+          });
+        });
+      });
+    });
+  });
+};
 
 /**
  * Sucht in der Datenbank einen Benutzer nach Email-Adresse.
  * @param {string} email - Email-Adresse des Benutzers
  * @param {selectCallback} callback - Callbackfunktion zum Verarbeiten der Rückgabewerte
  */
-exports.findUserByEmail = function (email, callback) {
-    this.pool.getConnection(function (connectionError, conn) {
-        if (connectionError) {
-            callback(connectionError, null);
-        }
-        console.log("[DBAM] findUser:Connected with ID " + conn.threadId);
-        conn.query('SELECT * FROM benutzer WHERE email = ? LIMIT 1', [email], function (selectError, results, fields) {
-            if (selectError) {
-                conn.release();
-                callback(selectError, null);
-                return;
-            }
-            if (results.length === 1) {
-                conn.query('SELECT * FROM casemodder WHERE user_id = ? LIMIT 1', [results[0].id], function (typeSelectError, isCasemodderResults, typeFields) {
-                    conn.release();
-                    if (typeSelectError) {
-                        callback(typeSelectError, null);
-                        return;
-                    }
-                    results[0].isCasemodder = isCasemodderResults.length > 0 ? true : false;
-                    callback(null, JSON.stringify(results[0]));
-                    return;
-                });
-            } else {
-                callback(null, null);
-                return;
-            }
-        });
-    });
-};
+exports.findUserByEmail = function findUserByEmail(email, callback) {
 
+  this.pool.getConnection(function (connectionError, conn) {
+
+    if (connectionError) {
+      callback(connectionError, null);
+    }
+
+    conn.query(
+      'SELECT * FROM benutzer WHERE email = ? LIMIT 1',
+      [email],
+      function (selectError, results, fields) {
+
+        if (selectError) {
+          conn.release();
+          callback(selectError, null);
+          return;
+        }
+
+        if (results.length === 1) {
+
+          conn.query(
+            'SELECT * FROM casemodder WHERE user_id = ? LIMIT 1',
+            [results[0].id],
+            function (typeSelectError, isCasemodderResults, typeFields) {
+            
+              conn.release();
+              if (typeSelectError) {
+                callback(typeSelectError, null);
+                return;
+              }
+
+              results[0].isCasemodder = isCasemodderResults.length > 0 ? true : false;
+              callback(null, JSON.stringify(results[0]));
+              return;
+            }
+          );
+        } else {
+          callback(null, null);
+          return;
+        }
+      }
+    );
+  });
+};
 
 /**
  * Ruft die Profildaten eines Benutzers ab
@@ -385,93 +337,101 @@ exports.findUserByEmail = function (email, callback) {
  * @param {string} userType - Benutzertyp
  * @param {selectCallback} callback - Callbackfunktion zum Verarbeiten der Rückgabewerte
  */
-exports.getProfileData = function (userId, userType, callback) {
-    this.pool.getConnection(function (connError, conn) {
-        if (connError) {
-            callback(connError, null);
+exports.getProfileData = function getProfileData(userId, userType, callback) {
+  this.pool.getConnection(
+    function (connError, conn) {
+      if (connError) {
+        callback(connError, null);
+        return;
+      }
+      var isCasemodder = (userType === "casemodder"),
+          returnData = isCasemodder
+          ? {
+            nachname: "",
+            vorname: "",
+            suchstatus: false,
+            wohnort: "",
+            beschreibung: ""
+          }
+          : {
+            nachname: "",
+            vorname: "",
+            firma: "",
+            beschreibung: ""
+          };
+      conn.query(
+        "SELECT * FROM benutzer WHERE id = ? LIMIT 1",
+        [userId],
+        function (userError, userResults, userFields) {
+          if (userError) {
+            conn.release();
+            callback(userError, null);
             return;
+          }
+          if (userResults.length > 0) {
+            returnData.nachname = userResults[0].nachname;
+            returnData.vorname = userResults[0].vorname;
+            conn.query(
+              "SELECT * FROM ?? WHERE user_id = ?",
+              [userType, userId],
+              function (typeError, typeResults, typeFields) {
+                conn.release();
+                if (typeError) {
+                  callback(typeError, null);
+                  return;
+                }
+                if (typeResults.length > 0) {
+                  switch (userType) {
+                  case "casemodder":
+                    returnData.suchstatus = typeResults[0].suchstatus;
+                    returnData.wohnort = typeResults[0].wohnort;
+                    returnData.beschreibung = typeResults[0].beschreibung;
+                    break;
+                  case "sponsor":
+                    returnData.firma = typeResults[0].firma;
+                    returnData.beschreibung = typeResults[0].beschreibung;
+                    break;
+                  default:
+                    break;
+                  }
+                  callback(null, returnData);
+                  return;
+                }
+              }
+            );
+          }
         }
-        console.log("[DBAM] getProfile:Connected with ID " + conn.threadId);
-        var isCasemodder = (userType === "casemodder"),
-            returnData = isCasemodder
-                ? {
-                    nachname: "",
-                    vorname: "",
-                    suchstatus: false,
-                    wohnort: "",
-                    beschreibung: ""
-                }
-                : {
-                    nachname: "",
-                    vorname: "",
-                    firma: "",
-                    beschreibung: ""
-                };
-        conn.query(
-            "SELECT * FROM benutzer WHERE id = ? LIMIT 1",
-            [userId],
-            function (userError, userResults, userFields) {
-                if (userError) {
-                    conn.release();
-                    callback(userError, null);
-                    return;
-                }
-                if (userResults.length > 0) {
-                    returnData.nachname = userResults[0].nachname;
-                    returnData.vorname = userResults[0].vorname;
-                    conn.query(
-                        "SELECT * FROM ?? WHERE user_id = ?",
-                        [userType, userId],
-                        function (typeError, typeResults, typeFields) {
-                            conn.release();
-                            if (typeError) {
-                                callback(typeError, null);
-                            }
-                            if (typeResults.length > 0) {
-                                switch (userType) {
-                                case "casemodder":
-                                    returnData.suchstatus = typeResults[0].suchstatus;
-                                    returnData.wohnort = typeResults[0].wohnort;
-                                    returnData.beschreibung = typeResults[0].beschreibung;
-                                    break;
-                                case "sponsor":
-                                    returnData.firma = typeResults[0].firma;
-                                    returnData.beschreibung = typeResults[0].beschreibung;
-                                    break;
-                                default:
-                                    break;
-                                }
-                                callback(null, returnData);
-                            }
-                        }
-                    );
-                }
-            }
-        );
-    });
+      );
+    }
+  );
 };
 
-
-
-exports.getProjectsForUser = function (userId, callback) {
-    this.pool.getConnection(function (connError, conn) {
-        if (connError) {
-            callback(connError, null);
-            return;
+/**
+ * Holt "Header-Informationen" über die Projekte eines Benutzers (ID und Titel)
+ * @param {int} userId   BenutzerID
+ * @param {selectCallback} callback Callbackfunktion
+ */
+exports.getProjectsForUser = function getProjectsForUser(userId, callback) {
+  this.pool.getConnection(function (connError, conn) {
+    if (connError) {
+      callback(connError, null);
+      return;
+    }
+    conn.query(
+      'SELECT id, titel FROM projekt WHERE casemodder_id = ? ORDER BY erstellt_am DESC',
+      [userId],
+      function (error, results, fields) {
+        conn.release();
+        if (error) {
+          callback(error, null);
+          return;
         }
-        console.log("[DBAM] getProjectsForUser: Connected with ID " + conn.threadId);
-        
-        conn.query("SELECT id, titel FROM projekt WHERE casemodder_id = ? ORDER BY erstellt_am DESC", [userId], function (error, results, fields) {
-            conn.release();
-            if (error) {
-                callback(error, null);
-                return;
-            }
-            results = JSON.parse(JSON.stringify(results));
-            callback(null, results);
-            return;
-        });
-    });
+        results = JSON.parse(JSON.stringify(results));
+        callback(null, results);
+        return;
+      }
+    );
+  });
 };
 
 /**
@@ -479,27 +439,27 @@ exports.getProjectsForUser = function (userId, callback) {
  * @param {int} userId - ID des Benutzers
  * @param {selectCallback} callback - Callbackfunktion zum Verarbeiten der Rückgabewerte
  */
-exports.checkForNewMessages = function (userId, callback) {
-    this.pool.getConnection(function (connError, conn) {
-        if (connError) {
-            callback(connError, null);
+exports.checkForNewMessages = function checkForNewMessages(userId, callback) {
+  this.pool.getConnection(function (err, conn) {
+    if (err) {
+      callback(err, null);
+    }
+    console.log("[DBAM] checkNewMessages: Connected with ID " + conn.threadId);
+    conn.query(
+      'SELECT COUNT(*) AS newMessages FROM nachricht WHERE empfanger_id = ? AND ungelesen = 1',
+      [userId],
+      function (err, row, fields) {
+        if (err) {
+          callback(queryError, null);
+          return;
+        } else {
+          console.log(row[0]);
+          callback(null, row[0].newMessages);
+          return;
         }
-        console.log("[DBAM] checkNewMessages: Connected with ID " + conn.threadId);
-        conn.query(
-            "SELECT COUNT(*) FROM nachricht WHERE empfanger_id = ? AND gelesen = 0",
-            [userId],
-            function (queryError, results, fields) {
-                if (queryError) {
-                    callback(queryError, null);
-                    return;
-                } else {
-                    console.log(results);
-                    callback(null, results);
-                    return;
-                }
-            }
-        );
-    });
+      }
+    );
+  });
 };
 
 /**
@@ -811,6 +771,7 @@ exports.countUserComments = function (userId, callback) {
 };
 
 
+
 /**
  * Holt ein Projekt, seine Kommentare, Updates und alle dazugehörigen Upvotes.
  * @param {int} pId - ID des Projektes
@@ -818,40 +779,65 @@ exports.countUserComments = function (userId, callback) {
  * @param {selectCallback} callback - Callbackfunktion
  */
 exports.getProject = function (pId, uId, callback) {
-    this.pool.getConnection(function (connError, conn) {
-        if (connError) {
-            callback(connError, null);
-        }
-        console.log('[DBAM] getProject: Connected with ID ' + conn.threadId);
-        var countSql = '(SELECT COUNT(*) FROM projekt_upvote pu WHERE pu.projekt_id = ?) AS upvotes',
-            sql = 'SELECT p.*, b.vorname, b.nachname, ' + countSql + ' FROM projekt p JOIN benutzer b ON p.casemodder_id = b.id WHERE p.id = ? LIMIT 1';
+  this.pool.getConnection(function (connError, conn) {
+    if (connError) {
+      callback(connError, null);
+    }
+    console.log('[DBAM] getProject: Connected with ID ' + conn.threadId);
+    var countSql = '(SELECT COUNT(*) FROM projekt_upvote pu WHERE pu.projekt_id = ?) AS upvotes',
+        sql = 'SELECT p.*, b.vorname, b.nachname, ' + countSql + ' FROM projekt p JOIN benutzer b ON p.casemodder_id = b.id WHERE p.id = ? LIMIT 1';
         
-        conn.query(sql, [pId, pId], function (error, results, fields) {
-            if (error) {
-                callback(error, null);
-                return;
+    conn.query(sql, [pId, pId], function (error, results, fields) {
+      if (error) {
+        callback(error, null);
+        return;
+      }
+      if (results.length === 1) {
+        var result = JSON.parse(JSON.stringify(results[0]));
+        if (result.casemodder_id === uId) {
+          result.userOwnsProject = true;
+        } else {
+          result.userOwnsProject = false;
+        }
+        console.log(result);
+                
+        // Get Comments for the Project
+        conn.query(
+          'SELECT id FROM kommentar k JOIN projekt_kommentar pk on k.id = pk.kommentar_id WHERE pk.projekt_id = ?',
+          [pId],
+          function (commentsError, commentsResults, commentsFields) {
+                
+            if (commentsError) {
+              callback(commentsError, null);
+              return;
             }
-            if (results.length === 1) {
-                var result = JSON.parse(JSON.stringify(results[0]));
-                if (result.casemodder_id === uId) {
-                    result.userOwnsProject = true;
-                } else {
-                    result.userOwnsProject = false;
+            commentsResults = JSON.parse(JSON.stringify(commentsResults));
+
+            // Get project updates
+            conn.query(
+              'SELECT * FROM projektupdate WHERE projekt_id = ?',
+              [pId],
+              function (puError, puResults, puFields) {
+
+                if (puError) {
+                  conn.release();
+                  callback(puError, null);
+                  return;
                 }
+
+                result.updates = JSON.parse(JSON.stringify(puResults));
                 console.log(result);
-                conn.query("SELECT * FROM projektupdate WHERE projekt_id = ?", [pId], function (puError, puResults, puFields) {
-                    conn.release();
-                    if (puError) {
-                        callback(puError, null);
-                        return;
-                    }
-                    result.updates = JSON.parse(JSON.stringify(puResults));
-                    console.log(result);
-                    callback(null, result);
-                });
-            }
-        });
+                callback(null, result);
+              }
+            );
+          }
+        );
+      } else {
+        callback(null, null);
+        return;
+      }
     });
+  });
 };
 
 

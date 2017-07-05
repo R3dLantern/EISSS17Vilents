@@ -3,6 +3,7 @@ package application.util.ui;
 import java.io.IOException;
 import java.util.UUID;
 
+import application.Main;
 import application.controller.IProfileController;
 import application.controller.ProjectController;
 import application.util.EFXML;
@@ -23,8 +24,9 @@ public class LayoutManager{
 	
 	/**
 	 * Konstruktor
-	 * @param userId Benutzer-ID
-	 * @param layoutForCasemodder Flag für Benutzertyp
+	 * @param userId				Benutzer-ID
+	 * @param layoutForCasemodder 	Flag für Benutzertyp
+	 * @param tabPane				Das TabPane-Objekt, in das später neue Tab eingesetzt werden können
 	 */
 	public LayoutManager(int userId, boolean layoutForCasemodder, TabPane tabPane) {
 		this.userId = userId;
@@ -57,10 +59,12 @@ public class LayoutManager{
 	
 	/**
 	 * Gibt die dynamisch initialisierte Profil-Pane zurück.
-	 * @param isCasemodderProfile Flag für Benutzertyp
-	 * @return Initialisiertes Pane-Objekt
+	 * @param userId				ID des Benutzers, dessen Profil angezeigt werden soll
+	 * @param isCasemodderProfile 	Flag für Benutzertyp
+	 * @return 						Initialisiertes Pane-Objekt
 	 */
 	public Pane getProfileTabContent(int userId, boolean isCasemodderProfile) {
+		Main.log(Integer.toString(userId));
 		FXMLLoader loader = new FXMLLoader(
 			getClass()
 			.getResource(
@@ -75,14 +79,17 @@ public class LayoutManager{
 			controller.initWithData(userId);
 			if(userId == this.userId) {
 				return content;
+			} else {
+				Main.log("else");
+				Tab profileTab = new Tab();
+				profileTab.setClosable(true);
+				profileTab.setContent(content);
+				profileTab.setText(controller.getName());
+				profileTab.setId("tab_" + UUID.randomUUID().toString());
+				tabPane.getTabs().add(profileTab);
+				tabPane.getSelectionModel().select(tabPane.getTabs().indexOf(profileTab));
+				return null;
 			}
-			Tab singleProjectTab = new Tab();
-			singleProjectTab.setClosable(true);
-			singleProjectTab.setContent(content);
-			singleProjectTab.setText(controller.getName());
-			tabPane.getTabs().add(singleProjectTab);
-			tabPane.getSelectionModel().select(tabPane.getTabs().indexOf(singleProjectTab));
-			return null;
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
@@ -152,7 +159,6 @@ public class LayoutManager{
 	/**
 	 * Initialisiert eine Projekt-Pane und gibt sie zurück
 	 * @param projectId Projekt-ID
-	 * @return Initialisiertes Pane-Objekt
 	 */
 	public void getSingleProjectTab(int projectId) {
 		try {

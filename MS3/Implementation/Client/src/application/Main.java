@@ -102,7 +102,7 @@ public class Main extends Application
 	 * Initialisiert den LayoutManager.
 	 * @param userId		ID des aktuellen Benutzers
 	 * @param isCasemodder	Flag für Benutzertyp
-	 * @param controller	Refrenzierte Controllerklasse
+	 * @param tabPane		TabPane für Tab-Management
 	 */
 	public static void initializeLayoutManager(int userId, boolean isCasemodder, TabPane tabPane)
 	{

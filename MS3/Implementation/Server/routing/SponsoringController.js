@@ -40,10 +40,14 @@ function getRepInLoop(userObj, i, res) {
         function (error, totalRep) {
             if (error) {
                 res.status(500).end();
-                return;
+                throw error;
             }
             userObj[i].rep = totalRep;
             console.log(userObj[i]);
+            if (i === userObj.length - 1) {
+                console.log(userObj);
+                res.status(200).json(userObj);
+            }
         }
     );
 }
@@ -67,12 +71,13 @@ sponsoringController.get('/index', function (req, res) {
             var i = 0,
                 len = resultObj.length;
             for (i, len; i < len; i += 1) {
-                this.getRepInLopp(resultObj, i, res);
+                getRepInLoop(resultObj, i, res);
             }
         } else {
             resultObj = {};
+            res.status(200).json(resultObj);
         }
-        res.status(200).json(resultObj);
+        return;
     });
 });
 

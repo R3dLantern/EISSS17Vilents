@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `benutzer` (
   `geburtsdatum` date DEFAULT NULL COMMENT 'Geburtstdatum des Benutzers',
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Übergeordnete Tabelle für Benutzer des Systems';
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Übergeordnete Tabelle für Benutzer des Systems';
 
 -- Daten Export vom Benutzer nicht ausgewählt
 -- Exportiere Struktur von Tabelle eis_ss2017.casemodder
@@ -35,9 +35,57 @@ DROP TABLE IF EXISTS `casemodder`;
 CREATE TABLE IF NOT EXISTS `casemodder` (
   `user_id` int(11) NOT NULL COMMENT 'zugehörige User-ID',
   `suchstatus` tinyint(1) DEFAULT '0' COMMENT 'Sponsorsuchstatus, wenn gesetzt, dann für Sponsoren sichtbar',
+  `wohnort` varchar(50) COLLATE utf8_unicode_ci DEFAULT 'Hier Wohnort einfügen' COMMENT 'Grobe Wohnangabe des Benutzers',
+  `beschreibung` varchar(160) COLLATE utf8_unicode_ci DEFAULT 'Hier Beschreibung (max. 160 Zeichen) eingeben!' COMMENT 'Kurzbeschreibung des Benutzers',
   PRIMARY KEY (`user_id`),
   CONSTRAINT `casemodder_user_id` FOREIGN KEY (`user_id`) REFERENCES `benutzer` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- Daten Export vom Benutzer nicht ausgewählt
+-- Exportiere Struktur von Tabelle eis_ss2017.datei
+DROP TABLE IF EXISTS `datei`;
+CREATE TABLE IF NOT EXISTS `datei` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Datei-ID',
+  `pfad` varchar(255) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Absoluter Dateipfad',
+  `dateityp` varchar(255) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Bild oder Dokument',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Tabelle über gespeicherte Dateien';
+
+-- Daten Export vom Benutzer nicht ausgewählt
+-- Exportiere Struktur von Tabelle eis_ss2017.datei_benutzer
+DROP TABLE IF EXISTS `datei_benutzer`;
+CREATE TABLE IF NOT EXISTS `datei_benutzer` (
+  `benutzer_id` int(11) NOT NULL,
+  `datei_id` int(11) NOT NULL,
+  PRIMARY KEY (`benutzer_id`,`datei_id`),
+  KEY `relation_uf_file_id` (`datei_id`),
+  CONSTRAINT `relation_uf_file_id` FOREIGN KEY (`datei_id`) REFERENCES `datei` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `relation_uf_user_id` FOREIGN KEY (`benutzer_id`) REFERENCES `benutzer` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Modeliert die Zugehörigkeit von Dokumenten zu Benutzern.';
+
+-- Daten Export vom Benutzer nicht ausgewählt
+-- Exportiere Struktur von Tabelle eis_ss2017.datei_projekt
+DROP TABLE IF EXISTS `datei_projekt`;
+CREATE TABLE IF NOT EXISTS `datei_projekt` (
+  `projekt_id` int(11) NOT NULL,
+  `datei_id` int(11) NOT NULL,
+  PRIMARY KEY (`projekt_id`,`datei_id`),
+  KEY `relation_pf_file_id` (`datei_id`),
+  CONSTRAINT `relation_pf_file_id` FOREIGN KEY (`datei_id`) REFERENCES `datei` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `relation_pf_project_id` FOREIGN KEY (`projekt_id`) REFERENCES `projekt` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Modelliert die Relation zwischen Dateien und Projekten';
+
+-- Daten Export vom Benutzer nicht ausgewählt
+-- Exportiere Struktur von Tabelle eis_ss2017.datei_projektupdate
+DROP TABLE IF EXISTS `datei_projektupdate`;
+CREATE TABLE IF NOT EXISTS `datei_projektupdate` (
+  `projektupdate_id` int(11) NOT NULL,
+  `datei_id` int(11) NOT NULL,
+  PRIMARY KEY (`projektupdate_id`,`datei_id`),
+  KEY `relation_puf_file_id` (`datei_id`),
+  CONSTRAINT `relation_puf_file_id` FOREIGN KEY (`datei_id`) REFERENCES `datei` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `relation_puf_projectupdate_id` FOREIGN KEY (`projektupdate_id`) REFERENCES `projektupdate` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Modelliert die Relation zwischen Dateien und Projektupdates';
 
 -- Daten Export vom Benutzer nicht ausgewählt
 -- Exportiere Struktur von Tabelle eis_ss2017.kommentar
@@ -73,13 +121,13 @@ CREATE TABLE IF NOT EXISTS `nachricht` (
   `empfanger_id` int(11) DEFAULT NULL COMMENT 'Löschung des Empfängers löscht automatisch Nachricht',
   `zeitstempel` datetime DEFAULT NULL,
   `inhalt` blob,
-  `gelesen` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Wurde die Nachricht gelesen?',
+  `ungelesen` tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Wurde die Nachricht gelesen?',
   PRIMARY KEY (`id`),
   KEY `sender_user_id` (`absender_id`),
   KEY `receiver_user_id` (`empfanger_id`),
   CONSTRAINT `receiver_user_id` FOREIGN KEY (`empfanger_id`) REFERENCES `benutzer` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `sender_user_id` FOREIGN KEY (`absender_id`) REFERENCES `benutzer` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Systeminterne Nachrichten zwischen Benutzern';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Systeminterne Nachrichten zwischen Benutzern';
 
 -- Daten Export vom Benutzer nicht ausgewählt
 -- Exportiere Struktur von Tabelle eis_ss2017.projekt
@@ -87,13 +135,14 @@ DROP TABLE IF EXISTS `projekt`;
 CREATE TABLE IF NOT EXISTS `projekt` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `casemodder_id` int(11) NOT NULL COMMENT 'ID des Casemodders, der das Projekt anlegt',
+  `erstellt_am` date DEFAULT NULL COMMENT 'Erstellungsdatum',
   `titel` varchar(255) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Titel des Projektes',
   `inhalt` blob COMMENT 'Textueller Inhalt, Beschreibung des Projektes',
   `status` varchar(50) COLLATE utf8_unicode_ci NOT NULL DEFAULT '"Laufend"' COMMENT 'Status des Projektes',
   PRIMARY KEY (`id`),
   KEY `CASEMODDER_ID` (`casemodder_id`),
   CONSTRAINT `CASEMODDER_ID` FOREIGN KEY (`casemodder_id`) REFERENCES `casemodder` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Tabelle von Case Modding-Projekten im System';
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Tabelle von Case Modding-Projekten im System';
 
 -- Daten Export vom Benutzer nicht ausgewählt
 -- Exportiere Struktur von Tabelle eis_ss2017.projektupdate
@@ -106,7 +155,7 @@ CREATE TABLE IF NOT EXISTS `projektupdate` (
   PRIMARY KEY (`id`),
   KEY `PROJECT_ID` (`projekt_id`),
   CONSTRAINT `PROJECT_ID` FOREIGN KEY (`projekt_id`) REFERENCES `projekt` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Updates zu Projekten';
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Updates zu Projekten';
 
 -- Daten Export vom Benutzer nicht ausgewählt
 -- Exportiere Struktur von Tabelle eis_ss2017.projektupdate_kommentar
@@ -114,6 +163,7 @@ DROP TABLE IF EXISTS `projektupdate_kommentar`;
 CREATE TABLE IF NOT EXISTS `projektupdate_kommentar` (
   `projektupdate_id` int(11) NOT NULL,
   `kommentar_id` int(11) NOT NULL,
+  `ungelesen` tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Flag für Dashboard',
   PRIMARY KEY (`projektupdate_id`,`kommentar_id`),
   KEY `relation_puc_comment_id` (`kommentar_id`),
   CONSTRAINT `relation_puc_comment_id` FOREIGN KEY (`kommentar_id`) REFERENCES `kommentar` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -138,6 +188,7 @@ DROP TABLE IF EXISTS `projekt_kommentar`;
 CREATE TABLE IF NOT EXISTS `projekt_kommentar` (
   `projekt_id` int(11) NOT NULL,
   `kommentar_id` int(11) NOT NULL,
+  `ungelesen` tinyint(1) NOT NULL DEFAULT '1' COMMENT 'Flag für Dashboard',
   PRIMARY KEY (`projekt_id`,`kommentar_id`),
   KEY `relation_pc_comment_id` (`kommentar_id`),
   CONSTRAINT `relation_pc_comment_id` FOREIGN KEY (`kommentar_id`) REFERENCES `kommentar` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -161,6 +212,8 @@ CREATE TABLE IF NOT EXISTS `projekt_upvote` (
 DROP TABLE IF EXISTS `sponsor`;
 CREATE TABLE IF NOT EXISTS `sponsor` (
   `user_id` int(11) NOT NULL COMMENT 'ID des Benutzers',
+  `firma` varchar(50) COLLATE utf8_unicode_ci DEFAULT 'Wo arbeiten Sie?',
+  `beschreibung` varchar(160) COLLATE utf8_unicode_ci DEFAULT 'Beschreiben Sie sich (max 160 Zeichen)',
   PRIMARY KEY (`user_id`),
   CONSTRAINT `sponsor_user_id` FOREIGN KEY (`user_id`) REFERENCES `benutzer` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Sponsorenbenutzer';
