@@ -132,6 +132,7 @@ local.properties
 *.war
 *.ear
 *.zip
+!client.zip
 *.tar.gz
 *.rar
 
