@@ -929,4 +929,11 @@ exports.createNewMessage = function createNewMessage(messageObject, callback) {
 };
 
 
+
+
+exports.deleteUserAccount = function deleteUserAccount(userId, callback) {
+    
+};
+
+
 module.exports = exports;

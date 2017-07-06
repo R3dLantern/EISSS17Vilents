@@ -90,4 +90,37 @@ loginController.get('/logout', function (req, res) {
     });
 });
 
+
+/**
+ * @function
+ * @name LoginController::deleteAccount
+ * @desc Löscht ein Benutzerkonto
+ * @param {string} path - Route
+ * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
+ */
+loginController.post('/deleteAccount', function (req, res) {
+  var password = req.body.password,
+      email = req.user.email;
+  dbam.findUserByEmail(
+    email,
+    function (error, result) {
+      if (error) {
+        res.status(500).end();
+        throw error;
+      } else {
+        result = JSON.parse(result);
+        if (result.passwort === req.body.password) {
+          var id = req.user.id;
+          dbam.deleteUserAccount(
+            id,
+            function (error) {
+              
+            }
+          );
+        }
+      }
+    }
+  );
+});
+
 module.exports = loginController;
