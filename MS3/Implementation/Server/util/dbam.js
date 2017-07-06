@@ -573,8 +573,6 @@ exports.getMessagesOverviewData = function (userId, callback) {
     });
 };
 
-
-
 /**
  * Holt alle Casemodder-Benutzer mit aktiviertem Suchstatus
  * @param {selectCallback} callback Callbackfunktion
@@ -609,8 +607,7 @@ exports.getSponsoringApplicants = function (callback) {
  * @param {int} userId - Die ID des Benutzers
  * @param {selectCallback} callback - Callbackfunktion zum Verarbeiten der Rückgabewerte
  */
-exports.countUserProjects = function (userId, callback) {
-    console.log("[DBAM] countUserProjects");
+exports.countUserProjects = function countUserProjects(userId, callback) {
     var resObj = {
         projects: 0,
         projectUpvotes: 0,
@@ -622,7 +619,6 @@ exports.countUserProjects = function (userId, callback) {
             callback(connectionError, null);
             return;
         }
-        console.log("[DBAM] Connected with ID " + conn.threadId);
         
         // Alle Projekte des Casemodders
         conn.query('SELECT * FROM projekt WHERE casemodder_id = ?', [userId], function (projectsError, projectsResults, projectsFields) {
@@ -637,8 +633,7 @@ exports.countUserProjects = function (userId, callback) {
                 
                 var i = 0,
                     projectsCount = projectsResults.length,
-                    projectUpvoteCountSQL = "SELECT COUNT(*) as count FROM projekt_upvote WHERE projekt_id IN (",
-                    projectUpdatesSQL = "SELECT * FROM projektupdate WHERE projekt_id IN (";
+                    projectUpvoteCountSQL = "SELECT COUNT(*) as count FROM projekt_upvote WHERE projekt_id IN (";
                 
                 // Anzahl Projekte setzen
                 resObj.projects = projectsCount;
@@ -646,14 +641,12 @@ exports.countUserProjects = function (userId, callback) {
                 // SQL-Sctring konstruieren
                 for (i, projectsCount; i < projectsCount; i += 1) {
                     projectUpvoteCountSQL += projectsResults[i].id.toString() + (i === projectsCount - 1 ? "" : ", ");
-                    projectUpdatesSQL += projectsResults[i].id.toString() + (i === projectsCount - 1 ? "" : ", ");
                 }
                 projectUpvoteCountSQL += ")";
-                projectUpdatesSQL += ")";
                 
                 // Alle Upvotes für die Projekte des Casemodders
                 conn.query(projectUpvoteCountSQL, function (pUpvoteCountError, pUpvoteCountResults, pUpvoteCountFields) {
-                    // Fehler abfangen
+                    conn.release();
                     if (pUpvoteCountError) {
                         callback(pUpvoteCountError, null);
                         return;
@@ -662,51 +655,15 @@ exports.countUserProjects = function (userId, callback) {
                     if (pUpvoteCountResults) {
                         resObj.projectUpvotes = pUpvoteCountResults[0].count;
                     }
-                });
-                
-                // Alle Projektupdates der Projekte des Casemodders
-                conn.query(projectUpdatesSQL, function (projectUpdatesError, projectUpdatesResults, projectUpdatesFields) {
-                    // Fehler abfangen
-                    if (projectUpdatesError) {
-                        conn.release();
-                        callback(projectUpdatesError, null);
-                        return;
-                    }
-                
-                    // Gibt es Projektupdates zu den Projekten?
-                    if (projectUpdatesResults.length > 0) {
-                        
-                        resObj.projectUpdates = projectUpdatesResults.length;
-                        
-                        var j = 0,
-                            puLen = projectUpdatesResults.length,
-                            projectUpdatesUpvoteCountSQL = "SELECT COUNT(*) as count FROM projektupdate_upvote WHERE projektupdate_id IN (";
-                        for (j, puLen; j < puLen; j += 1) {
-                            projectUpdatesUpvoteCountSQL += projectUpdatesResults[j].id.toString() + (j === puLen - 1 ? "" : ", ");
-                        }
-                        projectUpdatesUpvoteCountSQL += ")";
-                        
-                        // Alle Upvotes für die Projektupdates der Projekte des Casemodders
-                        conn.query(projectUpdatesUpvoteCountSQL, function (puUpvoteError, puUpvoteResults, puUpvoteFields) {
-                            // Letzte Abfrage
-                            conn.release();
-                            
-                            // Fehler abfangen
-                            if (puUpvoteError) {
-                                callback(puUpvoteError, null);
-                                return;
-                            }
-                            
-                            resObj.projectUpdateUpvotes = puUpvoteResults[0].count;
-                            callback(null, resObj);
+                    
+                    exports.countUserProjectUpdates(resObj, projectsResults, function (error, resultObject) {
+                        if (error) {
+                            callback(error, null);
                             return;
-                        });
-                    } else {
-                        callback(null, resObj);
-                        return;
-                    }
-                
-                });
+                        }
+                        callback(null, resultObject);
+                    });
+                });   
             } else {
                 conn.release();
                 callback(null, resObj);
@@ -714,6 +671,75 @@ exports.countUserProjects = function (userId, callback) {
             }
         });
     });
+};
+
+
+/**
+ * Zählt für ein Projekt die Projektupdates und alle dazugehörigen Upvotes
+ * @param {object}   resultObject  Übergebenes Objekt mit Gesamtergebnissen
+ * @param {object[]} projectsArray Array mit Projekt-Objekten
+ * @param {selectCallback} callback Callbackfunktion
+ */
+exports.countUserProjectUpdates = function countUserProjectUpdates(resultObject, projectsArray, callback) {
+    this.pool.getConnection(function (error, conn) {
+        if (error) {
+            callback(error, null);
+        }
+        
+        if (projectsArray.length > 0) {
+            var i = 0,
+                projectsCount = projectsArray.length,
+                projectUpdatesSQL = "SELECT * FROM projektupdate WHERE projekt_id IN (";
+            for (i, projectsCount; i < projectsCount; i += 1) {
+                projectUpdatesSQL += projectsArray[i].id.toString() + (i === projectsCount - 1 ? "" : ", ");
+            }
+            projectUpdatesSQL += ")";
+            
+            conn.query(
+                projectUpdatesSQL,
+                function (projectUpdatesError, projectUpdatesResults, projectUpdatesFields) {
+                // Fehler abfangen
+                if (projectUpdatesError) {
+                    conn.release();
+                    callback(projectUpdatesError, null);
+                    return;
+                }
+                
+                // Gibt es Projektupdates zu den Projekten?
+                if (projectUpdatesResults.length > 0) {
+                        
+                    resultObject.projectUpdates = projectUpdatesResults.length;
+                        
+                    var j = 0,
+                        puLen = projectUpdatesResults.length,
+                        projectUpdatesUpvoteCountSQL = "SELECT COUNT(*) as count FROM projektupdate_upvote WHERE projektupdate_id IN (";
+                    for (j, puLen; j < puLen; j += 1) {
+                        projectUpdatesUpvoteCountSQL += projectUpdatesResults[j].id.toString() + (j === puLen - 1 ? "" : ", ");
+                    }
+                    projectUpdatesUpvoteCountSQL += ")";
+                        
+                    // Alle Upvotes für die Projektupdates der Projekte des Casemodders
+                    conn.query(projectUpdatesUpvoteCountSQL, function (puUpvoteError, puUpvoteResults, puUpvoteFields) {
+                        // Letzte Abfrage
+                        conn.release();
+                            
+                        // Fehler abfangen
+                        if (puUpvoteError) {
+                            callback(puUpvoteError, null);
+                            return;
+                        }
+                            
+                        resultObject.projectUpdateUpvotes = puUpvoteResults[0].count;
+                        callback(null, resultObject);
+                        return;
+                    });
+                } else {
+                    callback(null, resultObject);
+                    return;
+                }    
+            });
+        }
+    })
 };
 
 

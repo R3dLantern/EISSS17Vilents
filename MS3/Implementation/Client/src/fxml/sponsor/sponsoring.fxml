@@ -7,12 +7,11 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-
 <Pane prefHeight="520.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.sponsor.SponsoringController">
    <children>
-      <ScrollPane layoutX="10.0" layoutY="245.0" prefHeight="267.0" prefWidth="780.0">
+      <ScrollPane layoutX="10.0" layoutY="245.0" maxHeight="267.0" maxWidth="780.0" pannable="true" prefHeight="267.0" prefWidth="780.0">
          <content>
-            <HBox fx:id="applicantsContent" prefHeight="250.0" prefWidth="778.0" spacing="20.0" />
+            <HBox fx:id="applicantsContent" spacing="20.0" />
          </content>
       </ScrollPane>
       <HBox fx:id="candidatesContent" layoutX="77.0" layoutY="57.0" prefHeight="149.0" prefWidth="445.0" spacing="20.0" />

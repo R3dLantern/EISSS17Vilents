@@ -27,6 +27,7 @@ public class SponsoringApplicantController {
 	/**
 	 * Initialisiert das Snippet mit den Daten.
 	 * @param applicantId	Benutzer-ID des Anwärters
+	 * @param rep			Gesamtreputation des Anwärters
 	 * @param vorname		Vorname des Anwärters
 	 * @param nachname		Nachname des Anwärters
 	 */

@@ -154,6 +154,160 @@
 
     
 
+    <h4 class="name" id="~getRepInLoop"><span class="type-signature">(inner) </span>getRepInLoop<span class="signature">(userObj, callback)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Schleife zum Erhalt mehrerer Gesamtreputationen für Benutzer
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>userObj</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Array von Benutzer-Objekten</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">loopCallback</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">callback Callbackfunktion bei Abschluss der Schleife, oder bei Fehlermeldung.<a href="https://stackoverflow.com/questions/21184340/async-for-loop-in-node-js">Quelle in akzeptierter Antwort</a></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="routing_SponsoringController.js.html">routing/SponsoringController.js</a>, <a href="routing_SponsoringController.js.html#line50">line 50</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
     <h4 class="name" id="~SponsoringController::create"><span class="type-signature">(inner) </span>SponsoringController::create<span class="signature">(path, middleware)</span><span class="type-signature"></span></h4>
 
     
@@ -277,7 +431,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="routing_SponsoringController.js.html">routing/SponsoringController.js</a>, <a href="routing_SponsoringController.js.html#line87">line 87</a>
+        <a href="routing_SponsoringController.js.html">routing/SponsoringController.js</a>, <a href="routing_SponsoringController.js.html#line122">line 122</a>
     </li></ul></dd>
     
 
@@ -415,7 +569,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="routing_SponsoringController.js.html">routing/SponsoringController.js</a>, <a href="routing_SponsoringController.js.html#line122">line 122</a>
+        <a href="routing_SponsoringController.js.html">routing/SponsoringController.js</a>, <a href="routing_SponsoringController.js.html#line157">line 157</a>
     </li></ul></dd>
     
 
@@ -576,7 +730,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="routing_SponsoringController.js.html">routing/SponsoringController.js</a>, <a href="routing_SponsoringController.js.html#line55">line 55</a>
+        <a href="routing_SponsoringController.js.html">routing/SponsoringController.js</a>, <a href="routing_SponsoringController.js.html#line85">line 85</a>
     </li></ul></dd>
     
 
@@ -584,13 +738,6 @@
 
     
 
-    
-    <dt class="tag-todo">To Do:</dt>
-    <dd class="tag-todo">
-        <ul>
-            <li><strong>Implementieren</strong></li>
-        </ul>
-    </dd>
     
 </dl>
 
@@ -714,7 +861,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="routing_SponsoringController.js.html">routing/SponsoringController.js</a>, <a href="routing_SponsoringController.js.html#line104">line 104</a>
+        <a href="routing_SponsoringController.js.html">routing/SponsoringController.js</a>, <a href="routing_SponsoringController.js.html#line139">line 139</a>
     </li></ul></dd>
     
 
@@ -852,7 +999,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="routing_SponsoringController.js.html">routing/SponsoringController.js</a>, <a href="routing_SponsoringController.js.html#line113">line 113</a>
+        <a href="routing_SponsoringController.js.html">routing/SponsoringController.js</a>, <a href="routing_SponsoringController.js.html#line148">line 148</a>
     </li></ul></dd>
     
 
@@ -889,6 +1036,141 @@
     
 
     
+        <h3 class="subsection-title">Type Definitions</h3>
+
+        
+                
+
+    
+
+    <h4 class="name" id="~loopCallback"><span class="type-signature"></span>loopCallback<span class="signature">(error)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Callback-Funktion mit optionaler Fehlerübergabe; bestätigt den Durchlauf der Schleife
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>error</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Fehler-Objekt, falls ein Fehler aufgetreten ist</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="routing_SponsoringController.js.html">routing/SponsoringController.js</a>, <a href="routing_SponsoringController.js.html#line37">line 37</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+    
 
     
 </article>
@@ -907,7 +1189,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Wed Jul 05 2017 22:16:23 GMT+0200 (Mitteleuropäische Sommerzeit)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Thu Jul 06 2017 15:18:40 GMT+0200 (Mitteleuropäische Sommerzeit)
 </footer>
 
 <script> prettyPrint(); </script>

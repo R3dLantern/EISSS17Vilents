@@ -5,6 +5,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import application.Main;
+import application.util.CandidatePicker;
 import application.util.EURI;
 import application.util.ServerRequest;
 import javafx.fxml.FXML;
@@ -29,7 +30,6 @@ public class SponsoringController {
 		ServerRequest req = new ServerRequest(EURI.SPONSORING.uri());
 		
 		HttpResponse res = req.get();
-		Main.log(res.getContent().toString());
 		
 		try {
 			if(res.getContent().getJSONArray("results").length() > 0) {
@@ -38,8 +38,15 @@ public class SponsoringController {
 				for(int i = 0; i < applicants.length(); i++) {
 					JSONObject applicant = applicants.getJSONObject(i);
 					AnchorPane snippet = Main.snippetLoader.getSponsoringApplicantSnippet(applicant.getInt("id"), applicant.getInt("rep"), applicant.getString("vorname"), applicant.getString("nachname"));
-					applicantsContent.setPrefWidth(((i + 1) * (snippet.getPrefWidth() + applicantsContent.getSpacing())));
 					applicantsContent.getChildren().add(snippet);
+				}
+				
+				CandidatePicker picker = new CandidatePicker();
+				JSONArray topCandidates = picker.getCandidatesForTopChoice(applicants);
+				for(int j = 0; j < topCandidates.length(); j++) {
+					JSONObject candidate = topCandidates.getJSONObject(j);
+					AnchorPane candidateSnippet = Main.snippetLoader.getSponsoringCandidateSnippet(candidate.getInt("id"), candidate.getInt("rep"));
+					candidatesContent.getChildren().add(candidateSnippet);
 				}
 			}
 		} catch (JSONException je) {

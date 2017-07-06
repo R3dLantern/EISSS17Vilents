@@ -3,9 +3,9 @@ package application.util.ui;
 import java.io.IOException;
 import java.util.UUID;
 
-import application.Main;
 import application.controller.IProfileController;
 import application.controller.ProjectController;
+
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -63,7 +63,6 @@ public class LayoutManager{
 	 * @return 						Initialisiertes Pane-Objekt
 	 */
 	public Pane getProfileTabContent(int userId, boolean isCasemodderProfile) {
-		Main.log(Integer.toString(userId));
 		FXMLLoader loader = new FXMLLoader(
 			getClass()
 			.getResource(
@@ -79,7 +78,6 @@ public class LayoutManager{
 			if(userId == this.userId) {
 				return content;
 			} else {
-				Main.log("else");
 				Tab profileTab = new Tab();
 				profileTab.setClosable(true);
 				profileTab.setContent(content);

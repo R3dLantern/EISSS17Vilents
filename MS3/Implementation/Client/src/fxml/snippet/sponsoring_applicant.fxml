@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="250.0" prefWidth="182.0" style="-fx-border-color: black;" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.snippet.SponsoringApplicantController">
+<AnchorPane minHeight="250.0" minWidth="182.0" style="-fx-border-color: black;" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.snippet.SponsoringApplicantController">
    <children>
       <Label fx:id="nameLabel" layoutX="52.0" layoutY="167.0" text="&lt;NameLabel&gt;" />
       <Label fx:id="repLabel" layoutX="62.0" layoutY="184.0" text="&lt;rep&gt;">

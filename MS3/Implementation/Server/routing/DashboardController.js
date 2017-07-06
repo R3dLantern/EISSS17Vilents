@@ -49,6 +49,9 @@ dashboardController.get('/dashboard', function (req, res) {
     rep: 0,
     id: req.user.id
   };
+    
+/** @todo Kommentarbenachrichtigungen */
+    
   dbam.checkForNewMessages(req.user.id, function (error, result) {
     if (error) {
       res.status(500).end();

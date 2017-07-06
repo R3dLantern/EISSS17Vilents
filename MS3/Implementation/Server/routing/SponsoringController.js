@@ -57,18 +57,27 @@ function getRepInLoop(userArray, callback) {
         onComplete();
     } else {
         keys.forEach(function (key) {
-            reputation.getTotalReputationForUser(
-                userArray[key].id,
-                function (error, totalRep) {
+            dbam.countUserProjects(userArray[key].id, function (error, projectsResultObject) {
+                if (error) {
+                    callback(error);
+                    return;
+                }
+                userArray[key].counters = projectsResultObject;
+                
+                dbam.countUserComments(userArray[key].id, function (error, commentsResultObject) {
                     if (error) {
                         callback(error);
+                        return;
                     }
-                    userArray[key].rep = totalRep;
+                    userArray[key].counters.comments = commentsResultObject.comments;
+                    userArray[key].counters.commentUpvotes = commentsResultObject.commentUpvotes;
+                    
+                    userArray[key].rep = reputation.getTotalReputationViaObject(userArray[key].counters);
                     if (--loop === 0) {
                         onComplete();
                     }
-                }
-            );
+                });
+            });
         });
     }
 }

@@ -112,7 +112,8 @@ exports.getTotalReputationForUser = function (userId, callback) {
  */
 exports.getTotalReputationViaObject = function (options) {
     var totalRep = 0.0,
-        invalidOptions = (!options.projects || !options.projectUpdates || !options.projectUpdateUpvotes || !options.projectUpvotes || !options.comments || !options.commentUpvotes);
+        invalidOptions = (options.projects === null || options.projectUpvotes === null || options.projectUpdates === null || options.projectUpdateUpvotes === null || options.comments === null || options.commentUpvotes === null);
+    // Sind alle Zählwerte im Objekt bereits gesetzt?
     if (invalidOptions) {
         return null;
     }
