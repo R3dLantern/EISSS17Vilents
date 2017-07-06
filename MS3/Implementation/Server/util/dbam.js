@@ -867,5 +867,31 @@ exports.getProject = function (pId, uId, callback) {
 };
 
 
+/**
+ * Aktiviert den Suchstatus eines Casemodders
+ * @param {int} userId   Benutzer-ID des Casemodders
+ * @param {insertCallback} callback Callbackfunktion
+ */
+exports.activateSeekerStatus = function activateSeekerStatus(userId, callback) {
+  this.pool.getConnection(
+    function (connError, conn) {
+      if (error) {
+        callback(error);
+      }
+      conn.query(
+        'UPDATE casemodder SET suchstatus = 1 WHERE user_id = ?',
+        [userId],
+        function (error, results, fields) {
+          if (error) {
+            callback(error);
+            return;
+          }
+          callback(null);    
+        }
+      );
+    }
+  );
+};
+
 
 module.exports = exports;

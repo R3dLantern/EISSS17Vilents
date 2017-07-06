@@ -13,8 +13,19 @@ var express             = require("express");
 
 var dbam                = require("../util/dbam.js");
 var reputation          = require("../util/reputation.js");
+var client = new Faye.Client('http://localhost:8000/');
 
 var dashboardController = express.Router();
+
+
+/**
+ * @constant
+ * @type {int}
+ * @desc Minimale Reputation zur Aktivierung des Suchstatus
+ * @default
+ */
+var MINIMUM_REP = 100;
+
 
 console.log("[DBCO] DashboardController loaded.");
 
@@ -76,6 +87,36 @@ dashboardController.get('/dashboard', function (req, res) {
       res.status(200).end();
     }  
   });
+});
+
+
+/**
+ * @function
+ * @name DashboardController::Seek
+ * @desc Aktiviert den Sponsorsuchstatus eines Casemodders
+ * @param {string} path - Pfad
+ * @param {function (req, res)} callback - Callbackfunktion
+ */
+dashboardController.get('/seek', function (req, res) {
+   dbam.getTotalReputationForUser(req.user.id, function (error, result) {
+       if (error) {
+           res.status(500).end();
+           throw error;
+       }
+       if (result < MINIMUM_REP) {
+           res.status(400).end();
+           return;
+       } else {
+           dbam.activateSeekerStatus(req.user.id, function (error) {
+               if (error) {
+                   res.status(500).end();
+                   throw error;
+               } else {
+                   res.status(201).end();
+               }
+           });
+       }
+   });
 });
     
 module.exports = dashboardController;
