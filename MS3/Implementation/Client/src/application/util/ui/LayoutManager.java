@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.util.UUID;
 
 import application.controller.IProfileController;
+import application.controller.NewMessageController;
 import application.controller.ProjectController;
 
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.LoadException;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.Pane;
@@ -175,6 +177,41 @@ public class LayoutManager{
 			singleProjectTab.setId("tab_" + UUID.randomUUID().toString());
 			tabPane.getTabs().add(singleProjectTab);
 			tabPane.getSelectionModel().select(singleProjectTab);
+			return;
+		} catch (IOException ie) {
+			ie.printStackTrace();
+			return;
+		}
+	}
+	
+	
+	/**
+	 * Erstellt einen neuen Tab zum Erstellen und Versenden einer Nachricht
+	 * @param receiverId	Benutzer-ID des Empfängers
+	 * @param receiverName	Vor- und Nachname des Empfängers
+	 */
+	public void getNewMessageTab(int receiverId, String receiverName)
+	{
+		try {
+			FXMLLoader loader = new FXMLLoader(
+				getClass()
+				.getResource(
+					EFXML.NEW_MESSAGE.fxml()
+				)
+			);
+			Pane content = loader.load();
+			NewMessageController controller = loader.<NewMessageController>getController();
+			controller.initWithData(receiverId, receiverName);
+			Tab newMessageTab = new Tab();
+			newMessageTab.setClosable(true);
+			newMessageTab.setContent(content);
+			newMessageTab.setText("Neue Nachricht");
+			newMessageTab.setId("tab_" + UUID.randomUUID().toString());
+			tabPane.getTabs().add(newMessageTab);
+			tabPane.getSelectionModel().select(newMessageTab);
+			return;	
+		} catch (LoadException le) {
+			le.printStackTrace();
 			return;
 		} catch (IOException ie) {
 			ie.printStackTrace();

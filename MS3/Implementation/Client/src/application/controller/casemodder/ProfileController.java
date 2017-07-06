@@ -23,6 +23,8 @@ import model.HttpResponse;
  */
 public class ProfileController implements IProfileController{
 	
+	private int profileId;
+	
 	@FXML
 	private ImageView profilePicture;
 	
@@ -53,6 +55,9 @@ public class ProfileController implements IProfileController{
 	 */
 	@Override
 	public void initWithData(int id) {
+		
+		this.profileId = id;
+		
 		ServerRequest req = new ServerRequest(EURI.PROFILE_CM.uri(), id);
 		
 		HttpResponse res = req.get();
@@ -84,6 +89,12 @@ public class ProfileController implements IProfileController{
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@FXML
+	protected void composeMessageToUser()
+	{
+		Main.layoutManager.getNewMessageTab(profileId, getName());
 	}
 	
 	@Override

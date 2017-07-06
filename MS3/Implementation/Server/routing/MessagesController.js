@@ -24,7 +24,6 @@ console.log("[MSCO] MessagesController loaded.");
  * @param {object} next - Weiterleitung
  */
 messagesController.use(function (req, res, next) {
-    console.log("[MSCO] Checking User");
     if (req.user) {
         next();
     } else {
@@ -60,13 +59,25 @@ messagesController.get('/index', function (req, res) {
 /**
  * @function
  * @name MessagesController::sendNew
- * @desc Schickt eine neue Nachricht einen Benutzer
+ * @desc Schickt eine neue Nachricht an einen Benutzer
  * @param {string} path - Route
  * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
  * @todo <strong>Implementieren</strong>
  */
 messagesController.post('/new', function (req, res) {
-    
+  var messageObject = req.body;
+  messageObject.senderId = req.user.id;
+  dbam.createNewMessage(
+    messageObject,
+    function (error) {
+      if (error) {
+        res.status(500).end();
+        throw error;
+      } else {
+        res.status(201).end();
+      }
+    }
+  );
 });
 
 

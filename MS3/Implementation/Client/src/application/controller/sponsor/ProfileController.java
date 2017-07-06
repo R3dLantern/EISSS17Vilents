@@ -2,6 +2,7 @@ package application.controller.sponsor;
 
 import org.json.JSONException;
 
+import application.Main;
 import application.controller.IProfileController;
 import application.util.EBoolean;
 import application.util.EURI;
@@ -14,6 +15,8 @@ import model.HttpResponse;
 
 public class ProfileController implements IProfileController{
 
+	private int profileId;
+	
 	@FXML
 	private ImageView profilePicture;
 	
@@ -35,6 +38,9 @@ public class ProfileController implements IProfileController{
 	
 	@Override
 	public void initWithData(int id) {
+		
+		this.profileId = id;
+		
 		ServerRequest req = new ServerRequest(EURI.PROFILE_SP.uri(), id);
 		
 		HttpResponse res = req.get();
@@ -48,12 +54,17 @@ public class ProfileController implements IProfileController{
 			} else {
 				editButton.setVisible(false);
 			}
-			//TODO: Projekte einbinden
+			//TODO: Aktivitäten einbinden
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 	}
-
+	
+	@FXML
+	protected void composeMessageToUser()
+	{
+		Main.layoutManager.getNewMessageTab(profileId, getName());
+	}
 
 	@Override
 	public String getName() {

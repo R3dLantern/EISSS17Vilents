@@ -20,6 +20,7 @@ public enum EFXML {
 	LOGIN ("/fxml/login.fxml"),
 	PROJECT("/fxml/project.fxml"),
 	MESSAGES ("/fxml/messages.fxml"),
+	NEW_MESSAGE ("/fxml/new_message.fxml"),
 	O_PROJECT ("/fxml/snippet/project_overview.fxml"),
 	O_MESSAGE ("/fxml/snippet/message_overview.fxml"),
 	E_DASHBOARD ("/fxml/snippet/dashboard_event.fxml"),

@@ -28,12 +28,12 @@
         	</padding>
       	</Label>
       	<Button fx:id="editButton" layoutX="448.0" layoutY="45.0" mnemonicParsing="false" text="Edit" />
-      	<Button fx:id="contactButton" layoutX="583.0" layoutY="39.0" mnemonicParsing="false" text="Kontaktieren">
+      	<Button fx:id="contactButton" layoutX="583.0" layoutY="39.0" mnemonicParsing="false" text="Kontaktieren" onAction="#composeMessageToUser">
         	<font>
             	<Font name="Calibri" size="20.0" />
          	</font>
       	</Button>
-      <Label fx:id="nameLabel1" layoutX="223.0" layoutY="76.0" prefHeight="22.0" prefWidth="200.0" text="&lt;Firma&gt;">
+      <Label fx:id="corpLabel" layoutX="223.0" layoutY="76.0" prefHeight="22.0" prefWidth="200.0" text="&lt;Firma&gt;">
          <font>
             <Font name="Calibri" size="14.0" />
          </font>

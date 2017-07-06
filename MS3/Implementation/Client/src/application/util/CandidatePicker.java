@@ -4,8 +4,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import application.Main;
-
 /**
  * Berechnet ElementRankings von Benutzerlisten und errechnet so die bestmöglichen Kandidaten für die Top-Liste
  * @author Leonid Vilents
@@ -35,7 +33,6 @@ public class CandidatePicker {
 	//TODO: Kandidaten basierend auf Ranking auswählen
 	private JSONArray getTopCandidatesBasedOnRankings(JSONArray array) throws JSONException
 	{
-		Main.log(array.toString());
 		// 3 Topkandidaten
 		// 0: ProjektRanking Bester
 		// 1: Projekt-Update-Kombintation Bester

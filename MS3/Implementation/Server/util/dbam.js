@@ -894,4 +894,39 @@ exports.activateSeekerStatus = function activateSeekerStatus(userId, callback) {
 };
 
 
+/**
+ * Erstellt eine neue Nachricht in der Datenbank
+ * @param {object} messageObject Das Nachrichtenobjekt
+ * @param {insertCallback} callback Callbackfunktion
+ */
+exports.createNewMessage = function createNewMessage(messageObject, callback) {
+  var invalidMessageObject = (messageObject.senderId === null || messageObject.reveiverId === null || messageObject.content === null);
+  if (invalidMessageObject) {
+    callback(new Error("Invalid Message Object"));
+    return;
+  }
+  this.pool.getConnection(
+    function (connError, conn) {
+      if (connError) {
+        callback(connError);
+        return;
+      }
+      conn.query(
+        "INSERT INTO nachricht (absender_id, empfanger_id, inhalt) VALUES (?, ?, ?)",
+        [messageObject.senderId, messageObject.receiverId, messageObject.content],
+        function (error, results, fields) {
+          conn.release();
+          if (error) {
+            callback(error);
+            return
+          } else {
+            callback(null);
+          }
+        }
+      );
+    }
+  );
+};
+
+
 module.exports = exports;

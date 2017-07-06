@@ -13,7 +13,6 @@ var express             = require("express");
 
 var dbam                = require("../util/dbam.js");
 var reputation          = require("../util/reputation.js");
-var client = new Faye.Client('http://localhost:8000/');
 
 var dashboardController = express.Router();
 

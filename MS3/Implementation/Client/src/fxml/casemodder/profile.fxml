@@ -50,7 +50,7 @@
          </font>
       </Label>
       <Button fx:id="editButton" layoutX="448.0" layoutY="45.0" mnemonicParsing="false" text="Edit" />
-      <Button fx:id="contactButton" layoutX="583.0" layoutY="39.0" mnemonicParsing="false" text="Kontaktieren">
+      <Button fx:id="contactButton" layoutX="583.0" layoutY="39.0" mnemonicParsing="false" text="Kontaktieren" onAction="#composeMessageToUser">
          <font>
             <Font name="Calibri" size="20.0" />
          </font>
