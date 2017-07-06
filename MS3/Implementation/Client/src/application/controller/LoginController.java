@@ -2,11 +2,11 @@ package application.controller;
 
 import application.Main;
 import application.util.EBoolean;
-import application.util.EFXML;
 import application.util.EURI;
 import application.util.FormValidator;
 import application.util.PasswordUtil;
 import application.util.ServerRequest;
+import application.util.ui.EFXML;
 
 import java.io.IOException;
 

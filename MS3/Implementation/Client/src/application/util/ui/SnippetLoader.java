@@ -6,7 +6,7 @@ import java.util.Date;
 import application.controller.snippet.MessageOverviewController;
 import application.controller.snippet.ProfileProjectController;
 import application.controller.snippet.ProjectOverviewController;
-import application.util.EFXML;
+import application.controller.snippet.SponsoringApplicantController;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.LoadException;
 import javafx.scene.layout.AnchorPane;
@@ -86,6 +86,34 @@ public class SnippetLoader{
 			AnchorPane content = loader.load();
 			ProfileProjectController controller = loader.<ProfileProjectController>getController();
 			controller.initializeWithData(pId, title);
+			return content;
+		} catch (LoadException le) {
+			le.printStackTrace();
+			return null;
+		} catch (IOException ie) {
+			ie.printStackTrace();
+			return null;
+		}
+	}
+	
+	
+	/**
+	 * Gibt ein initialisiertes Anwärter-Snippet zurück.
+	 * @param applicantId	Benutzer-ID des Anwärters
+	 * @param vorname		Vorname
+	 * @param nachname		Nachname
+	 * @return				Initialisiertes AnchorPane-Objekt
+	 */
+	public AnchorPane getSponsoringApplicantSnippet(int applicantId, int rep, String vorname, String nachname)
+	{
+		FXMLLoader loader = new FXMLLoader(
+			getClass()
+			.getResource(EFXML.A_SPONSORING.fxml())
+		);
+		try {
+			AnchorPane content = loader.load();
+			SponsoringApplicantController controller = loader.<SponsoringApplicantController>getController();
+			controller.initWithData(applicantId, rep, vorname, nachname);
 			return content;
 		} catch (LoadException le) {
 			le.printStackTrace();

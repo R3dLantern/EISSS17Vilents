@@ -34,22 +34,43 @@ sponsoringController.use(function (req, res, next) {
 });
 
 
-function getRepInLoop(userObj, i, res) {
-    reputation.getTotalReputationForUser(
-        userObj[i].id,
-        function (error, totalRep) {
-            if (error) {
-                res.status(500).end();
-                throw error;
-            }
-            userObj[i].rep = totalRep;
-            console.log(userObj[i]);
-            if (i === userObj.length - 1) {
-                console.log(userObj);
-                res.status(200).json(userObj);
-            }
-        }
-    );
+/**
+ * Callback-Funktion mit optionaler Fehlerübergabe; bestätigt den Durchlauf der Schleife
+ * 
+ * @callback loopCallback
+ * @param {object} error - Fehler-Objekt, falls ein Fehler aufgetreten ist
+ */
+
+/**
+ * Schleife zum Erhalt mehrerer Gesamtreputationen für Benutzer
+ * @param {object} userObj - Array von Benutzer-Objekten
+ * @param {loopCallback} - callback Callbackfunktion bei Abschluss der Schleife, oder bei Fehlermeldung.
+ * {@link https://stackoverflow.com/questions/21184340/async-for-loop-in-node-js Quelle in akzeptierter Antwort}
+ */
+function getRepInLoop(userArray, callback) {
+    var keys = Object.keys(userArray),
+        onComplete = function () {
+            callback(null);
+        },
+        loop = keys.length;
+    if (loop === 0) {
+        onComplete();
+    } else {
+        keys.forEach(function (key) {
+            reputation.getTotalReputationForUser(
+                userArray[key].id,
+                function (error, totalRep) {
+                    if (error) {
+                        callback(error);
+                    }
+                    userArray[key].rep = totalRep;
+                    if (--loop === 0) {
+                        onComplete();
+                    }
+                }
+            );
+        });
+    }
 }
 
 /**
@@ -58,24 +79,29 @@ function getRepInLoop(userObj, i, res) {
  * @desc Holt Daten für die Übersicht über Sponsor-suchende
  * @param {string} path - Route
  * @param {function (req, res)} middleware - HTTP-Middleware mit Request- und Response-Objekt
- * @todo <strong>Implementieren</strong>
  */
 sponsoringController.get('/index', function (req, res) {
     console.log('[SPCO] GET /index');
-    dbam.getSponsoringApplicants(function (error, resultObj) {
+    dbam.getSponsoringApplicants(function (error, resultArray) {
         if (error) {
             res.status(500).end();
             return;
         }
-        if (resultObj.length > 0) {
-            var i = 0,
-                len = resultObj.length;
-            for (i, len; i < len; i += 1) {
-                getRepInLoop(resultObj, i, res);
-            }
+        if (resultArray.length > 0) {
+            getRepInLoop(resultArray, function (error) {
+                if (error) {
+                    res.status(500).end();
+                    throw error;
+                }
+                var resObj = {
+                    results: resultArray
+                };
+                res.status(200).json(resObj);
+                return;
+            });
         } else {
-            resultObj = {};
-            res.status(200).json(resultObj);
+            res.status(200).json({});
+            return;
         }
         return;
     });
@@ -92,7 +118,7 @@ sponsoringController.get('/index', function (req, res) {
  * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
  * @todo <strong>Implementieren</strong>
  */
-sponsoringController.post('/new', /*requireLogin,*/ function (req, res) {
+sponsoringController.post('/new', function (req, res) {
     
 });
 

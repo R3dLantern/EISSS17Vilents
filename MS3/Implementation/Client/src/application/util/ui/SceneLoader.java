@@ -3,7 +3,6 @@ package application.util.ui;
 import java.io.IOException;
 
 import application.controller.ILayoutController;
-import application.util.EFXML;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;

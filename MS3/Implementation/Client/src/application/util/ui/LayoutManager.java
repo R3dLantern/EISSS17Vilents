@@ -6,7 +6,6 @@ import java.util.UUID;
 import application.Main;
 import application.controller.IProfileController;
 import application.controller.ProjectController;
-import application.util.EFXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;

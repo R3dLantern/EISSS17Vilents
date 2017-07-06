@@ -1,4 +1,4 @@
-package application.util;
+package application.util.ui;
 
 /**
  * Absolute Dateipfad-Strings aller FXML-Dateien
@@ -23,7 +23,9 @@ public enum EFXML {
 	O_PROJECT ("/fxml/snippet/project_overview.fxml"),
 	O_MESSAGE ("/fxml/snippet/message_overview.fxml"),
 	E_DASHBOARD ("/fxml/snippet/dashboard_event.fxml"),
-	P_PROFILE ("/fxml/snippet/profile_project.fxml");
+	P_PROFILE ("/fxml/snippet/profile_project.fxml"),
+	A_SPONSORING ("/fxml/snippet/sponsoring_applicant.fxml"),
+	C_SPONSORING ("/fxml/snippet/sponsoring_candidate.fxml");
 	
 	private final String fxml;
 	
