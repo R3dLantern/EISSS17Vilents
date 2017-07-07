@@ -9,7 +9,7 @@ import java.util.Base64;
  * @author Leonid Vilents
  *
  */
-public class PasswordUtil {
+public class CryptoUtil {
 	public static final String ERROR_HASH_FAILED = "Hashing fehlgeschlagen";
 	
 	public static final String ALGORITHM_MD5 = "MD5";

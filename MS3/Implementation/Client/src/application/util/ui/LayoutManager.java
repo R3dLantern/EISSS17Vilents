@@ -219,4 +219,35 @@ public class LayoutManager{
 			return;
 		}
 	}
+	
+	/**
+	 * Erstellt einen Tab zur Löschung des Benuterkontos,
+	 * hängt diesen ans Layout an und wählt ihn aus.
+	 */
+	public void getAccountDeletionTab()
+	{
+		try {
+			FXMLLoader loader = new FXMLLoader(
+				getClass()
+				.getResource(
+					EFXML.DELETE_PANEL.fxml()
+				)
+			);
+			Pane content = loader.load();
+			Tab deleteAccountTab = new Tab();
+			deleteAccountTab.setClosable(true);
+			deleteAccountTab.setContent(content);
+			deleteAccountTab.setText("Benutzerkonto löschen");
+			deleteAccountTab.setId("tab_" + UUID.randomUUID().toString());
+			tabPane.getTabs().add(deleteAccountTab);
+			tabPane.getSelectionModel().select(deleteAccountTab);
+			return;	
+		} catch (LoadException le) {
+			le.printStackTrace();
+			return;
+		} catch (IOException ie) {
+			ie.printStackTrace();
+			return;
+		}
+	}
 }

@@ -21,6 +21,7 @@ public enum EFXML {
 	PROJECT("/fxml/project.fxml"),
 	MESSAGES ("/fxml/messages.fxml"),
 	NEW_MESSAGE ("/fxml/new_message.fxml"),
+	DELETE_PANEL ("/fxml/delete_panel.fxml"),
 	O_PROJECT ("/fxml/snippet/project_overview.fxml"),
 	O_MESSAGE ("/fxml/snippet/message_overview.fxml"),
 	E_DASHBOARD ("/fxml/snippet/dashboard_event.fxml"),

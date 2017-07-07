@@ -7,8 +7,8 @@ import org.json.JSONObject;
 
 import application.Main;
 import application.controller.IDashboardController;
-import application.util.EURI;
-import application.util.ServerRequest;
+import application.util.conn.EURI;
+import application.util.conn.ServerRequest;
 import application.util.ui.DialogCreator;
 import application.util.ui.EDialog;
 import javafx.fxml.FXML;
@@ -88,5 +88,11 @@ public class DashboardController implements IDashboardController{
 		} else {
 			return;
 		}
+	}
+	
+	@FXML
+	protected void handleAccountDeletion()
+	{
+		Main.layoutManager.getAccountDeletionTab();
 	}
 }

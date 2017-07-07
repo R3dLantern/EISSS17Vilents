@@ -9,9 +9,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import application.Main;
-import application.util.EURI;
-import application.util.PasswordUtil;
-import application.util.ServerRequest;
+import application.util.CryptoUtil;
+import application.util.conn.EURI;
+import application.util.conn.ServerRequest;
 import application.util.ui.DialogCreator;
 import application.util.ui.EDialog;
 import javafx.event.ActionEvent;
@@ -131,7 +131,7 @@ public class MessageOverviewController {
 			messageLabel.setFont(Font.font("Calibri", 14));
 			messageLabel.setStyle("-fx-color: black; -fx-background-color: white");
 			try {
-				messageLabel.setText(PasswordUtil.decodeBase64(resContent.getString("inhalt")));
+				messageLabel.setText(CryptoUtil.decodeBase64(resContent.getString("inhalt")));
 				contentPane.setPrefHeight(160);
 				contentPane.getChildren().add(messageLabel);
 				return;

@@ -5,8 +5,8 @@ import org.json.JSONObject;
 
 import application.Main;
 import application.controller.IDashboardController;
-import application.util.EURI;
-import application.util.ServerRequest;
+import application.util.conn.EURI;
+import application.util.conn.ServerRequest;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
 import model.HttpResponse;
@@ -29,19 +29,22 @@ public class DashboardController implements IDashboardController{
 	public void initialize()
 	{
 		ServerRequest req = new ServerRequest(EURI.DASHBOARD.uri());
-		
 		HttpResponse res = req.get();
-		
 		try {
 			JSONObject content = res.getContent();
-			
 			if(content.getInt("newMessages") > 0) {
 				int count = content.getInt("newMessages");
 				eventPane.getChildren().add(Main.snippetLoader.getNewMessageDashboardEvent(count));
 			}
-			
+			// TODO: Events an Team-Casemodder-Projekten
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@FXML
+	protected void handleAccountDeletion()
+	{
+		Main.layoutManager.getAccountDeletionTab();
 	}
 }

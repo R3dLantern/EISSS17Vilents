@@ -6,15 +6,18 @@ package application.util.ui;
  */
 public enum EDialog {
 		
+	TITLE_SIGNOUT ("Accountlöschung"),
 	TITLE_DELETE_MESSAGE ("Bestätigung"),
 	TITLE_SENT_MESSAGE ("Deine Nachricht"),
 	TITLE_SEEK_STATUS ("Dein Suchstatus"),
 	TITLE_SEEK_STATUS_SET ("Dein Suchstatus"),
 	HEADER_SENT_MESSAGE("Erfolg"),
+	HEADER_SIGNOUT ("Benutzerkonto gelöscht"),
 	HEADER_DELETE_MESSAGE ("Nachricht löschen?"),
 	HEADER_SEEK_STATUS ("Sponsorsuchstatus setzen?"),
 	HEADER_SEEK_STATUS_SET ("Suchstatus erfolgreich gesetzt"),
 	CONTENT_DELETE_MESSAGE ("Möchtest Du diese Nachricht löschen?"),
+	CONTENT_SIGNOUT ("Du hast Dein Benutzerkonto gelöscht. Bis bald!"),
 	CONTENT_SENT_MESSAGE ("Deine Nachricht wurde erfolgreich abgeschickt."),
 	CONTENT_SEEK_STATUS (
 		"Das Setzen des Sponsorsuchstatus bedeutet, dass Sponsoren dies sehen "

@@ -8,7 +8,7 @@
 
 <Pane prefHeight="520.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.casemodder.DashboardController">
    <children>
-      <Pane fx:id="eventPane" layoutX="32.0" layoutY="51.0" prefHeight="441.0" prefWidth="460.0" />
+      <Pane fx:id="eventPane" layoutX="32.0" layoutY="42.0" prefHeight="450.0" prefWidth="460.0" />
       <Label layoutX="557.0" layoutY="193.0" text="Deine Gesamtreputation:">
          <font>
             <Font name="Calibri" size="16.0" />
@@ -38,5 +38,10 @@
             <Font name="Calibri" size="18.0" />
          </font>
       </Label>
+      <Button layoutX="575.0" layoutY="50.0" mnemonicParsing="false" onAction="#handleAccountDeletion" text="Benutzerkonto löschen">
+         <font>
+            <Font name="Calibri" size="12.0" />
+         </font>
+      </Button>
    </children>
 </Pane>

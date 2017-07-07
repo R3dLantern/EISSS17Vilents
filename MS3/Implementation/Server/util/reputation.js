@@ -108,12 +108,19 @@ exports.getTotalReputationForUser = function (userId, callback) {
 /**
  * Berechnet die Gesamtreputation aus einem mitgegebenen Objekt.
  * @param   {object}   options Enthält die Parameter, die sonst aus der Datenbank entnommen werden.
- * @returns {int} Die Gesamtreputation
+ * @returns {number} Die Gesamtreputation
  */
 exports.getTotalReputationViaObject = function (options) {
     var totalRep = 0.0,
-        invalidOptions = (options.projects === null || options.projectUpvotes === null || options.projectUpdates === null || options.projectUpdateUpvotes === null || options.comments === null || options.commentUpvotes === null);
-    // Sind alle Zählwerte im Objekt bereits gesetzt?
+        invalidOptions = (
+            options.projects === null
+            || options.projectUpvotes === null
+            || options.projectUpdates === null
+            || options.projectUpdateUpvotes === null
+            || options.comments === null
+            || options.commentUpvotes === null
+        );
+    // Sind alle Zählwerte im Objekt gesetzt?
     if (invalidOptions) {
         return null;
     }

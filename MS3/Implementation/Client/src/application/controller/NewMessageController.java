@@ -5,9 +5,9 @@ import java.io.IOException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import application.util.EURI;
-import application.util.PasswordUtil;
-import application.util.ServerRequest;
+import application.util.CryptoUtil;
+import application.util.conn.EURI;
+import application.util.conn.ServerRequest;
 import application.util.ui.DialogCreator;
 import application.util.ui.EDialog;
 import application.util.ui.LayoutManager;
@@ -56,7 +56,7 @@ public class NewMessageController {
 		
 		try {
 			messageData.put("receiverId", receiverId);
-			messageData.put("content", PasswordUtil.encodeBase64(textField.getText()));
+			messageData.put("content", CryptoUtil.encodeBase64(textField.getText()));
 			
 			HttpResponse res = req.post(messageData);
 			

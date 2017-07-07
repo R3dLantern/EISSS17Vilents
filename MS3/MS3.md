@@ -14,3 +14,6 @@ Im Fazit werden der Zielerreichungsgrad des Projektes diskutiert und ein eventue
 
 ### Das Prozessassessment
 Das Prozessassessment behandelt die kritische Reflexion des Projektes im Bezug auf die Einhaltung des Projektplans. Erläutert werden sollen auch der Umgang mit Schwierigkeiten oder mit Herausforderungen. Das Prozessassessment soll prozessorientiert formuliert werden.
+
+### Die Implementationsdokumentation
+In der Implementationsdokumentation ist die Installationsdokumentation verzeichnet. Weiterhin werden hier auch die Abweichungen der Implementation gegenüber der geplanten Umsetzung beschrieben.

@@ -5,8 +5,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import application.Main;
-import application.util.EURI;
-import application.util.ServerRequest;
+import application.util.conn.EURI;
+import application.util.conn.ServerRequest;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Pagination;

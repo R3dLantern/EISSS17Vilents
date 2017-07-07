@@ -45,9 +45,6 @@ var upvotesController           = require('./routing/UpvotesController.js');
 var port                = process.env.PORT || 8000;
 var app                 = express();
 
-/** @todo für Produktivumgebung entfernen! */
-console.log("[MAIN] Initializing database connection...");
-
 dbam.initializeConnection();
 
 app.use(bodyParser.json()); // for parsing application/json
@@ -71,7 +68,6 @@ app.use(session({
  * @param {function(req, next)} middleware - Callbackfunktion mit Request-, Response- und next-Objekt
  */
 app.use(function (req, res, next) {
-    console.log("[MAIN] Checking Session");
     if (req.session && req.session.user) {
         var email = req.session.user.email;
         dbam.findUserByEmail(email, function (error, result) {
@@ -96,19 +92,6 @@ app.use(function (req, res, next) {
     } else {
         next();
     }
-});
-
-/**
- * @function
- * @name stackTraceHandling
- * @desc In der Produktiv-Umgebung soll bei Fehlern kein Stacktrace mitgeschickt werden
- * @param {function(err, req, res, next)} middleware - Callbackfunktion mit Fehler-, Request-, Response- und next-Objekt
- */
-app.use(function (err, req, res, next) {
-    res.send({
-        message: err.message,
-        error: app.get('env') === "development" ? err : {}
-    });
 });
 
 app.use(loginController);

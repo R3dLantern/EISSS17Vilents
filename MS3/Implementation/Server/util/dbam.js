@@ -15,7 +15,6 @@ var fs          = require('fs');
 var fileManager = require('./filemanager.js');
 var pool        = null;
 
-
 /** @todo für Produktivumgebung entfernen! */
 console.log("[DBAM] DBAM module loaded.");
 
@@ -32,8 +31,6 @@ console.log("[DBAM] DBAM module loaded.");
  * @param {object} results - Ergebnisse aus Abfrage
  */
 
-
-
 /**
  * Entnimmt der im System hinterlegten Konfigurationsdatei die Zugangsdaten für die Datenbank
  * @returns {object} JSON-Objekt mit Login-Credentials für die Datenbank
@@ -42,16 +39,6 @@ function getCredentialsFromJson() {
   var content = fs.readFileSync('./util/config/dbam.json');
   return JSON.parse(content);
 }
-
-/**
- * Hilfsfunktion zur Erstellung von inneren Queries bei der Projektabfrage
- * für Sponsoren
- * @param   {string} index Teampositionsnummer
- * @returns {string} das fertige Subquery
- */
-function sponsorTeamSubquery(index) {
-  return "(SELECT casemodder" + index + "_id FROM team WHERE sponsor_id = ?)";
-};
 
 /**
  * Holt Kommentare für ein Spezifisches Element.
@@ -97,6 +84,27 @@ function setMessageAsRead(conn, mId, callback) {
       } else {
         callback(null);
       }
+    }
+  );
+}
+
+/**
+ * Holt die Teamdaten eines Sponsors
+ * @param {object} conn     Verbindungsobjekt
+ * @param {number} sId      Sponsor-ID
+ * @param {selectCallback} callback Callbackfunktion
+ */
+function getSponsorTeam(conn, sId, callback) {
+  conn.query(
+    'SELECT * FROM team WHERE sponsor_id = ? LIMIT 1',
+    [sId],
+    function (error, results, fields) {
+      if (error) {
+        callback(error, null);
+        return;
+      }
+      callback(null, JSON.parse(JSON.stringify(results)));
+      return;
     }
   );
 }
@@ -209,9 +217,13 @@ exports.trySignup = function trySignup(newUser, callback) {
 };
 
 /**
- * Fügt der Datenbank Referenzen zu einer Datei hinzu.
- * @param   {object}   options  Optionen-Objekt. Enthält eine Relationsreferenz, den Dateipfad und den Dateityp.
- * @param   {insertCallback} callback Callbackfunktion
+ * @function
+ * @name DBAM:Exports:insertFile
+ * @desc Fügt der Datenbank Referenzen zu einer Datei hinzu.
+ * @param   {object}            options  Optionen-Objekt. Enthält eine
+ *                                       Relationsreferenz, den Dateipfad und
+ *                                       den Dateityp.
+ * @param   {insertCallback}    callback Callbackfunktion
  */
 exports.insertFile = function insertFile(options, callback) {
     
@@ -326,8 +338,36 @@ exports.insertFile = function insertFile(options, callback) {
   );
 };
 
+/**
+ * @function
+ * @name DBAM:Exports:deleteUserAccount
+ * @desc Löscht einen Benutzer-Account und alle dazugehörigen Elemente
+ * @param {number}          userId   Benutzer-ID
+ * @param {insertCallback}  callback Callbackfunktion
+ */
 exports.deleteUserAccount = function deleteUserAccount(userId, callback) {
-    
+  this.pool.getConnection(
+    function (error, conn) {
+      if (error) {
+        callback(error);
+        return;
+      }
+      conn.query(
+        'DELETE FROM benutzer WHERE id = ?',
+        [userId],
+        function (error, results, fields) {
+          conn.release();
+          if (error) {
+            callback(error);
+            return;
+          } else {
+            callback(null);
+            return;
+          }
+        }
+      );
+    }
+  );
 };
 
 /**
@@ -341,7 +381,6 @@ exports.findUserByEmail = function findUserByEmail(email, callback) {
       if (connectionError) {
         callback(connectionError, null);
       }
-
       conn.query(
         'SELECT * FROM benutzer WHERE email = ? LIMIT 1',
         [email],
@@ -386,7 +425,6 @@ exports.checkForNewMessages = function checkForNewMessages(userId, callback) {
     if (err) {
       callback(err, null);
     }
-    console.log("[DBAM] checkNewMessages: Connected with ID " + conn.threadId);
     conn.query(
       'SELECT COUNT(*) AS newMessages FROM nachricht WHERE empfanger_id = ? AND ungelesen = 1',
       [userId],
@@ -545,7 +583,7 @@ exports.getMessagesOverviewData = function (userId, callback) {
         return;
       }
       conn.query(
-        'SELECT n.id as n_id, n.zeitstempel, n.ungelesen, b.id as b_id, b.vorname, 
+        'SELECT n.id as n_id, n.zeitstempel, n.ungelesen, b.id as b_id, b.vorname, '
         + 'b.nachname FROM nachricht n JOIN benutzer b ON n.absender_id = b.id '
         + 'WHERE empfanger_id = ? ORDER BY n.zeitstempel DESC',
         [userId],
@@ -722,16 +760,9 @@ exports.getProjectsOverviewData = function getProjectsOverviewData(userId, isCas
         callback(connError, null);
         return;
       }
-      
-      // SQL für Sponsor-Abfragen zu Gunsten von JSLint bereits hier eingebungen.
       var resObj = {
             latestProjects: null
-          },
-          casemodder1_substr = sponsorTeamSubquery("1"),
-          casemodder2_substr = sponsorTeamSubquery("2"),
-          casemodder3_substr = sponsorTeamSubquery("3"),
-          latestProjectsSQL = "SELECT * FROM projekt WHERE casemodder_id NOT IN (" + casemodder1_substr + ", " + casemodder2_substr + ", " + casemodder3_substr + ") ORDER BY erstellt_am DESC",
-          teamProjectsSQL = "SELECT * FROM projekt WHERE casemodder_id IN (" + casemodder1_substr + ", " + casemodder2_substr + ", " + casemodder3_substr + ")";
+          };
       if (isCasemodder) {
         conn.query(
           "SELECT * FROM projekt WHERE casemodder_id != ? ORDER BY erstellt_am DESC",
@@ -743,47 +774,81 @@ exports.getProjectsOverviewData = function getProjectsOverviewData(userId, isCas
               return;
             }
             resObj.latestProjects = JSON.parse(JSON.stringify(latestResults));
-          }
-        );
-        conn.query(
-          "SELECT * FROM projekt WHERE casemodder_id = ?",
-          [userId],
-          function (ownedError, ownedResults, ownedFields) {
-            conn.release();
-            if (ownedError) {
-              callback(ownedError, null);
-              return;
-            }
-            resObj.ownedProjects = JSON.parse(JSON.stringify(ownedResults));
-            callback(null, resObj);
-            return;
+            conn.query(
+              'SELECT * FROM projekt WHERE casemodder_id = ?',
+              [userId],
+              function (ownedError, ownedResults, ownedFields) {
+                conn.release();
+                if (ownedError) {
+                  callback(ownedError, null);
+                  return;
+                }
+                resObj.ownedProjects = JSON.parse(JSON.stringify(ownedResults));
+                callback(null, resObj);
+                return;
+              }
+            );
           }
         );
       } else {
-        conn.query(
-          latestProjectsSQL,
-          [userId, userId, userId],
-          function (latestError, latestResults, latestFields) {
-            if (latestError) {
+        console.log(isCasemodder);
+        getSponsorTeam(
+          conn,
+          userId,
+          function (error, result) {
+            if (error) {
               conn.release();
-              callback(latestError, null);
+              callback(error, null);
               return;
             }
-            resObj.latestProjects = latestResults;
-          }
-        );
-        conn.query(
-          teamProjectsSQL,
-          [userId, userId, userId],
-          function (teamError, teamResults, teamFields) {
-            conn.release();
-            if (teamError) {
-              callback(teamError, null);
-              return;
+            if (result.length === 1) {
+              var teamIds = [
+                result[0].casemodder1_id,
+                result[0].casemodder2_id,
+                result[0].casemodder3_id
+              ];
+              conn.query(
+                'SELECT * FROM projekt WHERE casemodder_id NOT IN (?)',
+                [conn.escape(teamIds)],
+                function (error, results, fields) {
+                  if (latestError) {
+                    conn.release();
+                    callback(latestError, null);
+                    return;
+                  }
+                  resObj.latestProjects = JSON.parse(JSON.stringify(results));
+                  conn.query(
+                    'SELECT * FROM projekt WHERE casemodder_id IN (?)',
+                    [conn.escape(teamIds)],
+                    function (tError, tResults, tFields) {
+                      conn.release();
+                      if (teamError) {
+                        callback(teamError, null);
+                        return;
+                      }
+                      resObj.teamProjects = JSON.parse(JSON.stringify(tResults));
+                      callback(null, resObj);
+                      return;
+                    }
+                  );
+                }
+              );
+            } else {
+              conn.query(
+                'SELECT * FROM projekt',
+                function (error, results, fields) {
+                  conn.release();
+                  if (error) {
+                    callback(error, null);
+                    return;
+                  }
+                  resObj.latestProjects = JSON.parse(JSON.stringify(results));
+                  resObj.teamProjects = [];
+                  callback(null, resObj);
+                  return;
+                }
+              );
             }
-            resObj.teamProjects = teamResults;
-            callback(null, resObj);
-            return;
           }
         );
       }
@@ -804,8 +869,8 @@ exports.getProject = function (pId, uId, callback) {
     }
     var countSql = '(SELECT COUNT(*) FROM projekt_upvote pu WHERE pu.projekt_id'
         + ' = ?) AS upvotes',
-        sql = 'SELECT p.*, b.vorname, b.nachname, ' + countSql + ' FROM projekt p JOIN benutzer b ON p.casemodder_id = b.id WHERE p.id = ? LIMIT 1';
-        
+        sql = 'SELECT p.*, b.vorname, b.nachname, ' + countSql + ' FROM projekt'
+        + ' p JOIN benutzer b ON p.casemodder_id = b.id WHERE p.id = ? LIMIT 1';
     conn.query(sql, [pId, pId], function (error, results, fields) {
       if (error) {
         callback(error, null);
@@ -819,28 +884,24 @@ exports.getProject = function (pId, uId, callback) {
           result.userOwnsProject = false;
         }
         conn.query(
-          'SELECT id FROM kommentar k JOIN projekt_kommentar pk on k.id = pk.kommentar_id WHERE pk.projekt_id = ?',
+          'SELECT id FROM kommentar k JOIN projekt_kommentar pk on k.id = '
+          + 'pk.kommentar_id WHERE pk.projekt_id = ?',
           [pId],
-          function (commentsError, commentsResults, commentsFields) {
-                
+          function (commentsError, commentsResults, commentsFields) {    
             if (commentsError) {
               callback(commentsError, null);
               return;
             }
             commentsResults = JSON.parse(JSON.stringify(commentsResults));
-
-            // Get project updates
             conn.query(
               'SELECT * FROM projektupdate WHERE projekt_id = ?',
               [pId],
               function (puError, puResults, puFields) {
-
                 if (puError) {
                   conn.release();
                   callback(puError, null);
                   return;
                 }
-
                 result.updates = JSON.parse(JSON.stringify(puResults));
                 console.log(result);
                 callback(null, result);
@@ -856,12 +917,6 @@ exports.getProject = function (pId, uId, callback) {
   });
 };
 
-
-
-
-
-
-
 /**
  * Holt alle Casemodder-Benutzer mit aktiviertem Suchstatus
  * @param {selectCallback} callback Callbackfunktion
@@ -874,7 +929,7 @@ exports.getSponsoringApplicants = function (callback) {
         return;
       } 
       conn.query(
-        "SELECT b.id, b.vorname, b.nachname FROM benutzer b JOIN casemodder c '
+        'SELECT b.id, b.vorname, b.nachname FROM benutzer b JOIN casemodder c '
         + 'ON b.id = c.user_id WHERE c.suchstatus = 1',
         function (error, results, fields) {
           conn.release();
@@ -894,7 +949,8 @@ exports.getSponsoringApplicants = function (callback) {
 /**
  * Zählt die Projekte und Projektupdates eines Benutzers
  * @param {int} userId - Die ID des Benutzers
- * @param {selectCallback} callback - Callbackfunktion zum Verarbeiten der Rückgabewerte
+ * @param {selectCallback} callback - Callbackfunktion zum Verarbeiten der
+ *                                  Rückgabewerte
  */
 exports.countUserProjects = function countUserProjects(userId, callback) {
   var resObj = {
@@ -970,23 +1026,22 @@ exports.countUserProjects = function countUserProjects(userId, callback) {
  * @param {object[]} projectsArray Array mit Projekt-Objekten
  * @param {selectCallback} callback Callbackfunktion
  */
-exports.countUserProjectUpdates = function countUserProjectUpdates(resultObject, projectsArray, callback) {
+exports.countUserProjectUpdates = function countUserProjectUpdates(resultObject, projects, callback) {
   this.pool.getConnection(
     function (error, conn) {
       if (error) {
         callback(error, null);
       }  
-      if (projectsArray.length > 0) {
+      if (projects.length > 0) {
         var i = 0,
-            projectsCount = projectsArray.length,
-            projectUpdatesSQL = "SELECT * FROM projektupdate WHERE projekt_id IN (";
-        for (i, projectsCount; i < projectsCount; i += 1) {
-          projectUpdatesSQL += projectsArray[i].id.toString()
-          + (i === projectsCount - 1 ? "" : ", ");
-        }
-        projectUpdatesSQL += ")";    
+            pCnt = projects.length,
+            values = [];
+        for (i, pCnt; i < pCnt; i += 1) {
+          values.push(projects[i].id);
+        }    
         conn.query(
-          projectUpdatesSQL,
+          'SELECT * FROM projektupdate WHERE projekt_id IN (?)',
+          [conn.escape(values)],
           function (puError, puResults, puFields) {
             if (puError) {
               conn.release();
@@ -997,22 +1052,20 @@ exports.countUserProjectUpdates = function countUserProjectUpdates(resultObject,
               resultObject.projectUpdates = puResults.length;        
               var j = 0,
                   puLen = puResults.length,
-                  puucSQL = 'SELECT COUNT(*) as count FROM projektupdate_upvote'
-                  + 'WHERE projektupdate_id IN (';
+                  puValues = []
               for (j, puLen; j < puLen; j += 1) {
-                puucSQL += puResults[j].id.toString()
-                + (j === puLen - 1 ? "" : ", ");
+                puValues.push(puResults[j].id);
               }
-              puucSQL += ")";
               conn.query(
-                puucSQL,
+                'SELECT COUNT(*) as cnt FROM ?? WHERE projektupdate_id IN (?)',
+                ['projektupdate_upvote', conn.escape(puValues)],
                 function (puucError, puucResults, puucFields) {
                   conn.release();
                   if (puucError) {
                     callback(puucError, null);
                     return;
                   }            
-                  resultObject.projectUpdateUpvotes = puucResults[0].count;
+                  resultObject.projectUpdateUpvotes = puucResults[0].cnt;
                   callback(null, resultObject);
                   return;
                 }
@@ -1028,11 +1081,11 @@ exports.countUserProjectUpdates = function countUserProjectUpdates(resultObject,
   );
 };
 
-
 /**
  * Zählt die Kommentare eines Benutzers
  * @param {int} userId - Die ID des Benutzers
- * @param {selectCallback} callback - Callbackfunktion zum Verarbeiten der Rückgabewerte
+ * @param {selectCallback} callback - Callbackfunktion zum Verarbeiten der
+ *                                  Rückgabewerte
  */
 exports.countUserComments = function (userId, callback) {
   var resObj = {
@@ -1060,10 +1113,11 @@ exports.countUserComments = function (userId, callback) {
                 i = 0,
                 len = results.length;
             for (i, len; i < len; i += 1) {
-              values[i] = results[i].id;
+              values.push(results[i].id);
             }
             conn.query(
-              'SELECT COUNT(*) AS count FROM kommentar_upvote WHERE kommentar_id IN ?',
+              'SELECT COUNT(*) AS cnt FROM kommentar_upvote WHERE kommentar_id'
+              + ' IN ?',
               [conn.escape(values)],
               function (upvoteError, upvoteResults, upvoteFields) {
                 conn.release();
@@ -1071,7 +1125,7 @@ exports.countUserComments = function (userId, callback) {
                   callback(upvoteError, null);
                   return;
                 }
-                resObj.commentUpvotes = upvoteResults[0].count;
+                resObj.commentUpvotes = upvoteResults[0].cnt;
                 callback(null, resObj);
                 return;
               }

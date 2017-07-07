@@ -25,7 +25,6 @@ var loginController     = express.Router();
  * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
  */
 loginController.post('/signup', function (req, res) {
-    console.log("[LGCO] POST /signup");
     dbam.trySignup(req.body, function (err) {
         if (err) {
             console.log(err.stack);
@@ -85,7 +84,8 @@ loginController.post('/login', function (req, res) {
 loginController.get('/logout', function (req, res) {
     req.session.destroy(function (err) {
         if (err) {
-            console.log(err);
+            res.status(500).end();
+            throw err;
         }
         res.status(204).end();
     });
@@ -99,7 +99,7 @@ loginController.get('/logout', function (req, res) {
  * @param {string} path - Route
  * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
  */
-loginController.post('/deleteAccount', function (req, res) {
+loginController.post('/signout', function (req, res) {
   var password = req.body.password,
       email = req.user.email;
   dbam.findUserByEmail(
@@ -115,7 +115,21 @@ loginController.post('/deleteAccount', function (req, res) {
           dbam.deleteUserAccount(
             id,
             function (error) {
-              
+              if (error) {
+                res.status(500).end();
+                return;
+              } else {
+                req.session.destroy(
+                  function (err) {
+                    if (err) {
+                      res.status(500).end();
+                      throw err;
+                    } else {
+                      res.status(204).end();
+                    }
+                  }
+                );
+              }
             }
           );
         }

@@ -1,4 +1,4 @@
-package application.util;
+package application.util.conn;
 
 /**
  * URIs.
@@ -7,7 +7,7 @@ package application.util;
 public enum EURI {
 	
 	SIGNUP ("%ssignup"),
-	SIGNOUT ("%signout"),
+	SIGNOUT ("%ssignout"),
 	LOGIN ("%slogin"),
 	LOGOUT ("%slogout"),
 	DASHBOARD ("%sdashboard"),

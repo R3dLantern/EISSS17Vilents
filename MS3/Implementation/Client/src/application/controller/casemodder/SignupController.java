@@ -7,10 +7,10 @@ import org.json.JSONObject;
 
 import application.Main;
 import application.util.EBoolean;
-import application.util.EURI;
 import application.util.FormValidator;
-import application.util.PasswordUtil;
-import application.util.ServerRequest;
+import application.util.CryptoUtil;
+import application.util.conn.EURI;
+import application.util.conn.ServerRequest;
 import application.util.ui.EFXML;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -121,7 +121,7 @@ public class SignupController {
 		JSONObject obj = new JSONObject();
 		try{
 			obj.put("email", email.getText());
-			obj.put("password", PasswordUtil.getHash(PasswordUtil.ALGORITHM_SHA256, password.getText()));
+			obj.put("password", CryptoUtil.getHash(CryptoUtil.ALGORITHM_SHA256, password.getText()));
 			obj.put("type", "casemodder");
 			obj.put("dateOfBirth", dateOfBirth.getValue().toString());
 			return obj;
