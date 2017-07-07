@@ -21,7 +21,7 @@ public class LayoutManager{
 	
 	private int userId;
 	private boolean layoutForCasemodder;
-	private TabPane tabPane;
+	public static TabPane tabPane;
 	
 	/**
 	 * Konstruktor
@@ -32,7 +32,7 @@ public class LayoutManager{
 	public LayoutManager(int userId, boolean layoutForCasemodder, TabPane tabPane) {
 		this.userId = userId;
 		this.layoutForCasemodder = layoutForCasemodder;
-		this.tabPane = tabPane;
+		LayoutManager.tabPane = tabPane;
 	}
 	
 	

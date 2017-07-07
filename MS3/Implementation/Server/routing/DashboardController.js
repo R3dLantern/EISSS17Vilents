@@ -23,7 +23,7 @@ var dashboardController = express.Router();
  * @desc Minimale Reputation zur Aktivierung des Suchstatus
  * @default
  */
-var MINIMUM_REP = 100;
+var MINIMUM_REP = 0;
 
 
 console.log("[DBCO] DashboardController loaded.");
@@ -53,7 +53,7 @@ dashboardController.use(function (req, res, next) {
  */
 dashboardController.get('/dashboard', function (req, res) {
   /** @todo für Produktivumgebung entfernen! */
-  console.log("[DBCO] Request auf /dashboard!");
+  console.log('[DBCO] GET /dashboard!');
   var resObj = {
     newMessages: 0,
     rep: 0,
@@ -73,11 +73,16 @@ dashboardController.get('/dashboard', function (req, res) {
         req.user.id,
         function (error, totalRep) {
           if (error) {
-            console.log("[DBCO] GetTotalRep failed");
+            console.log('[DBCO] GetTotalRep failed');
             res.status(500).end();
             throw error;
           }
           resObj.rep = totalRep;
+          if (totalRep >= MINIMUM_REP) {
+              resObj.canActivateSeekStatus = true;
+          } else {
+              resObj.canActivateSeekStatus = false;
+          }
           console.log(resObj);
           res.status(200).json(resObj);
         }

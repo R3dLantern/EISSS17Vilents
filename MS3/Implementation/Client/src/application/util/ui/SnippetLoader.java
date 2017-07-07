@@ -3,6 +3,7 @@ package application.util.ui;
 import java.io.IOException;
 import java.util.Date;
 
+import application.controller.snippet.DashboardEventController;
 import application.controller.snippet.MessageOverviewController;
 import application.controller.snippet.ProfileProjectController;
 import application.controller.snippet.ProjectOverviewController;
@@ -143,5 +144,26 @@ public class SnippetLoader{
 			ie.printStackTrace();
 			return null;
 		}
+	}
+	
+	public AnchorPane getNewMessageDashboardEvent(int count)
+	{
+		FXMLLoader loader = new FXMLLoader(
+			getClass()
+			.getResource(EFXML.E_DASHBOARD.fxml())
+		);
+		try {
+			AnchorPane content = loader.load();
+			DashboardEventController controller = loader.<DashboardEventController>getController();
+			controller.initNewMessagesEvent(count);
+			return content;
+		} catch (LoadException le) {
+			le.printStackTrace();
+			return null;
+		} catch (IOException ie) {
+			ie.printStackTrace();
+			return null;
+		}
+				
 	}
 }

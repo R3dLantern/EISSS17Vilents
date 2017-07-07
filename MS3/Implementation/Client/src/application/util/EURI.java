@@ -11,6 +11,7 @@ public enum EURI {
 	LOGIN ("%slogin"),
 	LOGOUT ("%slogout"),
 	DASHBOARD ("%sdashboard"),
+	SEEKSTATUS ("%sseek"),
 	PROFILE_CM ("%sprofile/casemodder/%d"),
 	PROFILE_SP ("%sprofile/sponsor/%d"),
 	MESSAGES ("%smessages/index"),
