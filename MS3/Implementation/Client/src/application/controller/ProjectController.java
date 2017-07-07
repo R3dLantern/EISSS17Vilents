@@ -34,6 +34,9 @@ public class ProjectController {
 	@FXML
 	private Button upvoteButton;
 	
+	@FXML
+	private Label upvotesLabel;
+	
 	private EventHandler<ActionEvent> upvote = new EventHandler<ActionEvent>() {
 		public void handle(ActionEvent event){
 			ServerRequest up = new ServerRequest(EURI.UPVOTE_PROJECT.uri(), projectId);
@@ -70,9 +73,12 @@ public class ProjectController {
 				nameLink.setText(String.format("%s %s", resContent.getString("vorname"), resContent.getString("nachname")));
 				if(resContent.getBoolean("userOwnsProject")){
 					upvoteButton.setVisible(false);
+				} else {
+					upvotesLabel.setVisible(false);
 				}
 				if(res.getContent().getJSONArray("upvotes").length() > 0) {
 					JSONArray upvotes = resContent.getJSONArray("upvotes");
+					upvotesLabel.setText(String.format("%d Upvotes", upvotes.length()));
 					for(int i = 0; i < upvotes.length(); i++){
 						attachUpvoteHandler();
 						if(visitorId == upvotes.getJSONObject(i).getInt("benutzer_id")) {

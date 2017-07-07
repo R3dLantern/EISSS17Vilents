@@ -37,7 +37,7 @@
             <Pagination layoutX="-1.0" layoutY="-1.0" prefHeight="418.0" prefWidth="456.0" />
          </children>
       </AnchorPane>
-      <Label fx:id="upvotesLabel" alignment="CENTER" layoutX="350.0" layoutY="46.0" prefHeight="17.0" prefWidth="49.0" text="&lt;rep&gt;" />
+      <Label fx:id="upvotesLabel" alignment="CENTER" layoutX="351.0" layoutY="42.0" prefHeight="25.0" prefWidth="57.0" />
       <Button fx:id="upvoteButton" layoutX="419.0" layoutY="42.0" mnemonicParsing="false" text="+" />
    </children>
 </Pane>
