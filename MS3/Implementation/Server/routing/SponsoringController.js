@@ -16,9 +16,6 @@ var reputation          = require('../util/reputation.js');
 
 var sponsoringController  = express.Router();
 
-/** @todo für Produktivumgebung entfernen! */
-console.log('[SPCO] SponsoringController loaded.');
-
 /**
  * Überprüft, ob es eine Login-Session gibt.
  * @param {object} req - HTTP Request-Objekt
@@ -90,7 +87,6 @@ function getRepInLoop(userArray, callback) {
  * @param {function (req, res)} middleware - HTTP-Middleware mit Request- und Response-Objekt
  */
 sponsoringController.get('/index', function (req, res) {
-    console.log('[SPCO] GET /index');
     dbam.getSponsoringApplicants(function (error, resultArray) {
         if (error) {
             res.status(500).end();

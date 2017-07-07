@@ -15,8 +15,6 @@ var dbam                = require("../util/dbam.js");
 
 var messagesController = express.Router();
 
-console.log("[MSCO] MessagesController loaded.");
-
 /**
  * Überprüft, ob es eine Login-Session gibt.
  * @param {object} req - HTTP Request-Objekt
@@ -42,7 +40,6 @@ messagesController.get('/index', function (req, res) {
     var id = req.user.id;
     dbam.getMessagesOverviewData(id, function (error, results) {
         if (error) {
-            console.log(error);
             res.status(500).end();
             throw error;
         }
@@ -98,7 +95,6 @@ messagesController.route('/:id')
         throw error;
       }
       if (result) {
-        console.log(result);
         res.status(200).json(result);
       } else {
         res.status(404).end();

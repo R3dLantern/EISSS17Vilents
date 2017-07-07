@@ -15,9 +15,6 @@ var fs          = require('fs');
 var fileManager = require('./filemanager.js');
 var pool        = null;
 
-/** @todo für Produktivumgebung entfernen! */
-console.log("[DBAM] DBAM module loaded.");
-
 /**
  * Callback-Funktion für Abfragen ohne Rückgaben
  * @callback noReturnCallback
@@ -32,7 +29,9 @@ console.log("[DBAM] DBAM module loaded.");
  */
 
 /**
- * Entnimmt der im System hinterlegten Konfigurationsdatei die Zugangsdaten für die Datenbank
+ * @function
+ * @name DBAM::getCredentialsFromJson
+ * @desc Entnimmt der im System hinterlegten Konfigurationsdatei die Zugangsdaten für die Datenbank
  * @returns {object} JSON-Objekt mit Login-Credentials für die Datenbank
  */
 function getCredentialsFromJson() {
@@ -41,7 +40,9 @@ function getCredentialsFromJson() {
 }
 
 /**
- * Holt Kommentare für ein Spezifisches Element.
+ * @function
+ * @name DBAM::getComments
+ * @desc Holt Kommentare für ein Spezifisches Element.
  * @param {object}         conn      Verbindungsobjekt
  * @param {number}         id        Projekt-ID
  * @param {boolean}        isProject Flag für Elementtyp
@@ -68,10 +69,12 @@ function getComments(conn, id, isProject, callback) {
 }
 
 /**
- * Setzt eine Nachricht in der Datenbank als gelesen
+ * @function
+ * @name DBAM::setMessageAsRead
+ * @desc Setzt eine Nachricht in der Datenbank als gelesen
  * @param {object} conn     Verbindungsobjekt
  * @param {number} mId      Nachricht-ID
- * @param {insertCallback} callback Callbackfunktion
+ * @param {noReturnCallback} callback Callbackfunktion
  */
 function setMessageAsRead(conn, mId, callback) {
   conn.query(
@@ -89,7 +92,9 @@ function setMessageAsRead(conn, mId, callback) {
 }
 
 /**
- * Holt die Teamdaten eines Sponsors
+ * @function
+ * @name DBAM::getSponsorTeam
+ * @desc Holt die Teamdaten eines Sponsors
  * @param {object} conn     Verbindungsobjekt
  * @param {number} sId      Sponsor-ID
  * @param {selectCallback} callback Callbackfunktion
@@ -110,12 +115,14 @@ function getSponsorTeam(conn, sId, callback) {
 }
 
 /**
- * Löscht ein Element aus einer Tabelle
+ * @function
+ * @name DBAM::deleteElement
+ * @desc Löscht ein Element aus einer Tabelle
  * @param {object}         conn     Verbindungsobjekt
  * @param {string}         table    Tabelle
  * @param {string}         idRow    Name der Primärschlüssel-Spalte
  * @param {number}         id       Element-ID
- * @param {insertCallback} callback Callbackfunktion
+ * @param {noReturnCallback} callback Callbackfunktion
  */
 function deleteElement(conn, table, idRow, id, callback) {
   conn.query(
@@ -149,8 +156,7 @@ exports.initializeConnection = function initializeConnection() {
  * @name DBAM:Exports:trySignUp
  * @desc Versucht, einen User in der Datenbank anzulegen. Bei Erfolg, wird der Typ des Users in der Datenbank bestimmt.
  * @param {object} newUser - Ein newUser-Objekt, bestehend aus den Werten email, type, password und dateOfBirth
- * @param {insertCallback} callback - Callbackfunktion zum Verarbeiten der Return-Wertes
- * @throws Fehler bei MySQL
+ * @param {noReturnCallback} callback - Callbackfunktion zum Verarbeiten der Return-Wertes
  */
 exports.trySignup = function trySignup(newUser, callback) {
   this.pool.getConnection(function (connectionError, conn) {
@@ -223,7 +229,7 @@ exports.trySignup = function trySignup(newUser, callback) {
  * @param   {object}            options  Optionen-Objekt. Enthält eine
  *                                       Relationsreferenz, den Dateipfad und
  *                                       den Dateityp.
- * @param   {insertCallback}    callback Callbackfunktion
+ * @param   {noReturnCallback}    callback Callbackfunktion
  */
 exports.insertFile = function insertFile(options, callback) {
     
@@ -343,7 +349,7 @@ exports.insertFile = function insertFile(options, callback) {
  * @name DBAM:Exports:deleteUserAccount
  * @desc Löscht einen Benutzer-Account und alle dazugehörigen Elemente
  * @param {number}          userId   Benutzer-ID
- * @param {insertCallback}  callback Callbackfunktion
+ * @param {noReturnCallback}  callback Callbackfunktion
  */
 exports.deleteUserAccount = function deleteUserAccount(userId, callback) {
   this.pool.getConnection(
@@ -371,7 +377,9 @@ exports.deleteUserAccount = function deleteUserAccount(userId, callback) {
 };
 
 /**
- * Sucht in der Datenbank einen Benutzer nach Email-Adresse.
+ * @function
+ * @name DBAM:Exports:findUserByEmail
+ * @desc Sucht in der Datenbank einen Benutzer nach Email-Adresse.
  * @param {string} email - Email-Adresse des Benutzers
  * @param {selectCallback} callback - Callbackfunktion zum Verarbeiten der Rückgabewerte
  */
@@ -416,8 +424,10 @@ exports.findUserByEmail = function findUserByEmail(email, callback) {
 };
 
 /**
- * Sucht nach ungelesenen Nachrichten im Postfach des Benutzers
- * @param {int} userId - ID des Benutzers
+ * @function
+ * @name DBAM:Exports:checkForNewMessages
+ * @desc Sucht nach ungelesenen Nachrichten im Postfach des Benutzers
+ * @param {number} userId - ID des Benutzers
  * @param {selectCallback} callback - Callbackfunktion zum Verarbeiten der Rückgabewerte
  */
 exports.checkForNewMessages = function checkForNewMessages(userId, callback) {
@@ -442,9 +452,11 @@ exports.checkForNewMessages = function checkForNewMessages(userId, callback) {
 };
 
 /**
- * Aktiviert den Suchstatus eines Casemodders
- * @param {int} userId   Benutzer-ID des Casemodders
- * @param {insertCallback} callback Callbackfunktion
+ * @function
+ * @name DBAM:Exports:activateSeekerStatus
+ * @desc Aktiviert den Suchstatus eines Casemodders
+ * @param {number} userId   Benutzer-ID des Casemodders
+ * @param {noReturnCallback} callback Callbackfunktion
  */
 exports.activateSeekerStatus = function activateSeekerStatus(userId, callback) {
   this.pool.getConnection(
@@ -468,8 +480,10 @@ exports.activateSeekerStatus = function activateSeekerStatus(userId, callback) {
 };
 
 /**
- * Ruft die Profildaten eines Benutzers ab
- * @param {int} userId - ID des Benutzers
+ * @function
+ * @name DBAM:Exports:getProfileData
+ * @desc Ruft die Profildaten eines Benutzers ab
+ * @param {number} userId - ID des Benutzers
  * @param {string} userType - Benutzertyp
  * @param {selectCallback} callback - Callbackfunktion zum Verarbeiten der Rückgabewerte
  */
@@ -543,8 +557,10 @@ exports.getProfileData = function getProfileData(userId, userType, callback) {
 };
 
 /**
- * Holt "Header-Informationen" über die Projekte eines Benutzers (ID und Titel)
- * @param {int} userId   BenutzerID
+ * @function
+ * @name DBAM:Exports:getProjectsForUser
+ * @desc Holt "Header-Informationen" über die Projekte eines Benutzers (ID und Titel)
+ * @param {number} userId   BenutzerID
  * @param {selectCallback} callback Callbackfunktion
  */
 exports.getProjectsForUser = function getProjectsForUser(userId, callback) {
@@ -571,8 +587,10 @@ exports.getProjectsForUser = function getProjectsForUser(userId, callback) {
 };
 
 /**
- * Ruft alle Nachrichten ab, bei denen der Benutzer der Empfänger ist
- * @param {int} userId - Die ID des Benutzers
+ * @function
+ * @name DBAM:Exports:getMessagesOverviewData
+ * @desc Ruft alle Nachrichten ab, bei denen der Benutzer der Empfänger ist
+ * @param {number} userId - Die ID des Benutzers
  * @param {selectCallback} callback - Callbackfunktion zum Verarbeiten der Rückgabewerte
  */
 exports.getMessagesOverviewData = function (userId, callback) {
@@ -606,9 +624,11 @@ exports.getMessagesOverviewData = function (userId, callback) {
 };
 
 /**
- * Erstellt eine neue Nachricht in der Datenbank
+ * @function
+ * @name DBAM:Exports:createNewMessage
+ * @desc Erstellt eine neue Nachricht in der Datenbank
  * @param {object} messageObject Das Nachrichtenobjekt
- * @param {insertCallback} callback Callbackfunktion
+ * @param {noReturnCallback} callback Callbackfunktion
  */
 exports.createNewMessage = function createNewMessage(messageObject, callback) {
   var invalidMessageObject = (
@@ -644,8 +664,10 @@ exports.createNewMessage = function createNewMessage(messageObject, callback) {
 };
 
 /**
- * Holt den Inhalt einer Nachricht
- * @param {int} mId - Nachricht-ID
+ * @function
+ * @name DBAM:Exports:getMessageContent
+ * @desc Holt den Inhalt einer Nachricht
+ * @param {number} mId - Nachricht-ID
  * @param {selectCallback} callback - Callbackfunktion
  */
 exports.getMessageContent = function getMessageContent(mId, callback) {
@@ -693,9 +715,11 @@ exports.getMessageContent = function getMessageContent(mId, callback) {
 };
 
 /**
- * Setzt eine Nachricht als Gelesen
+ * @function
+ * @name DBAM:Exports:setMessageAsRead
+ * @desc Setzt eine Nachricht als Gelesen
  * @param {number} mId      Nachricht-ID
- * @param {insertCallback} callback Callbackfunktion
+ * @param {noReturnCallback} callback Callbackfunktion
  */
 exports.setMessageAsRead = function (mId, callback) {
   this.pool.getConnection(function (error, conn) {
@@ -717,9 +741,11 @@ exports.setMessageAsRead = function (mId, callback) {
 };
 
 /**
- * Löscht eine Nachricht aus der Datenbank
+ * @function
+ * @name DBAM:Exports:deleteMessage
+ * @desc Löscht eine Nachricht aus der Datenbank
  * @param {number} mId      Nachricht-ID
- * @param {insertCallback} callback Callbackfunktion
+ * @param {noReturnCallback} callback Callbackfunktion
  */
 exports.deleteMessage = function deleteMessage(mId, callback) {
   this.pool.getConnection(
@@ -748,9 +774,11 @@ exports.deleteMessage = function deleteMessage(mId, callback) {
 };
 
 /**
- * Holt seitengerecht jeweils 8 Projekte aus der Datenbank,
- * sortiert absteigend nach Erstellungsdatum
- * @param {int} page - Setnummer
+ * @function
+ * @name DBAM:Exports:getProjectsOverviewData
+ * @desc Holt Projekte für die Projektwelt und teilt sie auf:
+ * a) nicht-referenzierende b) referenzierende Projekte
+ * @param {number} page - Setnummer
  * @param {selectCallback} callback - Callbackfunktion zum Verarbeiten der Rückgabewerte
  */
 exports.getProjectsOverviewData = function getProjectsOverviewData(userId, isCasemodder, callback) {
@@ -857,7 +885,9 @@ exports.getProjectsOverviewData = function getProjectsOverviewData(userId, isCas
 };
 
 /**
- * Holt ein Projekt, seine Kommentare, Updates und alle dazugehörigen Upvotes.
+ * @function
+ * @name DBAM:Exports:getProject
+ * @desc Holt ein Projekt, seine Kommentare, Updates und alle dazugehörigen Upvotes.
  * @param {number} pId - ID des Projektes
  * @param {number} uId - ID des Session-Benutzers
  * @param {selectCallback} callback - Callbackfunktion
@@ -927,7 +957,9 @@ exports.getProject = function (pId, uId, callback) {
 };
 
 /**
- * Holt alle Casemodder-Benutzer mit aktiviertem Suchstatus
+ * @function
+ * @name DBAM:Exports:getSponsoringApplicants
+ * @desc Holt alle Casemodder-Benutzer mit aktiviertem Suchstatus
  * @param {selectCallback} callback Callbackfunktion
  */
 exports.getSponsoringApplicants = function (callback) {
@@ -956,8 +988,10 @@ exports.getSponsoringApplicants = function (callback) {
 };
 
 /**
- * Zählt die Projekte und Projektupdates eines Benutzers
- * @param {int} userId - Die ID des Benutzers
+ * @function
+ * @name DBAM:Exports:countUserProjects
+ * @desc Zählt die Projekte und Projektupdates eines Benutzers
+ * @param {number} userId - Die ID des Benutzers
  * @param {selectCallback} callback - Callbackfunktion zum Verarbeiten der
  *                                  Rückgabewerte
  */
@@ -1030,7 +1064,9 @@ exports.countUserProjects = function countUserProjects(userId, callback) {
 };
 
 /**
- * Zählt für ein Projekt die Projektupdates und alle dazugehörigen Upvotes
+ * @function
+ * @name DBAM:Exports:countUserProjectUpdates
+ * @desc Zählt für ein Projekt die Projektupdates und alle dazugehörigen Upvotes
  * @param {object}   resultObject  Übergebenes Objekt mit Gesamtergebnissen
  * @param {object[]} projectsArray Array mit Projekt-Objekten
  * @param {selectCallback} callback Callbackfunktion
@@ -1091,8 +1127,10 @@ exports.countUserProjectUpdates = function countUserProjectUpdates(resultObject,
 };
 
 /**
- * Zählt die Kommentare eines Benutzers
- * @param {int} userId - Die ID des Benutzers
+ * @function
+ * @name DBAM:Exports:countUserComments
+ * @desc Zählt die Kommentare eines Benutzers
+ * @param {number} userId - Die ID des Benutzers
  * @param {selectCallback} callback - Callbackfunktion zum Verarbeiten der
  *                                  Rückgabewerte
  */
@@ -1151,10 +1189,12 @@ exports.countUserComments = function (userId, callback) {
 };
 
 /**
- * Erstellt eine Relation aus Projekt und Benutzer in Form eines Upvotes in der Datenbank
+ * @function
+ * @name DBAM:Exports:upvoteElement
+ * @desc Erstellt eine Relation aus Projekt und Benutzer in Form eines Upvotes in der Datenbank
  * @param {number} pId      Projekt-ID
  * @param {number} uId      Benutzer-ID
- * @param {insertCallback} callback Callbackfunktion
+ * @param {noReturnCallback} callback Callbackfunktion
  */
 exports.upvoteElement = function upvoteElement(typeOptions, pId, uId, callback) {
   this.pool.getConnection(
@@ -1182,7 +1222,9 @@ exports.upvoteElement = function upvoteElement(typeOptions, pId, uId, callback) 
 }
 
 /**
- * Löscht eine Upvote-Relation zwischen einem Element und einem Benutzer
+ * @function
+ * @name DBAM:Exports:removeUpvote
+ * @desc Löscht eine Upvote-Relation zwischen einem Element und einem Benutzer
  * @param {object}   typeOptions Tabellenname und -spaltenname
  * @param {number} eId         Element-ID
  * @param {number} uId         Benutzer-ID

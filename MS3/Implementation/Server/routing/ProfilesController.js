@@ -16,10 +16,6 @@ var reputation          = require('../util/reputation.js');
 
 var profilesController  = express.Router();
 
-/** @todo für Produktivumgebung entfernen! */
-console.log("[PFCO] ProfilesController loaded.");
-
-
 /**
  * Überprüft, ob es eine Login-Session gibt.
  * @param {object} req - HTTP Request-Objekt
@@ -45,45 +41,54 @@ profilesController.route('/:type/:id')
      * @todo <strong>Implementieren</strong>
      */
     .get(function (req, res) {
-        var id = req.params.id,
-            type = req.params.type;
-        console.log(type);
-        dbam.getProfileData(id, type, function (error, dbRes) {
-            if (error) {
-                res.status(500).end();
-                throw error;
-            }
-            if (dbRes) {
-                dbRes.userOwnsProfile = (id === req.user.id.toString()) ? true : false;
-                if (type === "sponsor") {
-                    res.status(200).json(dbRes);
-                } else {
-                    reputation.getTotalReputationForUser(id, function (repError, totalRep) {
-                        if (repError) {
-                            res.status(500).end();
-                            throw repError;
-                        }
-                        if (totalRep) {
-                            dbRes.totalRep = totalRep;
-                        } else {
-                            dbRes.totalRep = 0;
-                        }
-                        dbam.getProjectsForUser(id, function (projectsError, projects) {
-                            if (projectsError) {
-                                res.status(500).end();
-                                throw projectsError;
-                            }
-                            dbRes.projekte = projects;
-                            res.status(200).json(dbRes);
-                            return;
-                        });
-                    });
-                }
+      var id = req.params.id,
+          type = req.params.type;
+      dbam.getProfileData(
+        id,
+        type,
+        function (error, dbRes) {
+          if (error) {
+            res.status(500).end();
+            throw error;
+          }
+          if (dbRes) {
+            dbRes.userOwnsProfile = (id === req.user.id.toString()) ? true : false;
+            if (type === "sponsor") {
+              res.status(200).json(dbRes);
             } else {
-                res.status(404).end();
-                return;
+              reputation.getTotalReputationForUser(
+                id,
+                function (repError, totalRep) {
+                  if (repError) {
+                    res.status(500).end();
+                    throw repError;
+                  }
+                  if (totalRep) {
+                    dbRes.totalRep = totalRep;
+                  } else {
+                    dbRes.totalRep = 0;
+                  }
+                  dbam.getProjectsForUser(
+                    id,
+                    function (projectsError, projects) {
+                      if (projectsError) {
+                        res.status(500).end();
+                        throw projectsError;
+                      }
+                      dbRes.projekte = projects;
+                      res.status(200).json(dbRes);
+                      return;
+                    }
+                  );
+                }
+              );
             }
-        });
+          } else {
+            res.status(404).end();
+            return;
+          }
+        }
+      );
     })
     /** @function
      * @name ProfileController::updateProfileData

@@ -16,8 +16,6 @@ import javafx.scene.layout.Pane;
  */
 public class DashboardEventController {
 	
-	private int userId;
-	
 	@FXML
 	private AnchorPane eventRoot;
 	

@@ -100,7 +100,7 @@ public class ServerRequest {
 	
 	/**
 	 * Führt einen HTTP DELETE-Request auf den Server aus.
-	 * @return
+	 * @return HttpResponse-Objekt mit Content und Statuscode
 	 */
 	public HttpResponse delete()
 	{

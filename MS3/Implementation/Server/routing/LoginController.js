@@ -44,7 +44,6 @@ loginController.post('/signup', function (req, res) {
  * @todo <strong>Implementieren</strong>
  */
 loginController.post('/login', function (req, res) {
-    console.log("[LGCO] POST /login");
     dbam.findUserByEmail(req.body.email, function (error, result) {
         if (error) {
             res.status(500).end();
@@ -57,7 +56,6 @@ loginController.post('/login', function (req, res) {
                     email: result.email,
                     isCasemodder: result.isCasemodder
                 };
-                console.log(req.session.user);
                 delete result.passwort;
                 delete result.email;
                 delete result.geburtsdatum;

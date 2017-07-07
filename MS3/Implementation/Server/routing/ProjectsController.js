@@ -14,9 +14,6 @@ var dbam                = require("../util/dbam.js");
 
 var projectsController = express.Router();
 
-/** @todo für Produktivumgebung entfernen! */
-console.log("[PJCO] ProjectsController loaded.");
-
 /**
  * Überprüft, ob es eine Login-Session gibt.
  * @param {object} req - HTTP Request-Objekt
@@ -40,15 +37,19 @@ projectsController.use(function (req, res, next) {
  * @todo <strong>Implementieren</strong>
  */
 projectsController.get('/index', function (req, res) {
-    var id = req.user.id,
-        isCasemodder = req.user.isCasemodder;
-    dbam.getProjectsOverviewData(id, isCasemodder, function (error, resObj) {
-        if (error) {
-            res.status(500).end();
-            throw error;
-        }
-        res.status(200).end(JSON.stringify(resObj));
-    });
+  var id = req.user.id,
+      isCasemodder = req.user.isCasemodder;
+  dbam.getProjectsOverviewData(
+    id,
+    isCasemodder,
+    function (error, resObj) {
+      if (error) {
+        res.status(500).end();
+        throw error;
+      }
+      res.status(200).end(JSON.stringify(resObj));
+    }
+  );
 });
 
 /**

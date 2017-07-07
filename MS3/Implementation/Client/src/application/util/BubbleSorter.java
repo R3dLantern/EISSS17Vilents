@@ -15,6 +15,9 @@ public class BubbleSorter {
 	/**
 	 * Führt den Bubblesort basierend auf dem Key aus.
 	 * <a href="http://www.java-programmieren.com/bubblesort-java.php">Quelle zu Code-Struktur</a>
+	 * @param array Zu sortierendes JSONArray
+	 * @param rankKey Der korrespondierende Key des Rankings, nach dem sortiert werden soll
+	 * @return sortiertes JSONArray-Objekt
 	 */
 	public static JSONArray sort(JSONArray array, String rankKey)
 	{

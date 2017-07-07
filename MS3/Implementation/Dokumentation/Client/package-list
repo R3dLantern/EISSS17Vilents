@@ -4,6 +4,7 @@ application.controller.casemodder
 application.controller.snippet
 application.controller.sponsor
 application.util
+application.util.conn
 application.util.ui
 fxml
 fxml.casemodder

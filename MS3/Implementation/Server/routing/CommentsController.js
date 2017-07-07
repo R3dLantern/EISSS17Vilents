@@ -14,9 +14,6 @@ var dbam                = require('../util/dbam.js');
 
 var commentsController  = express.Router();
 
-/** @todo für Produktivumgebung entfernen! */
-console.log("[CMCO] CommentsController loaded.");
-
 
 /** Router-Handling für Projektkommentare
  * @param {string} path - Route

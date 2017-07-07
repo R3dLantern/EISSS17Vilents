@@ -14,9 +14,6 @@ var dbam                = require('../util/dbam.js');
 
 var projectUpdatesController  = express.Router();
 
-/** @todo für Produktivumgebung entfernen! */
-console.log("[PUCO] ProjectUpdatesController loaded.");
-
 
 /**
  * @function

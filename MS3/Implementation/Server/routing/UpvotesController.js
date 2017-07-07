@@ -14,9 +14,6 @@ var dbam                = require('../util/dbam.js');
 
 var upvotesController  = express.Router();
 
-/** @todo für Produktivumgebung entfernen! */
-console.log("[UPCO] UpvotesController loaded.");
-
 
 /** Router-Handling für Kommentarupvotes
  * @param {string} path - Route

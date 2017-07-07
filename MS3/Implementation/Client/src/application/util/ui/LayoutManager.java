@@ -164,8 +164,9 @@ public class LayoutManager{
 	/**
 	 * Initialisiert eine Projekt-Pane und gibt sie zurück
 	 * @param projectId Projekt-ID
+	 * @param int visitorId	Benutzer-ID des Besuchers
 	 */
-	public void getSingleProjectTab(int projectId, int userId) {
+	public void getSingleProjectTab(int projectId, int visitorId) {
 		try {
 			FXMLLoader loader = new FXMLLoader(
 				getClass()

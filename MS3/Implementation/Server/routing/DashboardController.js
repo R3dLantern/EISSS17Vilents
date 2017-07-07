@@ -25,9 +25,6 @@ var dashboardController = express.Router();
  */
 var MINIMUM_REP = 0;
 
-
-console.log("[DBCO] DashboardController loaded.");
-
 /**
  * Überprüft, ob es eine Login-Session gibt.
  * @param {object} req - HTTP Request-Objekt

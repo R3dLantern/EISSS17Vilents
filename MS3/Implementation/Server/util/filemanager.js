@@ -11,10 +11,6 @@
 var fs  = require('fs');
 var dbam = require('./dbam.js');
 
-
-/** @todo für Produktivumgebung entfernen! */
-console.log("[FIMA] File manager module loaded.");
-
 /**
  * Callback-Funktion für Datei-Upload
  * 
