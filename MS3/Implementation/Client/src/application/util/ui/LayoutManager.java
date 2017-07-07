@@ -207,6 +207,7 @@ public class LayoutManager{
 			newMessageTab.setContent(content);
 			newMessageTab.setText("Neue Nachricht");
 			newMessageTab.setId("tab_" + UUID.randomUUID().toString());
+			controller.setParentTab(newMessageTab);
 			tabPane.getTabs().add(newMessageTab);
 			tabPane.getSelectionModel().select(newMessageTab);
 			return;	

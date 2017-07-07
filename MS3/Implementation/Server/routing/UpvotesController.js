@@ -46,15 +46,19 @@ upvotesController.route('/comment/:id')
  * @param {string} path - Route
  */
 upvotesController.route('/project/:id')
-    /** @function
-     * @name UpvotesController::upvoteProject
-     * @desc Versieht ein Projekt mit einem Upvote
-     * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
-     * @todo <strong>Implementieren</strong>
-     */
-    .post(function (req, res) {
-    
-    })
+  /** @function
+   * @name UpvotesController::upvoteProject
+   * @desc Versieht ein Projekt mit einem Upvote
+   * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
+   * @todo <strong>Implementieren</strong>
+   */
+  .post(function (req, res) {
+    var pId = req.params.id,
+        uId = req.user.id;
+    dbam.upvoteProject(pId, uId, function (error) {
+        
+    });
+  })
     /** @function
      * @name UpvotesController::removeProjectUpvote
      * @desc Löscht einProjektupvote

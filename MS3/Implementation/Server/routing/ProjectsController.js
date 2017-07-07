@@ -51,7 +51,6 @@ projectsController.get('/index', function (req, res) {
     });
 });
 
-
 /**
  * @function
  * @name ProjectsController::create
@@ -63,7 +62,6 @@ projectsController.get('/index', function (req, res) {
 projectsController.post('/new', function (req, res) {
     
 });
-
 
 /** Router-Handling für Projekte
  * @param {string} path - Route

@@ -64,7 +64,6 @@ app.use(session({
     }
 }));
 
-
 /**
  * @function
  * @name Main::checkSession
@@ -99,7 +98,6 @@ app.use(function (req, res, next) {
     }
 });
 
-
 /**
  * @function
  * @name stackTraceHandling
@@ -113,7 +111,6 @@ app.use(function (err, req, res, next) {
     });
 });
 
-
 app.use(loginController);
 app.use(dashboardController);
 app.use('/profile', profilesController);
@@ -124,7 +121,6 @@ app.use('/sponsoring', sponsoringController);
 app.use('/comment', commentsController);
 app.use('/upvote', upvotesController);
 
-
 /** @function
  * @name listenToDefaultPort
  * @desc "Startprozess", der dem Server das Emfpangen von HTTP-Anfragen ermöglicht
@@ -132,6 +128,5 @@ app.use('/upvote', upvotesController);
 app.listen(port, function () {
     console.log("[MAIN] Server listens on port %d", port);
 });
-
 
 module.exports = app;

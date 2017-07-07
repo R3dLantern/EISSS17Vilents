@@ -99,6 +99,48 @@ public class ServerRequest {
 	}
 	
 	/**
+	 * Führt einen HTTP DELETE-Request auf den Server aus.
+	 * @return
+	 */
+	public HttpResponse delete()
+	{
+		try {
+			Main.conn = (HttpURLConnection) url.openConnection();
+			Main.conn.setRequestMethod(EHttp.HTTP_DELETE.val());
+			Main.conn.setRequestProperty("Accept", "application/json; charset=UTF-8");
+			return this.handleResponse();
+		} catch (IOException a) {
+			a.printStackTrace();
+			return this.safeExceptionLogout();
+		}
+	}
+	
+	
+	
+	/**
+	 * Führt einen HTTP PUT-Request auf den Server aus.
+	 * @param putData		zu übermittelnde Daten als JSON-Objekt
+	 * @return				HttpResponse-Objekt mit Antwortdaten und Statuscode
+	 * @throws IOException	Bei Streaming-Fehlern
+	 */
+	public HttpResponse put(JSONObject putData) throws IOException
+	{
+		Main.conn = (HttpURLConnection) url.openConnection();
+		Main.conn.setRequestMethod(EHttp.HTTP_PUT.val());
+		Main.conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+		Main.conn.setRequestProperty("Content-length", Integer.toString(putData.length()));
+		Main.conn.setRequestProperty("Accept", "application/json; charset=UTF-8");
+		Main.conn.setDoOutput(true);
+			
+		OutputStream out = Main.conn.getOutputStream();
+	    out.write(putData.toString().getBytes("UTF-8"));
+	    out.flush();
+	    out.close();
+		    
+	    return this.handleResponse();
+	}
+	
+	/**
 	 * Setzt die URL dieser Instanz neu.
 	 * @param url neuer URL-String
 	 */

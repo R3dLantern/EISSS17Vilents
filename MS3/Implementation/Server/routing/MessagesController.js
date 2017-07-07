@@ -40,7 +40,6 @@ messagesController.use(function (req, res, next) {
  */
 messagesController.get('/index', function (req, res) {
     var id = req.user.id;
-    console.log("[MSCO] GET /index");
     dbam.getMessagesOverviewData(id, function (error, results) {
         if (error) {
             console.log(error);
@@ -85,23 +84,59 @@ messagesController.post('/new', function (req, res) {
  * @param {string} path - Route
  */
 messagesController.route('/:id')
-    /** @function
-     * @name MessagesController::show
-     * @desc Holt Daten zu einem Projekt
-     * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
-     * @todo <strong>Implementieren</strong>
-     */
-    .get(function (req, res) {
-    
-    })
-    /** @function
-     * @name MessagesController::delete
-     * @desc Holt Daten zu einem Projekt
-     * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
-     * @todo <strong>Implementieren</strong>
-     */
-    .delete(function (req, res) {
-    
+  /** @function
+   * @name MessagesController::show
+   * @desc Holt den Inhalt einer Nachricht
+   * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
+   * @todo <strong>Implementieren</strong>
+   */
+  .get(function (req, res) {
+    var mId = req.params.id;
+    dbam.getMessageContent(mId, function (error, result) {
+      if (error) {
+        res.status(500).end();
+        throw error;
+      }
+      if (result) {
+        console.log(result);
+        res.status(200).json(result);
+      } else {
+        res.status(404).end();
+      }
     });
+  })
+  /** @function
+   * @name MessagesController::setAsRead
+   * @desc Setzt eine Nachricht als gelesen
+   * @param {function (req, res)} middleware - HTTP-Middleware mit Request und Response-Objekt
+   */
+  .put(function (req, res) {
+    var mId = req.params.id;
+    dbam.setMessageAsRead(mId, function (error) {
+      if (error) {
+        res.status(500).end();
+        throw error;
+      } else {
+        res.status(204).end();
+      }
+    });
+  })
+  /** @function
+   * @name MessagesController::delete
+   * @desc Löscht eine Nachricht aus der Datenbank
+   * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
+   * @todo <strong>Implementieren</strong>
+   */
+  .delete(function (req, res) {
+    var mId = req.params.id;
+    dbam.deleteMessage(mId, function (error) {
+      if (error) {
+        res.status(500).end();
+      } else {
+        res.status(204).end();
+      }
+      return;
+    });
+  });
 
 module.exports = messagesController;

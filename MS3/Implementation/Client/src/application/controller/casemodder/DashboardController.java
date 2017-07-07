@@ -9,10 +9,10 @@ import application.Main;
 import application.controller.IDashboardController;
 import application.util.EURI;
 import application.util.ServerRequest;
+import application.util.ui.DialogCreator;
+import application.util.ui.EDialog;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
@@ -45,8 +45,6 @@ public class DashboardController implements IDashboardController{
 		
 		HttpResponse res = req.get();
 		
-		//TODO Events implementieren
-		
 		try {
 			JSONObject content = res.getContent();
 			repLabel.setText(Integer.toString(content.getInt("rep")));
@@ -62,30 +60,29 @@ public class DashboardController implements IDashboardController{
 		}
 	}
 	
+	/**
+	 * Aktiviert den Sponsorsuchstatus
+	 */
 	@FXML
 	protected void activateSeekStatus()
 	{
-		Alert conf = new Alert(AlertType.CONFIRMATION);
-		conf.setTitle("Sponsorsuchstatus setzen");
-		conf.setHeaderText("Sponsorsuchstatus setzen?");
-		conf.setContentText("Das Setzen des Sponsorsuchstatus bedeutet, dass Sponsoren dies sehen und Dich in ein Team einladen können. Bist Du sicher, dass Du das möchtest?");
-		
-		ButtonType buttonYes = new ButtonType("Ja", ButtonData.YES);
-		ButtonType buttonNo = new ButtonType("Nein", ButtonData.NO);
-		
-		conf.getButtonTypes().setAll(buttonYes, buttonNo);
-		
+		Alert conf = DialogCreator.getYesNoConfirmation(
+			EDialog.TITLE_SEEK_STATUS.text(),
+			EDialog.HEADER_SEEK_STATUS.text(),
+			EDialog.CONTENT_SEEK_STATUS.text()
+		);
 		Optional<ButtonType> result = conf.showAndWait();
 		
-		if (result.get() == buttonYes) {
+		if (result.get() == conf.getButtonTypes().get(0)) {
 			ServerRequest req = new ServerRequest(EURI.SEEKSTATUS.uri());
 			
 			HttpResponse res = req.get();
 			if (res.getStatusCode() == 201) {
-				Alert info = new Alert(AlertType.INFORMATION);
-				info.setTitle("Dein Suchstatus");
-				info.setHeaderText("Suchstatus erfolgreich gesetzt");
-				info.setContentText("Du hast Deinen Sponsorsuchstatus erfolgreich gesetzt. Viel Erfolg!");
+				Alert info = DialogCreator.getInfo(
+					EDialog.TITLE_SEEK_STATUS_SET.text(),
+					EDialog.HEADER_SEEK_STATUS_SET.text(),
+					EDialog.CONTENT_SEEK_STATUS_SET.text()
+				);
 				info.showAndWait();
 			}
 		} else {

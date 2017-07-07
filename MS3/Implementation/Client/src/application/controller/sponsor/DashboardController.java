@@ -1,5 +1,9 @@
 package application.controller.sponsor;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import application.Main;
 import application.controller.IDashboardController;
 import application.util.EURI;
 import application.util.ServerRequest;
@@ -28,6 +32,16 @@ public class DashboardController implements IDashboardController{
 		
 		HttpResponse res = req.get();
 		
-		//TODO: Dashboard-Events implementieren
+		try {
+			JSONObject content = res.getContent();
+			
+			if(content.getInt("newMessages") > 0) {
+				int count = content.getInt("newMessages");
+				eventPane.getChildren().add(Main.snippetLoader.getNewMessageDashboardEvent(count));
+			}
+			
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 	}
 }

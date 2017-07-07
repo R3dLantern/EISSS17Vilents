@@ -52,16 +52,10 @@ dashboardController.use(function (req, res, next) {
  * @todo <strong>Implementieren</strong>
  */
 dashboardController.get('/dashboard', function (req, res) {
-  /** @todo für Produktivumgebung entfernen! */
-  console.log('[DBCO] GET /dashboard!');
   var resObj = {
     newMessages: 0,
-    rep: 0,
     id: req.user.id
   };
-    
-/** @todo Kommentarbenachrichtigungen */
-    
   dbam.checkForNewMessages(req.user.id, function (error, result) {
     if (error) {
       res.status(500).end();
@@ -73,7 +67,6 @@ dashboardController.get('/dashboard', function (req, res) {
         req.user.id,
         function (error, totalRep) {
           if (error) {
-            console.log('[DBCO] GetTotalRep failed');
             res.status(500).end();
             throw error;
           }
@@ -83,12 +76,11 @@ dashboardController.get('/dashboard', function (req, res) {
           } else {
               resObj.canActivateSeekStatus = false;
           }
-          console.log(resObj);
           res.status(200).json(resObj);
         }
       );
     } else {
-      res.status(200).end();
+      res.status(200).json(resObj);
     }  
   });
 });
@@ -102,25 +94,32 @@ dashboardController.get('/dashboard', function (req, res) {
  * @param {function (req, res)} callback - Callbackfunktion
  */
 dashboardController.get('/seek', function (req, res) {
-   dbam.getTotalReputationForUser(req.user.id, function (error, result) {
-       if (error) {
-           res.status(500).end();
-           throw error;
+    dbam.getTotalReputationForUser(
+      req.user.id,
+      function (error, result) {
+        if (error) {
+          res.status(500).end();
+          throw error;
+        }
+        if (result < MINIMUM_REP) {
+          res.status(400).end();
+          return;
+        } else {
+        dbam.activateSeekerStatus(
+          req.user.id,
+          function (error) {
+            if (error) {
+              res.status(500).end();
+              throw error;
+            } else {
+              res.status(201).end();
+            }
+          }
+        );
        }
-       if (result < MINIMUM_REP) {
-           res.status(400).end();
-           return;
-       } else {
-           dbam.activateSeekerStatus(req.user.id, function (error) {
-               if (error) {
-                   res.status(500).end();
-                   throw error;
-               } else {
-                   res.status(201).end();
-               }
-           });
-       }
-   });
-});
+     }
+    );
+  }
+);
     
 module.exports = dashboardController;

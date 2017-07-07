@@ -6,17 +6,22 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import application.util.EURI;
+import application.util.PasswordUtil;
 import application.util.ServerRequest;
+import application.util.ui.DialogCreator;
+import application.util.ui.EDialog;
+import application.util.ui.LayoutManager;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import model.HttpResponse;
 
 public class NewMessageController {
 	
 	private int receiverId;
+	private Tab parentTab;
 	
 	@FXML
 	private Label receiverLabel;
@@ -33,6 +38,11 @@ public class NewMessageController {
 		receiverLabel.setText(receiverName);
 	}
 	
+	public void setParentTab(Tab tab)
+	{
+		this.parentTab = tab;
+	}
+	
 	@FXML
 	protected void sendMessage()
 	{
@@ -46,16 +56,19 @@ public class NewMessageController {
 		
 		try {
 			messageData.put("receiverId", receiverId);
-			messageData.put("content", textField.getText());
+			messageData.put("content", PasswordUtil.encodeBase64(textField.getText()));
 			
 			HttpResponse res = req.post(messageData);
 			
 			if(res.getStatusCode() == 201) {
-				Alert alert = new Alert(AlertType.INFORMATION);
-				alert.setTitle("Deine Nachricht");
-				alert.setHeaderText("Erfolg");
-				alert.setContentText("Deine Nachricht wurde erfolgreich abgeschickt.");
-				alert.showAndWait();
+				Alert info = DialogCreator.getInfo(
+					EDialog.TITLE_SENT_MESSAGE.text(),
+					EDialog.HEADER_SENT_MESSAGE.text(),
+					EDialog.CONTENT_SENT_MESSAGE.text()
+				);
+				info.showAndWait();
+				LayoutManager.tabPane.getSelectionModel().select(0);
+				LayoutManager.tabPane.getTabs().remove(parentTab);
 				return;
 			}
 		} catch (JSONException je) {

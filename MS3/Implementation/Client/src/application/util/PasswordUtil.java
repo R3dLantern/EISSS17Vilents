@@ -2,6 +2,7 @@ package application.util;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 
 /**
  * Hilfsklasse für Funktionen rund ums Passwort
@@ -38,5 +39,25 @@ public class PasswordUtil {
 			e.printStackTrace();
 			return ERROR_HASH_FAILED;
 		}
+	}
+	
+	/**
+	 * Enkodiert einen String in Base64
+	 * @param content	zu kodierender Strin
+	 * @return			Kodierter String
+	 */
+	public static String encodeBase64 (String content)
+	{
+		return new String(Base64.getEncoder().encode(content.getBytes()));
+	}
+	
+	/**
+	 * Dekodiert einen Base64-String
+	 * @param content   zu dekodierender String
+	 * @return			Dekodierter String
+	 */
+	public static String decodeBase64 (String content)
+	{
+		return new String(Base64.getDecoder().decode(content.getBytes()));
 	}
 }
