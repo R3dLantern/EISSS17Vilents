@@ -867,9 +867,7 @@ exports.getProject = function (pId, uId, callback) {
     if (connError) {
       callback(connError, null);
     }
-    var countSql = '(SELECT COUNT(*) FROM projekt_upvote pu WHERE pu.projekt_id'
-        + ' = ?) AS upvotes',
-        sql = 'SELECT p.*, b.vorname, b.nachname, ' + countSql + ' FROM projekt'
+    var sql = 'SELECT p.*, b.vorname, b.nachname FROM projekt'
         + ' p JOIN benutzer b ON p.casemodder_id = b.id WHERE p.id = ? LIMIT 1';
     conn.query(sql, [pId, pId], function (error, results, fields) {
       if (error) {
@@ -884,27 +882,38 @@ exports.getProject = function (pId, uId, callback) {
           result.userOwnsProject = false;
         }
         conn.query(
-          'SELECT id FROM kommentar k JOIN projekt_kommentar pk on k.id = '
-          + 'pk.kommentar_id WHERE pk.projekt_id = ?',
+          'SELECT benutzer_id FROM projekt_upvote WHERE projekt_id = ?',
           [pId],
-          function (commentsError, commentsResults, commentsFields) {    
-            if (commentsError) {
-              callback(commentsError, null);
+          function (error, puResults, fields) {
+            if (error) {
+              callback(error, null);
               return;
             }
-            commentsResults = JSON.parse(JSON.stringify(commentsResults));
+            result.upvotes = JSON.parse(JSON.stringify(puResults));
             conn.query(
-              'SELECT * FROM projektupdate WHERE projekt_id = ?',
+              'SELECT id FROM kommentar k JOIN projekt_kommentar pk on k.id = '
+              + 'pk.kommentar_id WHERE pk.projekt_id = ?',
               [pId],
-              function (puError, puResults, puFields) {
-                if (puError) {
-                  conn.release();
-                  callback(puError, null);
+              function (commentsError, commentsResults, commentsFields) {    
+                if (commentsError) {
+                  callback(commentsError, null);
                   return;
                 }
-                result.updates = JSON.parse(JSON.stringify(puResults));
-                console.log(result);
-                callback(null, result);
+                commentsResults = JSON.parse(JSON.stringify(commentsResults));
+                conn.query(
+                  'SELECT * FROM projektupdate WHERE projekt_id = ?',
+                  [pId],
+                  function (puError, puResults, puFields) {
+                    if (puError) {
+                      conn.release();
+                      callback(puError, null);
+                      return;
+                    }
+                    result.updates = JSON.parse(JSON.stringify(puResults));
+                    console.log(result);
+                    callback(null, result);
+                  }
+                );
               }
             );
           }
@@ -1140,5 +1149,67 @@ exports.countUserComments = function (userId, callback) {
     }
   );
 };
+
+/**
+ * Erstellt eine Relation aus Projekt und Benutzer in Form eines Upvotes in der Datenbank
+ * @param {number} pId      Projekt-ID
+ * @param {number} uId      Benutzer-ID
+ * @param {insertCallback} callback Callbackfunktion
+ */
+exports.upvoteElement = function upvoteElement(typeOptions, pId, uId, callback) {
+  this.pool.getConnection(
+    function (err, conn) {
+      if (err) {
+        callback(err);
+        return;
+      }
+      conn.query(
+        'INSERT INTO ?? (??, benutzer_id) VALUES (?, ?);',
+        [typeOptions.table, typeOptions.row, pId, uId],
+        function (error, results, fields) {
+          conn.release();
+          if (error) {
+            callback(error);
+            return;
+          } else {
+            callback(null);
+            return;
+          }
+        }
+      );
+    }
+  );
+}
+
+/**
+ * Löscht eine Upvote-Relation zwischen einem Element und einem Benutzer
+ * @param {object}   typeOptions Tabellenname und -spaltenname
+ * @param {number} eId         Element-ID
+ * @param {number} uId         Benutzer-ID
+ * @param {insertCalback} callback    Callbackfunktion
+ */
+exports.removeUpvote = function removeUpvote(typeOptions, eId, uId, callback) {
+  this.pool.getConnection(
+    function (err, conn) {
+      if (err) {
+        callback(err);
+        return;
+      }
+      conn.query(
+        'DELETE FROM ?? WHERE ?? = ? AND benutzer_id = ?;',
+        [typeOptions.table, typeOptions.row, eId, uId],
+        function (error, results, fields) {
+          if (error) {
+            callback(error);
+            return;
+          } else {
+            callback(null);
+            return;
+          }
+        }
+      );
+    }
+  );
+}
 
 module.exports = exports;

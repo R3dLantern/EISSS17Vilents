@@ -29,6 +29,6 @@ public class ProjectOverviewController {
 	
 	@FXML
 	protected void viewProject(ActionEvent event) {
-		Main.layoutManager.getSingleProjectTab(projectId);
+		Main.layoutManager.getSingleProjectTab(projectId, Main.layoutManager.getUserId());
 	}
 }

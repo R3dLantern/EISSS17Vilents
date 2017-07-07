@@ -1,5 +1,6 @@
 package application.controller;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -7,7 +8,10 @@ import application.Main;
 import application.util.EBoolean;
 import application.util.conn.EURI;
 import application.util.conn.ServerRequest;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import model.HttpResponse;
@@ -18,7 +22,8 @@ import model.HttpResponse;
  */
 public class ProjectController {
 	
-	private int userId;
+	private int ownerId;
+	private int projectId;
 	
 	@FXML
 	private Label titleLabel;
@@ -26,7 +31,34 @@ public class ProjectController {
 	@FXML
 	private Hyperlink nameLink;
 	
-	public void initWithData(int pId) {
+	@FXML
+	private Button upvoteButton;
+	
+	private EventHandler<ActionEvent> upvote = new EventHandler<ActionEvent>() {
+		public void handle(ActionEvent event){
+			ServerRequest up = new ServerRequest(EURI.UPVOTE_PROJECT.uri(), projectId);
+			HttpResponse upRes = up.get();
+			if(upRes.getStatusCode() == 201) {
+				attachDownvoteHandler();
+				event.consume();
+			}
+		}
+	};
+	
+	private EventHandler<ActionEvent> downvote = new EventHandler<ActionEvent>() {
+		public void handle(ActionEvent event) {
+			ServerRequest down = new ServerRequest(EURI.UPVOTE_PROJECT.uri(), projectId);
+			HttpResponse downRes = down.delete();
+			if (downRes.getStatusCode() == 204) {
+				attachUpvoteHandler();
+				event.consume();
+			}
+		}
+	};
+	
+	public void initWithData(int pId, int visitorId) {
+		
+		this.projectId = pId;
 		ServerRequest req = new ServerRequest(EURI.PROJECT.uri(), pId);
 		
 		HttpResponse res = req.get();
@@ -34,8 +66,23 @@ public class ProjectController {
 		if(resContent != null) {
 			try{
 				titleLabel.setText(resContent.getString("titel"));
-				userId = resContent.getInt("casemodder_id");
+				ownerId = resContent.getInt("casemodder_id");
 				nameLink.setText(String.format("%s %s", resContent.getString("vorname"), resContent.getString("nachname")));
+				if(resContent.getBoolean("userOwnsProject")){
+					upvoteButton.setVisible(false);
+				}
+				if(res.getContent().getJSONArray("upvotes").length() > 0) {
+					JSONArray upvotes = resContent.getJSONArray("upvotes");
+					for(int i = 0; i < upvotes.length(); i++){
+						attachUpvoteHandler();
+						if(visitorId == upvotes.getJSONObject(i).getInt("benutzer_id")) {
+							attachDownvoteHandler();
+							i = upvotes.length();
+						}
+					}
+				} else {
+					attachUpvoteHandler();
+				}
 			} catch (JSONException je) {
 				je.printStackTrace();
 				return;
@@ -52,10 +99,21 @@ public class ProjectController {
 		return titleLabel.getText();
 	}
 	
-	
 	@FXML
 	protected void viewProfile()
 	{
-		Main.layoutManager.getProfileTabContent(userId, EBoolean.CASEMODDER.value());
+		Main.layoutManager.getProfileTabContent(ownerId, EBoolean.CASEMODDER.value());
+	}
+	
+	public void attachUpvoteHandler()
+	{
+		upvoteButton.setText("+");
+		upvoteButton.setOnAction(upvote);
+	}
+	
+	public void attachDownvoteHandler()
+	{
+		upvoteButton.setText("X");
+		upvoteButton.setOnAction(downvote);
 	}
 }

@@ -36,6 +36,12 @@ public class LayoutManager{
 	}
 	
 	
+	public int getUserId()
+	{
+		return this.userId;
+	}
+	
+	
 	/**
 	 * Gibt die initialisierte Dashboard-Pane zurück.
 	 * @return Initialisiertes Pane-Objekt
@@ -159,7 +165,7 @@ public class LayoutManager{
 	 * Initialisiert eine Projekt-Pane und gibt sie zurück
 	 * @param projectId Projekt-ID
 	 */
-	public void getSingleProjectTab(int projectId) {
+	public void getSingleProjectTab(int projectId, int userId) {
 		try {
 			FXMLLoader loader = new FXMLLoader(
 				getClass()
@@ -169,7 +175,7 @@ public class LayoutManager{
 			);
 			Pane content = (Pane) loader.load();
 			ProjectController controller = loader.<ProjectController>getController();
-			controller.initWithData(projectId);
+			controller.initWithData(projectId, this.userId);
 			Tab singleProjectTab = new Tab();
 			singleProjectTab.setClosable(true);
 			singleProjectTab.setContent(content);

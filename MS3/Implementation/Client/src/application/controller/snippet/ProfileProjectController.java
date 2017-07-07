@@ -24,6 +24,6 @@ public class ProfileProjectController {
 	@FXML
 	protected void viewProject()
 	{
-		Main.layoutManager.getSingleProjectTab(this.projectId);
+		Main.layoutManager.getSingleProjectTab(this.projectId, Main.layoutManager.getUserId());
 	}
 }

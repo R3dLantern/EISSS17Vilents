@@ -16,6 +16,8 @@ import javafx.scene.layout.Pane;
  */
 public class DashboardEventController {
 	
+	private int userId;
+	
 	@FXML
 	private AnchorPane eventRoot;
 	
@@ -53,7 +55,7 @@ public class DashboardEventController {
 		eventLink.setOnAction(new EventHandler<ActionEvent>() {
 			public void handle(ActionEvent event)
 			{
-				Main.layoutManager.getSingleProjectTab(pId);
+				Main.layoutManager.getSingleProjectTab(pId, Main.layoutManager.getUserId());
 			}
 		});
 	}

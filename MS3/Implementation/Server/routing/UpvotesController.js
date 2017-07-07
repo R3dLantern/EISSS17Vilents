@@ -28,8 +28,26 @@ upvotesController.route('/comment/:id')
      * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
      * @todo <strong>Implementieren</strong>
      */
-    .post(function (req, res) {
-    
+    .get(function (req, res) {
+      var pId = req.params.id,
+          uId = req.user.id;
+      dbam.upvoteElement(
+        {
+          table: "kommentar_upvote",
+          row: "kommentar_id"
+        },
+        pId,
+        uId,
+        function (error) {
+          if (error) {
+            res.status(500).end();
+            return;
+          } else {
+            res.status(201).end();
+            return;
+          }
+        }
+      );
     })
     /** @function
      * @name UpvotesController::removeCommentUpvote
@@ -38,7 +56,24 @@ upvotesController.route('/comment/:id')
      * @todo <strong>Implementieren</strong>
      */
     .delete(function (req, res) {
-    
+      var pId = req.params.id,
+          uId = req.user.id;
+      dbam.removeUpvote(
+        {
+            table: "kommentar_upvote",
+            row: "kommentar_id"
+        },
+        pId,
+        uId,
+        function(error) {
+          if (error) {
+            res.status(500).end();
+            throw error;
+          } else {
+            res.status(204).end();
+          }
+        }
+      );
     });
 
 
@@ -52,12 +87,26 @@ upvotesController.route('/project/:id')
    * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
    * @todo <strong>Implementieren</strong>
    */
-  .post(function (req, res) {
+  .get(function (req, res) {
     var pId = req.params.id,
         uId = req.user.id;
-    dbam.upvoteProject(pId, uId, function (error) {
-        
-    });
+    dbam.upvoteElement(
+      {
+        table: "projekt_upvote",
+        row: "projekt_id"
+      },
+      pId,
+      uId,
+      function (error) {
+        if (error) {
+          res.status(500).end();
+          return;
+        } else {
+          res.status(201).end();
+          return;
+        }
+      }
+    );
   })
     /** @function
      * @name UpvotesController::removeProjectUpvote
@@ -66,7 +115,24 @@ upvotesController.route('/project/:id')
      * @todo <strong>Implementieren</strong>
      */
     .delete(function (req, res) {
-    
+      var pId = req.params.id,
+          uId = req.user.id;
+      dbam.removeUpvote(
+        {
+            table: "projekt_upvote",
+            row: "projekt_id"
+        },
+        pId,
+        uId,
+        function(error) {
+          if (error) {
+            res.status(500).end();
+            throw error;
+          } else {
+            res.status(204).end();
+          }
+        }
+      );
     });
 
 
@@ -81,7 +147,25 @@ upvotesController.route('/projectupdate/:id')
      * @todo <strong>Implementieren</strong>
      */
     .post(function (req, res) {
-    
+      var pId = req.params.id,
+          uId = req.user.id;
+      dbam.upvoteElement(
+        {
+          table: "projektupdate_upvote",
+          row: "projektupdate_id"
+        },
+        pId,
+        uId,
+        function (error) {
+          if (error) {
+            res.status(500).end();
+            return;
+          } else {
+            res.status(201).end();
+            return;
+          }
+        }
+      );
     })
     /** @function
      * @name UpvotesController::removeProjectUpdateUpvote
@@ -90,7 +174,24 @@ upvotesController.route('/projectupdate/:id')
      * @todo <strong>Implementieren</strong>
      */
     .delete(function (req, res) {
-    
+      var pId = req.params.id,
+          uId = req.user.id;
+      dbam.removeUpvote(
+        {
+            table: "projektupdate_upvote",
+            row: "projektupdate_id"
+        },
+        pId,
+        uId,
+        function(error) {
+          if (error) {
+            res.status(500).end();
+            throw error;
+          } else {
+            res.status(204).end();
+          }
+        }
+      );
     });
 
 module.exports = upvotesController;
