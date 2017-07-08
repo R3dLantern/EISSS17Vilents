@@ -409,6 +409,7 @@ exports.findUserByEmail = function findUserByEmail(email, callback) {
                   return;
                 }
                 results[0].isCasemodder = isCasemodderResults.length > 0 ? true : false;
+                results[0].suchstatus = isCasemodderResults[0].suchstatus;
                 callback(null, JSON.stringify(results[0]));
                 return;
               }
@@ -460,8 +461,8 @@ exports.checkForNewMessages = function checkForNewMessages(userId, callback) {
  */
 exports.activateSeekerStatus = function activateSeekerStatus(userId, callback) {
   this.pool.getConnection(
-    function (connError, conn) {
-      if (error) {
+    function (err, conn) {
+      if (err) {
         callback(error);
       }
       conn.query(
@@ -469,6 +470,7 @@ exports.activateSeekerStatus = function activateSeekerStatus(userId, callback) {
         [userId],
         function (error, results, fields) {
           if (error) {
+            console.log('err_update');
             callback(error);
             return;
           }

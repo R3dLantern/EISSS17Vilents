@@ -60,6 +60,7 @@ dashboardController.get('/dashboard', function (req, res) {
     }
     resObj.newMessages = result;
     if (req.user.isCasemodder) {
+      resObj.suchstatus = req.user.suchstatus;
       reputation.getTotalReputationForUser(
         req.user.id,
         function (error, totalRep) {
@@ -68,7 +69,7 @@ dashboardController.get('/dashboard', function (req, res) {
             throw error;
           }
           resObj.rep = totalRep;
-          if (totalRep >= MINIMUM_REP) {
+          if (totalRep >= MINIMUM_REP && req.user.suchstatus === false) {
               resObj.canActivateSeekStatus = true;
           } else {
               resObj.canActivateSeekStatus = false;
@@ -91,7 +92,7 @@ dashboardController.get('/dashboard', function (req, res) {
  * @param {function (req, res)} callback - Callbackfunktion
  */
 dashboardController.get('/seek', function (req, res) {
-    dbam.getTotalReputationForUser(
+    reputation.getTotalReputationForUser(
       req.user.id,
       function (error, result) {
         if (error) {

@@ -33,6 +33,9 @@ public class DashboardController implements IDashboardController{
 	@FXML
 	private Pane seekStatusPane;
 	
+	@FXML
+	private Label seekStatusText;
+	
 	/*
 	 * (non-Javadoc)
 	 * @see application.controller.IDashboardController#initialize()

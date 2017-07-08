@@ -57,9 +57,6 @@ var FACTOR_COMMENTS_UPVOTES = 0.3;
 
 var dbam = require('./dbam.js');
 
-/** @todo für Produktivumgebung entfernen! */
-console.log("[REPM] Reputation module loaded.");
-
 
 /**
  * Callbackfunktion für Übergabe der GesamtReputation
@@ -70,13 +67,12 @@ console.log("[REPM] Reputation module loaded.");
 
 /**
  * Berechnet die Gesamtreputation für einen Casemodder-Benutzer
- * @param {int} userId - Email des Benutzers
+ * @param {number} userId - Email des Benutzers
  * @param {getTotalRepCallback} callback - Callbackfunktion zur Rückgabe des Wertes
  * @todo <strong>Implementieren</strong>
  */
-exports.getTotalReputationForUser = function (userId, callback) {
+exports.getTotalReputationForUser = function getTotalReputationForUser(userId, callback) {
     var totalRep = 0.0;
-    
     // Reputation aus Projekten
     dbam.countUserProjects(userId, function (projectsError, projectsResult) {
         if (projectsError) {

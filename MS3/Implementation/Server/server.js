@@ -23,9 +23,6 @@
  * @author Leonid Vilents <lvilents@smail.th-koeln.de>
  */
 
-/** @todo für Produktivumgebung entfernen! */
-console.log("[MAIN] Main module loaded.");
-
 var express             = require('express');
 var session             = require('express-session');
 var bodyParser          = require('body-parser');
@@ -81,6 +78,9 @@ app.use(function (req, res, next) {
                     email: result.email,
                     isCasemodder: result.isCasemodder
                 };
+                if (result.isCasemodder) {
+                  userSessionData.suchstatus = result.suchstatus;
+                }
                 req.user = userSessionData;
                 req.session.user = userSessionData;
                 req.locals = {

@@ -56,6 +56,9 @@ loginController.post('/login', function (req, res) {
                     email: result.email,
                     isCasemodder: result.isCasemodder
                 };
+                if (result.isCasemodder) {
+                  req.session.user.suchstatus = result.suchstatus;
+                }
                 delete result.passwort;
                 delete result.email;
                 delete result.geburtsdatum;
