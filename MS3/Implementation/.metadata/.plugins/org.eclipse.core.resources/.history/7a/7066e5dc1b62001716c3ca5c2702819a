@@ -1,0 +1,27 @@
+package application.controller.snippet;
+
+import application.Main;
+import application.util.EBoolean;
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
+
+public class SponsoringApplicantController {
+	
+	private int applicantId;
+	
+	@FXML
+	private Label nameLabel;
+	
+	@FXML
+	private Label repLabel;
+	
+	@FXML
+	private ImageView profilePicture;
+	
+	@FXML
+	protected void handleProfileButton()
+	{
+		Main.layoutManager.getProfileTabContent(applicantId, EBoolean.CASEMODDER.value());
+	}
+}

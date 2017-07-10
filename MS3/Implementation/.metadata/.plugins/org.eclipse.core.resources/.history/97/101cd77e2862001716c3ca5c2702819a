@@ -1,0 +1,10 @@
+package application.util;
+
+/**
+ * Sortiert JSON-Objekte mittels QuickSort-Algorithmus.
+ * <a href="http://www.java-uni.de/index.php?Seite=86">Quelle für Code-Struktur</a>
+ * @author Leonid Vilents
+ */
+public class QuickSorter {
+
+}

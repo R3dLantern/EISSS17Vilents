@@ -1,0 +1,27 @@
+package application.controller.snippet;
+
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+
+/**
+ * Controllerklasse für das Project Snippet aus der Projektwelt
+ * @author Leonid Vilents
+ *
+ */
+public class ProjectOverviewController {
+	
+	@FXML
+	private Label titleLabel;
+	
+	@FXML
+	private Label fromLabel;
+	
+	@FXML
+	private Label upvotesLabel;
+	
+	@FXML
+	protected void viewProject(ActionEvent event) {
+		
+	}
+}

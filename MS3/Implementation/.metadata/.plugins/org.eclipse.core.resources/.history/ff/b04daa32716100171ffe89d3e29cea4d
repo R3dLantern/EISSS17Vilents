@@ -1,0 +1,28 @@
+package application.controller.snippet;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
+
+public class ProjectProfileController {
+	@FXML
+	private ImageView projectPicture;
+	
+	@FXML
+	private Label titleLabel;
+	
+	private int projectId;
+	
+	public void initializeWithData(int pId, String title)
+	{
+		this.projectId = projectId;
+		titleLabel.setText(title);
+	}
+	
+	
+	@FXML
+	protected void viewProject()
+	{
+		
+	}
+}

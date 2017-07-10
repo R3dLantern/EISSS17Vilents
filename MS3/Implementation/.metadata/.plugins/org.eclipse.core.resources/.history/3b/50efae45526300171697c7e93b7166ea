@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Pagination?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<Pane prefHeight="520.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.ProjectController">
+   <children>
+      <Label fx:id="titleLabel" layoutX="15.0" layoutY="14.0" text="&lt;Titel&gt;">
+         <font>
+            <Font name="Calibri" size="24.0" />
+         </font>
+      </Label>
+      <ScrollPane layoutX="487.0" layoutY="93.0" prefHeight="418.0" prefWidth="296.0" />
+      <Label layoutX="487.0" layoutY="63.0" text="Kommentare">
+         <font>
+            <Font name="Calibri" size="18.0" />
+         </font>
+      </Label>
+      <Label layoutX="26.0" layoutY="46.0" text="von">
+         <font>
+            <Font name="Calibri" size="14.0" />
+         </font>
+      </Label>
+      <Hyperlink fx:id="nameLink" layoutX="48.0" layoutY="42.0" onAction="#viewProfile" prefHeight="23.0" prefWidth="183.0" text="&lt;Vorname Nachname&gt;">
+         <font>
+            <Font name="Calibri" size="14.0" />
+         </font>
+      </Hyperlink>
+      <AnchorPane layoutX="15.0" layoutY="85.0" prefHeight="418.0" prefWidth="456.0">
+         <children>
+            <Pagination layoutX="-1.0" layoutY="-1.0" prefHeight="418.0" prefWidth="456.0" />
+         </children>
+      </AnchorPane>
+      <Label fx:id="upvotesLabel" alignment="CENTER" layoutX="350.0" layoutY="46.0" prefHeight="17.0" prefWidth="49.0" text="&lt;rep&gt;" />
+      <Button fx:id="upvoteButton" layoutX="419.0" layoutY="42.0" mnemonicParsing="false" onAction="#handleUpvoteButton" text="+" />
+   </children>
+</Pane>

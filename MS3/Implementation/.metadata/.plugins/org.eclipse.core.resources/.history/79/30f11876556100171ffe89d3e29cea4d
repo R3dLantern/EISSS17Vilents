@@ -1,0 +1,30 @@
+package application.controller.sponsor;
+
+import application.controller.IDashboardController;
+import application.util.EURI;
+import application.util.ServerRequest;
+import javafx.fxml.FXML;
+import javafx.scene.layout.Pane;
+import model.HttpResponse;
+
+/**
+ * Controllerklasse für das Sponsoren-Dashboard
+ * @author Léon
+ *
+ */
+public class DashboardController implements IDashboardController{
+	
+	@FXML
+	private Pane eventPane;
+	
+	@FXML
+	@Override
+	public void initialize()
+	{
+		ServerRequest req = new ServerRequest(EURI.DASHBOARD.uri());
+		
+		HttpResponse res = req.get();
+		
+		//TODO: Dashboard-Events implementieren
+	}
+}

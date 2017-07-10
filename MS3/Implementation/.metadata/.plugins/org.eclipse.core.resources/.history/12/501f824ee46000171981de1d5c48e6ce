@@ -1,0 +1,11 @@
+package application.util;
+
+public enum EFXML {
+
+	private final String fxml;
+	
+	EFXML(String fxml) { this.fxml = fxml; }
+	
+	public String fxml() { return fxml; }
+	
+}

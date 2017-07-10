@@ -1,0 +1,6 @@
+/**
+ * Controllerklassen für die im System hinterlegten FXML-Dateien,
+ * sowie die FXML-Dateien selbst.
+ * @author Leonid Vilents
+ */
+package application.controller;

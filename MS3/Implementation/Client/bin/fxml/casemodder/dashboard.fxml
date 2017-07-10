@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<Pane prefHeight="520.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.casemodder.DashboardController">
+   <children>
+      <Pane fx:id="eventPane" layoutX="32.0" layoutY="42.0" prefHeight="450.0" prefWidth="460.0" />
+      <Label layoutX="557.0" layoutY="193.0" text="Deine Gesamtreputation:">
+         <font>
+            <Font name="Calibri" size="16.0" />
+         </font>
+      </Label>
+      <Label fx:id="repLabel" layoutX="592.0" layoutY="229.0" text="&lt;rep&gt;">
+         <font>
+            <Font name="Calibri" size="40.0" />
+         </font>
+      </Label>
+      <Pane fx:id="seekStatusPane" layoutX="539.0" layoutY="292.0" prefHeight="200.0" prefWidth="200.0" visible="false">
+         <children>
+            <Button layoutX="24.0" layoutY="100.0" mnemonicParsing="false" onAction="#activateSeekStatus" prefHeight="72.0" prefWidth="152.0" text="Suchstatus setzen!">
+               <font>
+                  <Font name="Calibri" size="14.0" />
+               </font>
+            </Button>
+            <Label fx:id="seekStatusText" prefHeight="89.0" prefWidth="200.0" text="Du hast genug Reputation zusammen, um Dich auf die Suche nach einem Sponsor zu machen!" textAlignment="CENTER" wrapText="true">
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </Label>
+         </children>
+      </Pane>
+      <Label layoutX="32.0" layoutY="7.0" prefHeight="32.0" prefWidth="460.0" text="Neuigkeiten">
+         <font>
+            <Font name="Calibri" size="18.0" />
+         </font>
+      </Label>
+      <Button layoutX="575.0" layoutY="50.0" mnemonicParsing="false" onAction="#handleAccountDeletion" text="Benutzerkonto löschen">
+         <font>
+            <Font name="Calibri" size="12.0" />
+         </font>
+      </Button>
+   </children>
+</Pane>

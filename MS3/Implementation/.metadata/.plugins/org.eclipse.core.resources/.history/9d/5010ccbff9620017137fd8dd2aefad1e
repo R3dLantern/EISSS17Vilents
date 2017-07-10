@@ -1,0 +1,9 @@
+package application.controller.snippet;
+
+public class DashboardEventController {
+	@FXML
+	private Label eventLabel;
+	
+	@FXML
+	private Hyperlink eventLink;
+}

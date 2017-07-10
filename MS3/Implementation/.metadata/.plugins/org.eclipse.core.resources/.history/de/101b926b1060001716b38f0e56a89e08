@@ -1,0 +1,10 @@
+package application.controller.snippet;
+
+/**
+ * Controllerklasse für das Project Snippet aus der Projektwelt
+ * @author Leonid Vilents
+ *
+ */
+public class ProjectOverviewController {
+	
+}

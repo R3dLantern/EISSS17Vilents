@@ -1,0 +1,6 @@
+package application.controller;
+
+public abstract class SuperProfileController {
+
+	public abstract void initWithData(int id);
+}

@@ -1,0 +1,31 @@
+package application.util;
+
+/**
+ * Absolute Dateipfad-Strings aller FXML-Dateien
+ * @author Leonid Vilents
+ */
+public enum EFXML {
+
+	LOGIN ("/fxml/login.fxml"),
+	CM_SIGNUP ("/fxml/casemodder/signup.fxml"),
+	CM_LAYOUT ("/fxml/casemodder/layout.fxml"),
+	CM_PROFILE ("/fxml/casemodder/profile.fxml"),
+	CM_PROJECTS ("/fxml/casemodder/projects.fxml"),
+	CM_DASHBOARD ("/fxml/casemodder/dashboard.fxml"),
+	SP_SIGNUP ("/fxml/sponsor/signup.fxml"),
+	SP_LAYOUT ("/fxml/sponsor/layout.fxml"),
+	SP_PROFILE ("/fxml/sponsor/profile.fxml"),
+	SP_PROJECTS ("/fxml/sponsor/projects.fxml"),
+	SP_DASHBOARD ("/fxml/sponsor/dashboard.fxml"),
+	MESSAGES ("/fxml/messages.fxml"),
+	O_PROJECT ("/fxml/snippet/project_overview.fxml"),
+	O_MESSAGE ("/fxml/snippet/message_overview.fxml"),
+	E_DASHBOARD ("/fxml/snippet/dashboard_event.fxml");
+	
+	private final String fxml;
+	
+	EFXML(String fxml) { this.fxml = fxml; }
+	
+	public String fxml() { return fxml; }
+	
+}

@@ -1,0 +1,5 @@
+package application.controller.sponsor;
+
+public class SponsoringController {
+
+}

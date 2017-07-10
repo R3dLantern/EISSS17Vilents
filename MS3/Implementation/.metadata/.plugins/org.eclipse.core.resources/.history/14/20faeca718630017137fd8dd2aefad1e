@@ -1,0 +1,5 @@
+package application.util.ui;
+
+public enum EDialog {
+
+}

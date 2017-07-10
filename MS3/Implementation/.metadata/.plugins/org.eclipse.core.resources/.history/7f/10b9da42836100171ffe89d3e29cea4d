@@ -1,0 +1,35 @@
+package application.controller;
+
+import application.util.ui.LayoutManager;
+import javafx.fxml.FXML;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
+
+/** 
+ * Controllerklasse für Projekte
+ * @author Leonid Vilents
+ */
+public class ProjectController {
+	
+	private int userId;
+	private int projectId;
+	
+	private LayoutManager layoutManager;
+	
+	@FXML
+	private Label titleLabel;
+	
+	@FXML
+	private Hyperlink nameLink;
+	
+	public void initWithData(int uId, int pId) {
+		
+	}
+	
+	
+	@FXML
+	protected void viewProfile()
+	{
+		
+	}
+}

@@ -1,0 +1,25 @@
+package application.controller;
+
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.ScrollPane;
+
+/**
+ * Controllerklasse für die Nachrichtenübersicht
+ * @author Leonid Vilents
+ */
+public class MessagesController {
+	
+	@FXML
+	private ScrollPane overviewContent;
+	
+	@FXML
+	protected void composeNewMessage(ActionEvent event) {
+		
+	}
+	
+	public void initWithData()
+	{
+		
+	}
+}

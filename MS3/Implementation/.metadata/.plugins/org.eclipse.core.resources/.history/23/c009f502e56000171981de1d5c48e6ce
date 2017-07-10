@@ -1,0 +1,23 @@
+package application.util;
+
+public enum EFXML {
+
+	LOGIN ("/fxml/login.fxml"),
+	CM_SIGNUP ("/fxml/casemodder/signup.fxml"),
+	CM_LAYOUT ("/fxml/casemodder/layout.fxml"),
+	
+	
+	SP_SIGNUP ("/fxml/sponsor/signup.fxml"),
+	SP_LAYOUT ("/fxml/sponsor/layout.fxml"),
+	
+	
+	
+	
+	
+	private final String fxml;
+	
+	EFXML(String fxml) { this.fxml = fxml; }
+	
+	public String fxml() { return fxml; }
+	
+}

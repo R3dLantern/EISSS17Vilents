@@ -1,0 +1,50 @@
+package application.controller;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import application.util.EURI;
+import application.util.ServerRequest;
+import application.util.ui.LayoutManager;
+import javafx.fxml.FXML;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
+import model.HttpResponse;
+
+/** 
+ * Controllerklasse für Projekte
+ * @author Leonid Vilents
+ */
+public class ProjectController {
+	
+	private int userId;
+	
+	private LayoutManager layoutManager;
+	
+	@FXML
+	private Label titleLabel;
+	
+	@FXML
+	private Hyperlink nameLink;
+	
+	public void initWithData(int pId) {
+		ServerRequest req = new ServerRequest(EURI.PROJECT.uri(), pId);
+		
+		HttpResponse res = req.get();
+		JSONObject resContent = res.getContent();
+		try{
+			titleLabel.setText(resContent.getString("titel"));
+			userId = resContent.getInt("userId");
+		} catch (JSONException je) {
+			je.printStackTrace();
+			return;
+		}
+	}
+	
+	
+	@FXML
+	protected void viewProfile()
+	{
+		
+	}
+}

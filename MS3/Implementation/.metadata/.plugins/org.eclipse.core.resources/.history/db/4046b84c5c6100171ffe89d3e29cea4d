@@ -1,0 +1,11 @@
+package application.controller.sponsor;
+
+/**
+ * Controllerklasse für die Sponsoringwelt
+ * @author Léon
+ *
+ */
+public class SponsoringController {
+	@FXML
+	private HBox applicantsContent;	
+}

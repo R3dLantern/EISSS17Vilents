@@ -58,19 +58,19 @@ jspm_packages
 .brackets.json
 
 ## ECLIPSE IDE
-.metadata
-bin/
-tmp/
-*.tmp
-*.bak
-*.swp
-*~.nib
-local.properties
-.settings/
-.loadpath
-.recommenders
-.classpath
-.project
+#.metadata
+#bin/
+#tmp/
+#*.tmp
+#*.bak
+#*.swp
+#*~.nib
+#local.properties
+#.settings/
+#.loadpath
+#.recommenders
+#.classpath
+#.project
 
 # External tool builders
 .externalToolBuilders/
@@ -103,7 +103,7 @@ local.properties
 .springBeans
 
 # Code Recommenders
-.recommenders/
+#.recommenders/
 
 # Scala IDE specific (Scala & Java development for Eclipse)
 .cache-main
@@ -116,10 +116,10 @@ local.properties
 
 
 # Compiled class file
-*.class
+#*.class
 
 # Log file
-*.log
+#*.log
 
 # BlueJ files
 *.ctxt
@@ -128,13 +128,13 @@ local.properties
 .mtj.tmp/
 
 # Package Files #
-*.jar
-*.war
-*.ear
-*.zip
-!client.zip
-*.tar.gz
-*.rar
+#*.jar
+#*.war
+#*.ear
+#*.zip
+#!client.zip
+#*.tar.gz
+#*.rar
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*

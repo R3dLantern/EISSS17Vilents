@@ -1,0 +1,34 @@
+package application.controller.sponsor;
+
+import javafx.fxml.FXML;
+import javafx.scene.layout.HBox;
+
+/**
+ * Controllerklasse für die Sponsoringwelt
+ * @author Leonid Vilents
+ */
+public class SponsoringController {
+	@FXML
+	private HBox applicantsContent;
+	
+	@FXML
+	private HBox candidatesContent;
+	
+	@FXML
+	protected void initialize()
+	{
+		
+	}
+	
+	@FXML
+	protected void handleCreateTopTeamButton()
+	{
+		
+	}
+	
+	@FXML
+	protected void handleMyTeamButton()
+	{
+		
+	}
+}

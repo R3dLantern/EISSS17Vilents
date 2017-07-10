@@ -1,0 +1,156 @@
+package application.controller.sponsor;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+import application.Main;
+import application.controller.ILayoutController;
+import application.util.EBoolean;
+import application.util.EFXML;
+import application.util.EURI;
+import application.util.ServerRequest;
+import application.util.ui.LayoutManager;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXML;
+import javafx.scene.Parent;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import model.HttpResponse;
+
+public class LayoutController implements ILayoutController {
+	@FXML
+	private TabPane tabs;
+	
+	@FXML
+	private Tab tabDashboard;
+	
+	@FXML
+	private Tab tabProfile;
+	
+	@FXML
+	private Tab tabMessages;
+	
+	@FXML
+	private Tab tabProjects;
+	
+	@FXML
+	private Tab tabSponsoring;
+	
+	@FXML
+	private Label usernameLabel;
+	
+	@FXML
+	private Button logoutButton;
+	
+	private int userId;
+	
+	/*
+	 * (non-Javadoc)
+	 * @see application.controller.ILayoutController#initializeWithLayoutManager()
+	 */
+	@Override
+	public void initializeWithLayoutManager()
+	{
+		Main.initializeLayoutManager(this.userId, EBoolean.NOT_CASEMODDER.value(), this);
+		tabDashboard.setContent(manager.getDashboardTabContent());
+		tabs.getSelectionModel().selectedItemProperty().addListener(
+			new ChangeListener<Tab>() {
+				@Override
+				public void changed(ObservableValue<? extends Tab> ov, Tab deselected, Tab selected) {
+					Set<String> ids = new HashSet<String>(
+						Arrays.asList(
+							new String[] {
+									"tabDashboard",
+									"tabProfile",
+									"tabMessages",
+									"tabProjects",
+									"tabSponsoring"
+							}
+						)
+					);
+					if(ids.contains(deselected.getId())) {
+						deselected.setContent(null);
+					}
+					switch(selected.getId()) {
+					default:
+					case "tabDashboard":
+						selected.setContent(manager.getDashboardTabContent());
+						break;
+					case "tabProfile":
+						selected.setContent(manager.getProfileTabContent(userId, EBoolean.NOT_CASEMODDER.value()));
+						break;
+					case "tabMessages":
+						selected.setContent(manager.getMessagesTabContent());
+						break;
+					case "tabProjects":
+						selected.setContent(manager.getProjectTabContent());
+						break;
+					case "tabSponsoring":
+						selected.setContent(manager.getSponsoringTabContent());
+					}
+				}
+			}
+		);
+	}
+	
+	/**
+	 * Loggt den Benutzer aus und leitet zurück auf die Login-Maske.
+	 */
+	@FXML
+	protected void handleLogoutButton()
+	{
+		ServerRequest req = new ServerRequest(EURI.LOGOUT.uri());
+		
+		HttpResponse res = req.get();
+		
+		switch (res.getStatusCode()) {
+		case 204:
+			Main.sceneLoader.loadScene(EFXML.LOGIN.fxml());
+			return;
+		default:
+			return;
+		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see application.controller.ILayoutController#setUsername(java.lang.String)
+	 */
+	@Override
+	public void setUsername(String email)
+	{
+		usernameLabel.setText(email);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see application.controller.ILayoutController#setUserId(int)
+	 */
+	@Override
+	public void setUserId(int id) {
+		this.userId = id;
+	}
+	
+	/**
+	 * Getter für userId
+	 * @return gesetzte userId
+	 */
+	public int getUserId() {
+		return this.userId;
+	}
+	
+	@Override
+	public void addTab(String id, String tabName, Parent content) {
+		Tab newTab = new Tab();
+		newTab.setClosable(true);
+		newTab.setId(id);
+		newTab.setText(tabName);
+		newTab.setContent(content);
+		tabs.getTabs().add(newTab);
+		tabs.getSelectionModel().select(newTab);
+	}
+}

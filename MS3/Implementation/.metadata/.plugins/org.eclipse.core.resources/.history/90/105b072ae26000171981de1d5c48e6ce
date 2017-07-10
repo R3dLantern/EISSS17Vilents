@@ -1,0 +1,21 @@
+package application.util;
+
+public enum EURI {
+	
+	SIGNUP ("%ssignup"),
+	LOGIN ("%slogin"),
+	LOGOUT ("%slogout"),
+	DASHBOARD ("%dashboard"),
+	PROFILE ("%sprofile"),
+	MESSAGES ("%smessages"),
+	MESSAGES_NEW ("%messages/new"),
+	MESSAGE ("%messages/%d"),
+	
+	
+	
+	private final String uri;
+	
+	EURI(String uri) { this.uri = uri; }
+	
+	public String uri() { return uri; }
+}

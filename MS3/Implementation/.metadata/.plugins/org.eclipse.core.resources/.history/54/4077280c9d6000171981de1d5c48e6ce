@@ -1,0 +1,109 @@
+package application.controller.casemodder;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import application.util.ServerRequest;
+import application.util.SnippetLoader;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.Pagination;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+
+/**
+ * Controllerklasse für die Casemodder-Projektwelt
+ * @author Léon
+ */
+public class ProjectsController {
+	
+	private final String PROJECTS_STRING = "http://%s:%s/projects/index";
+	
+	private SnippetLoader loader;
+	
+	@FXML
+	private TextField searchField;
+	
+	@FXML
+	private Button searchButton;
+	
+	@FXML
+	private Pagination projectsPagination;
+	
+	@FXML
+	private AnchorPane latestAnchorPane;
+	
+	@FXML
+	private Pagination ownProjectsPagination;
+	
+	@FXML
+	private AnchorPane ownedAnchorPane;
+	
+	private int getItemsPerPage()
+	{
+		return 3;
+	}
+	
+	/**
+	 * Initialisiert den Controller mit Daten.
+	 */
+	public void initWithData(){
+		loader = new SnippetLoader();
+		
+		ServerRequest req = new ServerRequest(PROJECTS_STRING);
+		
+		try {
+			JSONObject content = new JSONObject(req.get().getContent());
+			
+			JSONArray latest = content.getJSONArray("latestProjects");
+			JSONArray owned = content.getJSONArray("ownedProjects");
+			
+			int latestLen =  latest.length();
+			int ownLen = owned.length();
+			
+			projectsPagination.setPageCount((Integer) (latestLen / getItemsPerPage()) + 1);
+			ownProjectsPagination.setPageCount((Integer) (ownLen / getItemsPerPage()) + 1);
+			
+			projectsPagination.setPageFactory((Integer pageIndex) -> createPage(pageIndex, latest));
+			ownProjectsPagination.setPageFactory((Integer pageIndex) -> createPage(pageIndex, owned));
+			
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return;
+		}
+	}
+	
+	/**
+	 * Erzeugt eine Seite für die Pagination einer Projektliste.
+	 * @param pageIndex Seitenindex
+	 * @param array JSONArray mit Projekten
+	 * @return VBox mit fertigen Teillisten
+	 */
+	private VBox createPage(int pageIndex, JSONArray array)
+	{
+		if(array == null){
+			return new VBox();
+		}
+		VBox box = new VBox();
+		int page = pageIndex * getItemsPerPage();
+		try {
+			for (int i = page; i < Math.min((page + getItemsPerPage()), array.length()); i++) {
+				if(array.getJSONObject(i) != null) {
+					JSONObject project = array.optJSONObject(i);
+					Pane pOverview = this.loader.getProjectOverviewSnippet(
+						project.getInt("id"),
+						project.getString("titel")
+					);
+					box.getChildren().add(pOverview);
+				}
+			}
+			return box;
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+}

@@ -1,0 +1,9 @@
+package application.controller;
+
+/**
+ * Controllerklasse für die Nachrichtenübersicht
+ * @author Leonid Vilents
+ */
+public class MessagesController {
+
+}

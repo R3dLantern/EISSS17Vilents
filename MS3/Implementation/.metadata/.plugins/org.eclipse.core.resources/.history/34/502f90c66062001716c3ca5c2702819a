@@ -1,0 +1,19 @@
+package application.util;
+
+/**
+ * Sortiert JSONArrays nach dem Bubblesort-Prinzip.
+ * Gedacht für kleinere Arrays, zur Sortierung der Rankings
+ * @author Léon
+ *
+ */
+public class BubbleSorter {
+	
+	/**
+	 * Führt den Bubblesort basierend auf dem Key aus.
+	 * <a href="http://www.java-programmieren.com/bubblesort-java.php">Quelle zu Code-Struktur</a>
+	 */
+	public static JSONArray sort(JSONArray array, String rankKey)
+	{
+		
+	}
+}

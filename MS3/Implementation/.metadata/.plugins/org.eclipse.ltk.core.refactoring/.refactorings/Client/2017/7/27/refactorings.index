@@ -1,0 +1,59 @@
+1499081377664	Delete element
+1499082885711	Rename method 'initializeLayoutManager'
+1499100766469	Rename resource 'project_single.fxml'
+1499100782985	Rename type 'ProjectOverviewSnippetController'
+1499172224462	Rename field 'SIGNUP_STRING'
+1499172231298	Rename field 'LOGIN_STRING'
+1499172238322	Rename field 'LOGOUT_STRING'
+1499188456483	Rename type 'SignupSponsorController'
+1499188461708	Move compilation unit
+1499188493760	Rename type 'SponsorController'
+1499188570555	Move file
+1499188583850	Move file
+1499188600809	Move file
+1499188603314	Move file
+1499188605472	Move file
+1499188607653	Move file
+1499188610529	Move file
+1499188630321	Move file
+1499188634678	Delete element
+1499188647398	Move file
+1499188649015	Move file
+1499188651630	Move file
+1499188680679	Delete element
+1499188861743	Delete element
+1499189045685	Rename resource 'dashboard_casemodder.fxml'
+1499189054254	Rename resource 'layout_casemodder.fxml'
+1499189062025	Rename resource 'profile_casemodder.fxml'
+1499189070561	Rename resource 'projects_casemodder.fxml'
+1499189078431	Rename resource 'signup_casemodder.fxml'
+1499189089929	Rename resource 'signup_sponsor.fxml'
+1499189640014	Rename type 'ProfileController'
+1499189778655	Rename type 'DynamicController'
+1499189835540	Delete element
+1499190315505	Rename compilation unit 'uri.java'
+1499192682568	Move compilation unit
+1499192689175	Move compilation unit
+1499192693808	Move compilation unit
+1499192696956	Move compilation unit
+1499192768043	Delete element
+1499193918438	Delete element
+1499194524297	Rename method 'setUsernameLabelText'
+1499195287699	Rename local variable 'isCasemodder'
+1499241703278	Rename local variable 'isCasemodder'
+1499252446762	Rename type 'ProjectProfileController'
+1499257489973	Delete element
+1499263087287	Rename method 'getProjectTabContent'
+1499326076779	Move compilation unit
+1499335940258	Rename type 'CadidatePicker'
+1499343975819	Rename method 'getTopCandidates'
+1499344940869	Rename local variable 'candidateSnippt'
+1499345111606	Rename type 'SponsorCandidateController'
+1499351460709	Rename local variable 'top'
+1499367915053	Rename local variable 'singleProjectTab'
+1499448414744	Move compilation unit
+1499448428792	Move compilation unit
+1499448438074	Move compilation unit
+1499449344302	Rename type 'PasswordUtil'
+1499457632807	Rename field 'userId'
+1499464094719	Rename local variable 'userId'

@@ -1,0 +1,6 @@
+package application.controller;
+
+public interface IDashboardController {
+	
+	abstract void initialize();
+}

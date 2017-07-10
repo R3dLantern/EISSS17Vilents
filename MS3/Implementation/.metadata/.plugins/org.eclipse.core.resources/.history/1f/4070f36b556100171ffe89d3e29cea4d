@@ -1,0 +1,23 @@
+package application.controller.sponsor;
+
+import application.util.EURI;
+import application.util.ServerRequest;
+import javafx.fxml.FXML;
+import javafx.scene.layout.Pane;
+import model.HttpResponse;
+
+public class DashboardController {
+	
+	@FXML
+	private Pane eventPane;
+	
+	@FXML
+	protected void initialize()
+	{
+		ServerRequest req = new ServerRequest(EURI.DASHBOARD.uri());
+		
+		HttpResponse res = req.get();
+		
+		//TODO: Dashboard-Events implementieren
+	}
+}

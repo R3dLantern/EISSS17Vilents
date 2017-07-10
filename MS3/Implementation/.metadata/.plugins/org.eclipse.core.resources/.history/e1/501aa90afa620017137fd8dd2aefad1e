@@ -1,0 +1,17 @@
+package application.controller.snippet;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
+
+/**
+ * Controllerklasse für Dashboard-Benachrichtigungssnippets
+ * @author Leonid Vilents
+ */
+public class DashboardEventController {
+	@FXML
+	private Label eventLabel;
+	
+	@FXML
+	private Hyperlink eventLink;
+}

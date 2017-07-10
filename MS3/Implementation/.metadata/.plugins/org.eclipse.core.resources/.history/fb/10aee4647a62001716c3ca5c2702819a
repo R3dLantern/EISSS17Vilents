@@ -1,0 +1,24 @@
+package application.controller;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+
+public class NewMessageController {
+	
+	private int receiverId;
+	private int senderId;
+	
+	@FXML
+	private Label receiverLabel;
+	
+	@FXML
+	private TextArea textField;
+	
+	
+	@FXML
+	protected void sendMessage()
+	{
+		
+	}
+}

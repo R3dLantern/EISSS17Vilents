@@ -1,0 +1,9 @@
+package application.controller;
+
+/**
+ * Hauptsächlich Träger für Konstanten rund ums Login, Logout und Registrierung
+ * @author Leonid Vilents
+ */
+public interface ISignInUpHandling {
+
+}

@@ -1,0 +1,9 @@
+package model;
+
+/**
+ * Modell eines Projektes
+ * @author Léon
+ */
+public class Project {
+
+}

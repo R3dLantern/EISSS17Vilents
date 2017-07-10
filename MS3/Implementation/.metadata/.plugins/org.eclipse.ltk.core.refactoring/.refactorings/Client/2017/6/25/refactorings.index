@@ -1,0 +1,37 @@
+1498308054855	Delete element
+1498308060006	Move file
+1498308062193	Move file
+1498308065434	Delete element
+1498313663094	Move file
+1498314029904	Rename type 'PageController'
+1498314034163	Move compilation unit
+1498314084016	Delete element
+1498314111362	Move file
+1498314112791	Move file
+1498314181594	Move file
+1498402864908	Move file
+1498403681429	Move compilation unit
+1498403687567	Move compilation unit
+1498403690715	Delete element
+1498403715396	Move file
+1498403717042	Move file
+1498403720816	Delete element
+1498405950052	Rename type 'LoginPageController'
+1498405958354	Rename type 'SignupPageController'
+1498408626999	Rename local variable 'target'
+1498408648533	Rename local variable 'target'
+1498408663753	Rename field 'pStage'
+1498408882376	Rename method 'setStage'
+1498414214877	Rename method 'initializeScene'
+1498414972080	Rename type 'SignupController'
+1498415282823	Delete element
+1498415287997	Delete element
+1498416751247	Rename resource 'SignupCasemodder.fxml'
+1498416763925	Rename resource 'SsignupCasemodder.fxml'
+1498416899482	Rename method 'click'
+1498419133914	Delete element
+1498419887655	Delete element
+1498420427160	Delete element
+1498420457294	Move compilation unit
+1498420469870	Delete element
+1498420504355	Rename package 'application.Util'

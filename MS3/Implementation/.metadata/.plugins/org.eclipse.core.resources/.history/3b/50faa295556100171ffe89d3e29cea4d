@@ -1,0 +1,9 @@
+package application.controller;
+
+import javafx.fxml.FXML;
+
+public interface IDashboardController {
+	
+	@FXML
+	abstract void initialize();
+}

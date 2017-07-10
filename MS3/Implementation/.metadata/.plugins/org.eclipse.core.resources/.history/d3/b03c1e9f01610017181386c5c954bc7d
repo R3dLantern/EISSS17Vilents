@@ -1,0 +1,6 @@
+package application.controller;
+
+public interface IProfileController {
+	
+	public abstract void initWithData(int id);
+}

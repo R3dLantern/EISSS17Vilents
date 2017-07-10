@@ -1,0 +1,28 @@
+package model;
+
+import java.util.Date;
+
+/**
+ * Modell eines Projektes
+ * @author Léon
+ */
+public class Project {
+	
+	private int id;
+	
+	public String title;
+	
+	public Date createdOn;
+	
+	public String content;
+	
+	public String status;
+	
+	public Project(int id) {
+		this.id = id;
+	}
+	
+	public int getId() {
+		return this.id;
+	}
+}

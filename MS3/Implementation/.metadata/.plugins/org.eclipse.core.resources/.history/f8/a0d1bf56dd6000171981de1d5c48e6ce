@@ -1,0 +1,11 @@
+package application.util;
+
+/**
+ * Interface für Komponenten, die den FXMLLoader benutzen.
+ * @author Léon
+ *
+ */
+public interface IFXMLLoader {
+	static final String FXML_PATH = "/fxml/casemodder/";
+	static final String FXML_SNIPPET_PATH = "/fxml/snippet/";
+}

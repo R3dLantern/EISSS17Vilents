@@ -1,0 +1,166 @@
+package application.util;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import application.Main;
+
+/**
+ * Berechnet ElementRankings von Benutzerlisten und errechnet so die bestmöglichen Kandidaten für die Top-Liste
+ * @author Leonid Vilents
+ *
+ */
+public class CandidatePicker {
+	
+	/**
+	 * Sortiert ein JSONArray von Benutzern aufsteigend nach deren Gesamtreputation.
+	 * @param applicants JSONArray mit Benutzer-JSONObjects
+	 * @return Ein JSONArray mit exakt 3 Benutzer-JSONObjects, die die besten Rankings besitzen
+	 */
+	public JSONArray getCandidatesForTopChoice(JSONArray applicants)
+	{
+		// Nach Gesamtreputation sortieren
+		QuickSorter.sort(applicants);
+		// Es wird nur das obere Quartil an Daten betrachtet
+		JSONArray arrayWithRankings = this.calculateRankings(this.getUpperQuartile(applicants));
+		return arrayWithRankings;
+	}
+	
+	//TODO: Kandidaten basierend auf Ranking auswählen
+	private JSONArray getTopCandidatesBasedOnRankings(JSONArray array)
+	{
+		// 3 Topkandidaten
+		// 0: ProjektRanking Bester
+		// 1: Projekt-Update-Kombintation Bester
+		// 2: Kommentare Bester
+		int[] tops = new int[] {0,0,0};
+		
+		JSONArray sortedByHighestProjectsRanking = BubbleSorter.sort(array, "projectsRanking");
+		JSONArray sortedByHighestProjectUpdatesRanking = BubbleSorter.sort(array, "projectUpdatesRanking");
+		JSONArray sortedByHighestCommentsRanking = BubbleSorter.sort(array, "commentsRanking");
+	}
+	
+	
+	/**
+	 * Berechnet anhand der Zählwerte im Objekt eines Arrays dessen Rankings
+	 * im Hinblick auf Projekte, Projekt-Update-Kombination und Kommentare.
+	 * @param array
+	 * @return JSONArray mit erweiterten Benutzer-JSONObjects.
+	 */
+	private JSONArray calculateRankings (JSONArray array)
+	{
+		JSONArray arrayWithRankings = new JSONArray();
+		
+		for (int i = 0; i < array.length(); i++) {
+			try {
+				JSONObject userObject = array.getJSONObject(i);
+				JSONObject counters = userObject.getJSONObject("counters");
+				
+				JSONObject rankings = new JSONObject();
+				// Ranking für Projekte
+				int projectCount = counters.getInt("projects");
+				int projectUpvotesCount = counters.getInt("projectUpvotes");
+				int projectRanking = (int) Math.floor((projectCount + projectUpvotesCount) /2);
+				rankings.put("projectRanking", projectRanking);
+				
+				// Ranking für Projekt-Update-Kombinationen
+				int projectUpdatesCount = counters.getInt("projectUpdates");
+				int projectUpdateUpvotesCount = counters.getInt("projectUpdateUpvotes");
+				int partialRanking = (int) Math.floor((projectUpdatesCount + projectUpdateUpvotesCount) /2);
+				int projectUpdatesRanking = (int) Math.floor((projectRanking + partialRanking) / 2);
+				rankings.put("projectUpdatesRanking", projectUpdatesRanking);
+				
+				// Ranking für Kommentare
+				int commentsCount = counters.getInt("comments");
+				int commentUpvotesCount = counters.getInt("commentUpvotes");
+				int commentsRanking = (int) Math.floor((commentsCount + commentUpvotesCount) / 2);
+				rankings.put("commentsRanking", commentsRanking);
+				
+				userObject.put("rankings", rankings);
+				
+				arrayWithRankings.put(userObject);
+			} catch (JSONException je) {
+				je.printStackTrace();
+				return null;
+			}
+		}
+		return arrayWithRankings;
+	}
+	
+	/**
+	 * Gibt das obere Quartil des JSONArrays im Parameter als neues JSONArray zurück.
+	 * @param array JSON-Array mit Benutzern
+	 * @return JSONArray mit oberem Quartil des Parameter-Arrays
+	 */
+	private JSONArray getUpperQuartile(JSONArray array)
+	{
+		int n = array.length();
+		int q3 = (int) (0.75 * (n+1));
+		
+		if (n == 3) {
+			return array;
+		}
+		
+		try {
+			JSONArray q3array = new JSONArray();
+			for (int i = q3 - 1; i < n; i++) {
+				q3array.put(array.getJSONObject(i));
+			}
+			
+			// Arrays kleiner 6 werden aufgefüllt
+			if(q3array.length() < 6) {
+				int j = q3-1;
+				while(q3array.length() != 3 ){
+					q3array.put(array.getJSONObject(--j));
+				}
+				return q3array;
+
+			//Von größeren Arrays wird ein weiteres Oberes Quartil angefordert
+			} else if (q3array.length() > 18) {	
+				return getUpperQuartile(q3array);
+			} else {
+				return q3array;
+			}
+		} catch(JSONException je) {
+			je.printStackTrace();
+			return null;
+		}
+	}
+	
+	/**
+	 * Gibt den Kandidaten mit dem Höchsten Ranking eines definierten Bereichs zurück und entfernt ihn aus dem Array.
+	 * @param array	JSONArray mit Benutzern
+	 * @param key	Key-String
+	 * @return	JSON-Objekt mit Top-Kandidat im Ranking
+	 */
+	private JSONObject getCandidateWithHighestRanking(JSONArray array, String rankKey)
+	{
+		int topIndex = 0;
+		int topRankValue = 0;
+		int topRepValue = 0;
+		try {
+			for (int i = 0; i < array.length(); i++) {
+				int userRanking = array.getJSONObject(i).getJSONObject("rankings").getInt(rankKey);
+				int userRep = array.getJSONObject(i).getInt("rep");
+				
+				// topIndex in Array spezifiert User mit höchstem Ranking
+				if (userRanking > topRankValue) {
+					topIndex = i;
+					topRepValue = userRep;
+					
+				// Bei gleichhohen Rankings wird auf die Reputation geguckt
+				} else if (userRanking == topRankValue) {
+					if (userRep > topRepValue) {
+						topIndex = i;
+						topRepValue = userRep;
+					}
+				}
+			}
+			return array.getJSONObject(topIndex);
+		} catch (JSONException je) {
+			je.printStackTrace();
+			return null;
+		}
+	}
+}

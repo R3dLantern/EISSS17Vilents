@@ -1,0 +1,25 @@
+package application.controller.sponsor;
+
+import application.controller.IProfileController;
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
+
+public class ProfileController implements IProfileController{
+
+	@FXML
+	private ImageView profilePicture;
+	
+	@FXML
+	private Label nameLabel;
+	
+	@FXML
+	private Label descriptionLabel;
+	
+	
+	@Override
+	public void initWithData(int id) {
+		
+	}
+
+}

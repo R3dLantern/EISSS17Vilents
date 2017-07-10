@@ -1,0 +1,19 @@
+package application.util.ui;
+
+public enum EDialog {
+	
+	TITLE_DELETE_MESSAGE ("Bestätigung"),
+	TITLE_SEEK_STATUS ("Dein Sponsorsuchstatus"),
+	HEADER_DELETE_MESSAGE ("Nachricht löschen?"),
+	HEADER_SET_SEEK_STATUS ("Sponsorsuchstatus setzen?"),
+	CONTENT_DELETE_MESSAGE ("Möchtest Du diese Nachricht löschen?"),
+	CONTENT_SET_SEEK_STATUS (
+		"Das Setzen des Sponsorsuchstatus bedeutet, dass Sponsoren dies sehen "
+		+ "und Dich in ein Team einladen können. Bist Du sicher, dass Du das möchtest?");
+	
+	private String text;
+	
+	EDialog(String text) { this.text = text; }
+	
+	public String text() { return this.text; }
+}

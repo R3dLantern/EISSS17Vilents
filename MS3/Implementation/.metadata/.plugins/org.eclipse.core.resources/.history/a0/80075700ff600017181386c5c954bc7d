@@ -1,0 +1,73 @@
+package application.controller.casemodder;
+
+import org.json.JSONException;
+
+import application.controller.IProfileController;
+import application.util.EURI;
+import application.util.ServerRequest;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
+import model.HttpResponse;
+
+/**
+ * Controllerklasse für die Casemodder-Profilübersicht
+ * @author Leonid Vilents
+ */
+public class ProfileController implements IProfileController{
+	
+	@FXML
+	private ImageView profilePicture;
+	
+	@FXML
+	private Label nameLabel;
+	
+	@FXML
+	private Label descriptionLabel;
+	
+	@FXML
+	private Label repLabel;
+	
+	@FXML
+	private AnchorPane scrollContent;
+	
+	@FXML
+	private Button editButton;
+	
+	@FXML
+	private Button contactButton;
+	
+	@FXML
+	protected void initialize(){
+		
+	}
+	
+	/**
+	 * Befüllt das FXML-Element mit Daten
+	 * @param id Benutzer-ID
+	 */
+	@Override
+	public void initWithData(int id) {
+		ServerRequest req = new ServerRequest(EURI.PROFILE.uri(), id);
+		
+		HttpResponse res = req.get();
+		
+		try{
+			if((!res.getContent().isNull("vorname")) && (!res.getContent().isNull("nachname"))){
+				nameLabel.setText(String.format("%s %s", res.getContent().getString("vorname"), res.getContent().getString("nachname")));
+			}
+			descriptionLabel.setText(res.getContent().getString("beschreibung"));
+			repLabel.setText(Integer.toString(res.getContent().getInt("totalRep")));
+			if(res.getContent().getBoolean("userOwnsProfile")) {
+				contactButton.setVisible(false);
+			} else {
+				editButton.setVisible(false);
+			}
+			//TODO: Projekte einbinden
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+}

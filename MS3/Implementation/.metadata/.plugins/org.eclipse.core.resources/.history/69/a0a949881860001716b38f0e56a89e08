@@ -1,0 +1,32 @@
+package model;
+
+import java.util.Date;
+
+/**
+ * Modell eines Projektes
+ * @author Léon
+ */
+public class Project {
+	
+	private int pId;
+	private int uId;
+	
+	public String title;
+	
+	public String content;
+	
+	public String status;
+	
+	public Project(int pId, int uId) {
+		this.pId = pId;
+		this.uId = uId;
+	}
+	
+	public int getPId() {
+		return this.pId;
+	}
+	
+	public int getUId() {
+		return this.uId;
+	}
+}

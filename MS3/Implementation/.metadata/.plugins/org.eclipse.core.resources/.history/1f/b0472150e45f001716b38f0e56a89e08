@@ -1,0 +1,10 @@
+package application.util;
+
+/**
+ * Interface für 
+ * @author Léon
+ *
+ */
+public interface IFXMLLoader {
+	private final String FXML_PATH = "/application/controller/fxml/";
+}

@@ -1,0 +1,12 @@
+package application.controller;
+
+/**
+ * Interface für polymorphes Layout-Rendering
+ * @author Léon
+ *
+ */
+public interface ILayoutController {
+	
+	public abstract void initializeWithLayoutManager();
+	
+}

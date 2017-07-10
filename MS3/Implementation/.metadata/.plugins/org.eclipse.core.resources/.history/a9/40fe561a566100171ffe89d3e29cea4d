@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.Pane?>
+
+<Pane prefHeight="520.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controller.sponsor.ProfileController">
+	<children>
+		<Pane layoutX="26.0" layoutY="45.0" prefHeight="160.0" prefWidth="160.0" style="-fx-border-color: black;">
+         <children>
+            <ImageView fx:id="profilePicture" fitHeight="160.0" fitWidth="160.0" pickOnBounds="true" preserveRatio="true" />
+         </children>
+      </Pane>
+      <Label fx:id="nameLabel" layoutX="223.0" layoutY="46.0" prefHeight="22.0" prefWidth="200.0" text="&lt;Vorname&gt; &lt;Nachname&gt;">
+         <font>
+            <Font name="Calibri" size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="descriptionLabel" alignment="TOP_LEFT" layoutX="223.0" layoutY="87.0" prefHeight="100.0" prefWidth="200.0" text="&lt;Beschreibung&gt;">
+         <font>
+            <Font name="Calibri" size="14.0" />
+         </font>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </Label>
+	</children>
+</Pane>
+

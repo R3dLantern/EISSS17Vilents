@@ -1,0 +1,124 @@
+package application.controller.snippet;
+
+import java.text.DateFormat;
+import java.util.Date;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.sun.prism.paint.Color;
+import com.sun.prism.paint.Paint;
+
+import application.Main;
+import application.util.EURI;
+import application.util.ServerRequest;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Font;
+
+/**
+ * Controllerklasse für Nachrichtensnippets in der Nachrichtenübersicht
+ * @author Leonid Vilents
+ */
+public class MessageOverviewController {
+	
+	@FXML
+	private AnchorPane contentPane;
+	
+	@FXML
+	private Label dateLabel;
+	
+	@FXML
+	private Label senderLabel;
+	
+	private int messageId;
+	
+	private int senderId;
+	
+	private boolean messageOpen;
+	
+	/**
+	 * Löscht die Nachricht
+	 * @param event
+	 */
+	@FXML
+	protected void deleteMessage(ActionEvent event) {
+		//TODO: implementieren
+	}
+	
+	/**
+	 * Ermöglicht das Antworten
+	 */
+	@FXML
+	protected void replyToSender() {
+		Main.layoutManager.getNewMessageTab(senderId, senderLabel.getText());
+	}
+	
+	/**
+	 * Markiert die Nachricht als gelesen
+	 * @param event
+	 */
+	@FXML
+	protected void markAsRead(ActionEvent event) {
+		//TODO: implementieren
+	}
+	
+	/**
+	 * Zeigt die Nachricht an oder blendet sie aus.
+	 */
+	@FXML
+	protected void toggleMessage() {
+		if (messageOpen) {
+			contentPane.getChildren().remove(contentPane.getChildren().get(contentPane.getChildren().size() - 1));
+			contentPane.setPrefHeight(62);
+			messageOpen = false;
+			return;
+		} else {
+			messageOpen = true;
+			ServerRequest req = new ServerRequest(EURI.MESSAGE.uri(), messageId);
+			JSONObject resContent = req.get().getContent();
+			Label messageLabel = new Label();
+			messageLabel.setPrefHeight(90);
+			messageLabel.setPrefWidth(500);
+			messageLabel.setPadding(new Insets(10));
+			messageLabel.setFont(Font.font("Calibri", 14));
+			messageLabel.setStyle("-fx-color: black");
+			try {
+				messageLabel.setText(resContent.getString("message"));
+				contentPane.setPrefHeight(160);
+				contentPane.getChildren().add(messageLabel);
+				return;
+			} catch (JSONException je) {
+				messageLabel.setStyle("-fx-color: red");
+				messageLabel.setText("JSONException");
+				je.printStackTrace();
+				return;
+			}
+		}
+	}
+	
+	/**
+	 * Initialisiert das Snippet mit Daten
+	 * @param isUnread 	Ungelesen-Flag
+	 * @param mId		Nachricht-ID
+	 * @param sId		Benutzer-ID des Absenders
+	 * @param date		Datum der Nachricht
+	 * @param firstName	Vorname des Absenders
+	 * @param lastName	Nachname des Absenders
+	 */
+	public void initWithData(boolean isUnread, int mId, int sId, Date date, String firstName, String lastName) {
+		String senderLabelstr = String.format("%s %s", firstName, lastName);
+		String styleStr = "-fx-border-color: black; " + (isUnread ? "-fx-background-color: #1abe58;" : "");
+		
+		contentPane.setStyle(styleStr);
+
+		this.messageId = mId;
+		this.senderId = sId;
+		this.dateLabel.setText(DateFormat.getDateInstance().format(date));
+		this.senderLabel.setText(senderLabelstr);
+		this.messageOpen = false;
+	}
+}

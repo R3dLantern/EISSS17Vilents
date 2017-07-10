@@ -1,0 +1,20 @@
+package application.controller.snippet;
+
+import application.Main;
+import application.util.EBoolean;
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+
+public class SponsorCandidateController {
+	
+	private int candidateId;
+	
+	@FXML
+	private Label repLabel;
+	
+	@FXML
+	protected void viewProfile()
+	{
+		Main.layoutManager.getProfileTabContent(candidateId, EBoolean.CASEMODDER.value());
+	}
+}

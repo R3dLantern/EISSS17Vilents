@@ -1,0 +1,40 @@
+package application.controller.snippet;
+
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
+
+/**
+ * Controllerklasse für das Project Snippet aus der Projektwelt
+ * @author Leonid Vilents
+ *
+ */
+public class ProjectOverviewController {
+	
+	private int projectId;
+	
+	private int caseModderId;
+	
+	@FXML
+	private Label titleLabel;
+	
+	/**
+	 * Weist die Werte zu.
+	 * @param pId	Projekt-ID
+	 * @param uId	Casemodder-ID
+	 * @param title	Projekttitel
+	 * @param name	Casemodder-Name
+	 * @param value	Upvote-Zahl des Projekts
+	 */
+	public void initWithData(int pId, int uId, String title){
+		this.projectId = pId;
+		this.caseModderId = uId;
+		titleLabel.setText(title);
+	}
+	
+	@FXML
+	protected void viewProject(ActionEvent event) {
+		//TODO: FXML laden
+	}
+}

@@ -1,0 +1,27 @@
+package application.controller.snippet;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
+
+/**
+ * Controllerklasse für Dashboard-Benachrichtigungssnippets
+ * @author Leonid Vilents
+ */
+public class DashboardEventController {
+	@FXML
+	private Label eventLabel;
+	
+	@FXML
+	private Hyperlink eventLink;
+	
+	public void initNewMessagesEvent(int count)
+	{
+		switch(count) {
+		case 1:
+			eventLabel.setText("Eine neue Nachricht.");
+		}
+		default:
+			eventLabel.setText(String.format("%d neue Nachrichten.", count));
+	}
+}

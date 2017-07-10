@@ -1,0 +1,47 @@
+package application.controller;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import application.util.EURI;
+import application.util.ServerRequest;
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+
+public class NewMessageController {
+	
+	private int receiverId;
+	private int senderId;
+	
+	@FXML
+	private Label receiverLabel;
+	
+	@FXML
+	private TextArea textField;
+	
+	public void initWithData(int senderId, int receiverId, String vorname, String nachname)
+	{
+		this.receiverId = receiverId;
+		this.senderId = senderId;
+		receiverLabel.setText(String.format("%s %s", vorname, nachname));
+	}
+	
+	@FXML
+	protected void sendMessage()
+	{
+		ServerRequest req = new ServerRequest(EURI.MESSAGE_NEW.uri());
+		
+		JSONObject messageData = new JSONObject();
+		
+		try {
+			messageData.put("senderId", senderId);
+			messageData.put("receiverId", receiverId);
+			messageData.put("content", textField.getText());
+		} catch (JSONException je) {
+			je.printStackTrace();
+			return;
+		}
+		
+	}
+}

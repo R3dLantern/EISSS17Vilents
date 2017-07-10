@@ -1,0 +1,24 @@
+package application.controller.snippet;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
+
+public class SponsoringApplicantController {
+	private int applicantId;
+	
+	@FXML
+	private Label nameLabel;
+	
+	@FXML
+	private Label repLabel;
+	
+	@FXML
+	private ImageView profilePicture;
+	
+	@FXML
+	protected void handleProfileButton()
+	{
+		
+	}
+}

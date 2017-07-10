@@ -1,0 +1,42 @@
+package application.controller;
+
+import application.util.ui.LayoutManager;
+import javafx.scene.Parent;
+
+/**
+ * Interface für polymorphes Layout-Rendering
+ * @author Leonid Vilents
+ */
+public interface ILayoutController {
+	
+	public static LayoutManager manager = null;
+	
+	
+	public abstract void setManager(LayoutManager manager);
+	
+	/**
+	 * Initialisiert das Layout mit einem Manager, sowie den benötigen Benutzerdaten.
+	 */
+	public abstract void initializeWithLayoutManager();
+	
+	/**
+	 * Setter für usernameLabel.
+	 * @param email zu setzender String, vorzugsweise Benutzer-Email
+	 */
+	public abstract void setUsername(String email);
+	
+	/**
+	 * Setter für userId.
+	 * @param id Benutzer-ID
+	 */
+	public abstract void setUserId(int id);
+	
+	
+	/**
+	 * Fügt einen neuen Tab hinzu.
+	 * @param id Tab-ID
+	 * @param tabName Angezeigter Tab-Name
+	 * @param content Inhalt des Tabs
+	 */
+	public abstract void addTab(String id, String tabName, Parent content);
+}

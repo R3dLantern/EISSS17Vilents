@@ -1,0 +1,32 @@
+package application.util;
+
+import org.json.JSONArray;
+
+/**
+ * Sortiert JSON-Objekte mittels QuickSort-Algorithmus.
+ * <a href="http://www.java-uni.de/index.php?Seite=86">Quelle für Code-Struktur</a>
+ * @author Leonid Vilents
+ */
+public class QuickSorter {
+	public static void sort(JSONArray array)
+	{
+		
+	}
+	
+	
+	public static void qSort(JSONArray array, int left, int right)
+	{
+		
+	}
+	
+	public static int partition(JSONArray array, int left, int right)
+	{
+		int pivot, i, j, help;
+		pivot = array.getJSONObject(right).getInt("rep");
+		i = left;
+		j = right - 1;
+		while (i <= j) {
+			if(array.getJSONObject(i).getInt("rep") > )
+		}
+	}
+}

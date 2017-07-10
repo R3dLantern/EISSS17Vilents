@@ -1,0 +1,47 @@
+package application.controller;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import application.Main;
+import application.util.ServerRequest;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.ScrollPane;
+import model.HttpResponse;
+
+/**
+ * Controllerklasse für die Nachrichtenübersicht
+ * @author Leonid Vilents
+ */
+public class MessagesController {
+	
+	private final String MESSAGES_OVERVIEW_STRING = "%smessages/index";
+	
+	@FXML
+	private ScrollPane overviewContent;
+	
+	@FXML
+	protected void composeNewMessage(ActionEvent event) {
+		
+	}
+	
+	@FXML
+	protected void initialize()
+	{
+		ServerRequest req = new ServerRequest(MESSAGES_OVERVIEW_STRING);
+		
+		HttpResponse res = req.get();
+		
+		if(res.getStatusCode() == 200) {
+			try {
+				JSONArray content = new JSONArray(req.get().getContent());
+				Main.log(content.toString());
+			} catch (JSONException e) {
+				e.printStackTrace();
+				return;
+			}
+		}
+	}
+}

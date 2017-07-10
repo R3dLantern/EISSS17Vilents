@@ -1,0 +1,73 @@
+package application.controller;
+
+import java.time.Instant;
+import java.util.Date;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import application.Main;
+import application.util.ServerRequest;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
+import model.HttpResponse;
+
+/**
+ * Controllerklasse für die Nachrichtenübersicht
+ * @author Leonid Vilents
+ */
+public class MessagesController {
+	
+	private final String MESSAGES_OVERVIEW_STRING = "%smessages/index";
+	
+	@FXML
+	private ScrollPane overviewContent;
+	
+	@FXML
+	protected void composeNewMessage(ActionEvent event) {
+		
+	}
+	
+	@FXML
+	protected void initialize()
+	{
+		ServerRequest req = new ServerRequest(MESSAGES_OVERVIEW_STRING);
+		
+		HttpResponse res = req.get();
+		
+		if(res.getStatusCode() == 200) {
+			try {
+				JSONArray content = req.get().getContent().getJSONArray("messages");
+				
+				// VBox als Content-Träger für einzelne Nachrichten
+				VBox box = new VBox();
+				
+				for(int i = 0; i < content.length(); i++) {
+					JSONObject object = content.getJSONObject(i);
+					Date date = Date.from(Instant.parse(object.getString("zeitstempel")));
+					
+					// Snippet für Nachricht aus JSON-Objekt erstellen
+					AnchorPane messageContent = Main.snippetLoader.getMessageOverviewSnippet(
+						object.getInt("ungelesen") == 1 ? true : false,
+						object.getInt("n_id"),
+						object.getInt("b_id"),
+						date,
+						object.getString("vorname"),
+						object.getString("nachname")
+					);
+					box.getChildren().add(messageContent);
+				}
+				
+				// VBox in die Übersicht setzen
+				overviewContent.setContent(box);
+			} catch (JSONException e) {
+				e.printStackTrace();
+				return;
+			}
+		}
+	}
+}

@@ -1,0 +1,10 @@
+package application.util;
+
+public enum EURI {
+	
+	SIGNUP_URI ("%ssignup"),
+	
+	public static final String SIGNUP_URI = "%ssignup";
+	public static final String LOGIN_URI = "%slogin";
+	public static final String LOGOUT_URI = "%slogout";
+}

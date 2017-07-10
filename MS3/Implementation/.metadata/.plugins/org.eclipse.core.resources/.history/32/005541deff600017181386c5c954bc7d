@@ -1,0 +1,203 @@
+package application.util;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.Charset;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import application.Main;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import model.HttpResponse;
+
+/**
+ * Handler-Klasse für HTTP-Kommunikation
+ * @author Leonid Vilents
+ */
+public class ServerRequest {
+	
+	private URL url;
+	
+	
+	/**
+	 * Konstruktor
+	 * @param url Die Ziel-URL des Requests
+	 */
+	public ServerRequest(String url)
+	{	
+		String fullURL = String.format(url, getFullPrefix());
+		try{
+			this.url = new URL(fullURL);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	/**
+	 * Konstruktor mit Identifikator
+	 * @param urlWithId Ziel-URL des Requests, mit Integer-Formatierungszeichen
+	 * @param id ID einer Ressource
+	 */
+	public ServerRequest(String urlWithId, int id)
+	{
+		String fullURL = String.format(urlWithId, getFullPrefix(), id);
+		try {
+			this.url = new URL(fullURL);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Führt einen HTTP POST-Request auf den Server aus.
+	 * @param postData die zu übertragenden POST-Daten
+	 * @return Die Antwort des Servers 
+	 * @throws IOException 
+	 */
+	public HttpResponse post(JSONObject postData) throws IOException
+	{
+		Main.conn = (HttpURLConnection) url.openConnection();
+		Main.conn.setRequestMethod(HTTP_METHOD_POST);
+		Main.conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+		Main.conn.setRequestProperty("Content-length", Integer.toString(postData.length()));
+		Main.conn.setRequestProperty("Accept", "application/json; charset=UTF-8");
+		Main.conn.setDoOutput(true);
+			
+		OutputStream out = Main.conn.getOutputStream();
+	    out.write(postData.toString().getBytes("UTF-8"));
+	    out.flush();
+	    out.close();
+		    
+	    return this.handleResponse();
+	}
+	
+	/**
+	 * Führt einen HTTP GET-Request auf den Server aus.
+	 * @return HttpResponse-Objekt
+	 * @throws MalformedURLException 
+	 */
+	public HttpResponse get()
+	{
+		try {
+			Main.conn = (HttpURLConnection) url.openConnection();
+			Main.conn.setRequestMethod(HTTP_METHOD_GET);
+			Main.conn.setRequestProperty("Accept", "application/json; charset=UTF-8");
+			return this.handleResponse();
+		} catch (IOException a) {
+			a.printStackTrace();
+			return this.safeExceptionLogout();
+		}
+	}
+	
+	/**
+	 * Setzt die URL dieser Instanz neu.
+	 * @param url neuer URL-String
+	 */
+	public void setURL(String url)
+	{		
+		try{
+			this.url = new URL(url);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Behandelt die Serverantwort und gibt ein simplifiziertes HttpResponse-Objekt zurück.
+	 * @return
+	 */
+	private HttpResponse handleResponse() throws IOException
+	{	
+		StringBuilder sb = new StringBuilder();
+		try {
+		    InputStream is = Main.conn.getInputStream();
+		    BufferedReader br = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+		    String line = null;
+		    while((line = br.readLine() ) != null) {
+		        sb.append(line);
+		    }
+		    if(sb.length() > 0){
+		    	JSONObject content = new JSONObject(sb.toString());
+		    	return new HttpResponse(Main.conn.getResponseCode(), content);
+		    } else {
+		    	return new HttpResponse(Main.conn.getResponseCode());
+		    }
+		} catch (IOException a) {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle(CONNECTION_ERROR);
+			switch(Main.conn.getResponseCode()) {
+			case 400:
+				alert.setHeaderText(HEADER_400);
+				alert.setContentText(ERROR_400);
+				break;
+			case 401:
+				alert.setHeaderText(HEADER_401);
+				alert.setContentText(ERROR_401);
+				break;
+			case 403:
+				alert.setHeaderText(HEADER_403);
+				alert.setContentText(ERROR_403);
+				break;
+			case 404:
+				alert.setHeaderText(HEADER_404);
+				alert.setContentText(ERROR_404);
+				break;
+			case 500:
+				alert.setHeaderText(HEADER_500);
+				alert.setContentText(ERROR_500);
+				break;
+			default:
+				alert.setHeaderText("Unbekannter Fehler");
+				alert.setContentText("Keine Ahnung was hier abgeht...");
+				break;
+			}
+			alert.showAndWait();
+			a.printStackTrace();
+			return this.safeExceptionLogout();
+			
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return new HttpResponse(Main.conn.getResponseCode());
+			
+		} finally {
+			Main.conn.disconnect();
+			
+		}
+	}
+	
+	/**
+	 * Wird im Catch-Block der handleResponse ausgeführt.
+	 * @return Leere HTTP Response und Umleitung auf Login.
+	 * @throws MalformedURLException
+	 */
+	private HttpResponse safeExceptionLogout()
+	{
+		String logoutURL = String.format(EURI.LOGOUT.uri(), getFullPrefix());
+		try {
+			this.url = new URL(logoutURL);
+			Main.sceneLoader.init();
+			return this.get();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			return new HttpResponse(400, new JSONObject());
+		}	
+	}
+	
+	/**
+	 * Gibt den formatierten URL-Präfix (Protokoll, IP und Port) zurück.
+	 * @return String
+	 */
+	private String getFullPrefix()
+	{
+		return String.format(HTTP_PREFIX, Main.SERVER_IP, Main.SERVER_PORT);
+	}
+}

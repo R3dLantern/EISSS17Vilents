@@ -1,0 +1,6 @@
+package application.controller;
+
+public abstract class DynamicController {
+
+	public abstract void initWithData();
+}

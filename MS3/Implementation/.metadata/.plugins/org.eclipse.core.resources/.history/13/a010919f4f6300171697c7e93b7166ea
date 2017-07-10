@@ -1,0 +1,81 @@
+package application.controller;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import application.Main;
+import application.util.EBoolean;
+import application.util.conn.EURI;
+import application.util.conn.ServerRequest;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
+import model.HttpResponse;
+
+/** 
+ * Controllerklasse für Projekte
+ * @author Leonid Vilents
+ */
+public class ProjectController {
+	
+	private int ownerId;
+	private int projectId;
+	
+	@FXML
+	private Label titleLabel;
+	
+	@FXML
+	private Hyperlink nameLink;
+	
+	@FXML
+	private Button upvoteButton;
+	
+	public void initWithData(int pId, int userId) {
+		
+		this.projectId = pId;
+		ServerRequest req = new ServerRequest(EURI.PROJECT.uri(), pId);
+		
+		HttpResponse res = req.get();
+		JSONObject resContent = res.getContent();
+		if(resContent != null) {
+			try{
+				titleLabel.setText(resContent.getString("titel"));
+				ownerId = resContent.getInt("casemodder_id");
+				nameLink.setText(String.format("%s %s", resContent.getString("vorname"), resContent.getString("nachname")));
+				if(resContent.getBoolean("userOwnsProject")){
+					upvoteButton.setVisible(false);
+				}
+				if(res.getContent().getJSONArray("upvotes").length() > 0) {
+				  //if(res.getContent().getJSONArray("upvotes").)
+				}
+			} catch (JSONException je) {
+				je.printStackTrace();
+				return;
+			}
+		}
+	}
+	
+	/**
+	 * Gibt den Projekttitel aus dem Label zurück.
+	 * @return Projekttitel
+	 */
+	public String getTitle()
+	{
+		return titleLabel.getText();
+	}
+	
+	@FXML
+	protected void handleUpvote()
+	{
+		
+	}
+	
+	@FXML
+	protected void viewProfile()
+	{
+		Main.layoutManager.getProfileTabContent(ownerId, EBoolean.CASEMODDER.value());
+	}
+}

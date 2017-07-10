@@ -1,0 +1,34 @@
+package application.controller;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import application.util.EURI;
+import application.util.PasswordUtil;
+import application.util.ServerRequest;
+import javafx.fxml.FXML;
+import javafx.scene.control.PasswordField;
+
+public class DeletePanelController {
+	
+	@FXML
+	private PasswordField passwordField;
+	
+	@FXML
+	protected void deleteAccount()
+	{
+		String pwdHash = PasswordUtil.getHash(PasswordUtil.ALGORITHM_SHA256, passwordField.getText());
+		
+		ServerRequest req = new ServerRequest(EURI.SIGNOUT.uri());
+		
+		JSONObject body = new JSONObject();
+		
+		try {
+			body.put("password", pwdHash);
+			
+		} catch (JSONException je) {
+			je.printStackTrace();
+			return;
+		}
+	}
+}

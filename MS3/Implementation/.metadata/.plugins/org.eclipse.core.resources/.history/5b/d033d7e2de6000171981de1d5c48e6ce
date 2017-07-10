@@ -1,0 +1,6 @@
+package application.controller;
+
+public abstract class ProfileController {
+
+	public void initWithData();
+}

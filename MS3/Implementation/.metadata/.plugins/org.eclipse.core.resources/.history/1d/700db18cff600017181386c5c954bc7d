@@ -1,0 +1,16 @@
+package application.util;
+
+public enum EHttp {
+	
+	HTTP_PREFIX ("http://%s:%s/"),
+	HTTP_GET ("GET"),
+	HTTP_POST ("POST"),
+	HTTP_PUT ("PUT"),
+	HTTP_DELETE ("DELETE");
+	
+	private String val;
+	
+	EHttp(String val) {this.val = val;}
+	
+	public String val() {return this.val;}
+}

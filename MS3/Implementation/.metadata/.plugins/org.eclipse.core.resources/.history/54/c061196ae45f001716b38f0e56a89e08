@@ -1,0 +1,10 @@
+package application.util;
+
+/**
+ * Interface für Komponenten, die den FXMLLoader benutzen.
+ * @author Léon
+ *
+ */
+public interface IFXMLLoader {
+	static final String FXML_PATH = "/application/controller/fxml/";
+}
