@@ -19,8 +19,9 @@ USE `eis_ss2017`;
 
 # Neuen Benutzer für Datenbank anlegen und ihm alle Rechte für diese Datenbank zuweisen
 # Alle Änderungen des Benutzers müssen parallel in der dbam.json geändert werden!
-CREATE USER IF NOT EXISTS `eis_ss2017@localhost` IDENTIFIED BY `R4kujLRrN6zYxBtb`;
-GRANT ALL ON `eis_ss2017`.`*` TO `eis_ss2017@localhost`
+CREATE USER IF NOT EXISTS `eis_ss2017`@`localhost`;
+SET PASSWORD FOR `eis_ss2017`@`localhost` = PASSWORD('R4kujLRrN6zYxBtb');
+GRANT ALL ON eis_ss2017.* TO `eis_ss2017`@`localhost`;
 
 -- Exportiere Struktur von Tabelle eis_ss2017.benutzer
 DROP TABLE IF EXISTS `benutzer`;
