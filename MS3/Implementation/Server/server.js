@@ -8,7 +8,6 @@
  * @requires express
  * @requires express-session
  * @requires body-parser
- * @requires uid2
  * @requires util/dbam
  * @requires routing/LoginController
  * @requires routing/ProfilesController
@@ -94,6 +93,7 @@ app.use(function (req, res, next) {
     }
 });
 
+// Einzelne Routing-Controller an Ressource-URIs mounten
 app.use(loginController);
 app.use(dashboardController);
 app.use('/profile', profilesController);
@@ -105,7 +105,7 @@ app.use('/comment', commentsController);
 app.use('/upvote', upvotesController);
 
 /** @function
- * @name listenToDefaultPort
+ * @name Main::listenToDefaultPort
  * @desc "Startprozess", der dem Server das Emfpangen von HTTP-Anfragen ermöglicht
  */
 app.listen(port, function () {

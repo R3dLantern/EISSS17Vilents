@@ -7,7 +7,6 @@
     "express-session": "^1.15.3",
     "mysql": "^2.13.0",
     "node-mysql": "^0.4.2",
-    "uid2": "0.0.3"
   },
   "devDependencies": {
     "jsdoc": "^3.4.3"

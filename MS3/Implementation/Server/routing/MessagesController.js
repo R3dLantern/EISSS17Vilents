@@ -28,64 +28,68 @@ messagesController.use(function (req, res, next) {
         res.status(403).end();
     }
 });
-/**
- * @function
- * @name MessagesController::index
- * @desc Holt alle Nachrichten im Posteingang eines Benutzers
- * @param {string} path - Route
- * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
- * @todo <strong>Implementieren</strong>
+
+/** Router-Handling für bestehende Nachrichten
+ * @param {string} path - URI
  */
-messagesController.get('/index', function (req, res) {
+messagesController.route('/')
+  /**
+   * @function
+   * @name MessagesController::index
+   * @desc Fordert alle Nachrichten an, die sich im Posteingang eines Benutzers
+   *       befinden.
+   * @param {function (req, res)} httpCallback Callbackfunktion mit Request- und
+   *                                           Response-Objekt
+   */
+  .get(function (req, res) {
     var id = req.user.id;
     dbam.getMessagesOverviewData(id, function (error, results) {
-        if (error) {
-            res.status(500).end();
-            throw error;
-        }
-        if (results) {
-            res.status(200).json(results);
-            return;
-        }
-        res.status(200).end();
-    });
-});
-
-
-/**
- * @function
- * @name MessagesController::sendNew
- * @desc Schickt eine neue Nachricht an einen Benutzer
- * @param {string} path - Route
- * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
- * @todo <strong>Implementieren</strong>
- */
-messagesController.post('/new', function (req, res) {
-  var messageObject = req.body;
-  messageObject.senderId = req.user.id;
-  dbam.createNewMessage(
-    messageObject,
-    function (error) {
       if (error) {
         res.status(500).end();
-        throw error;
-      } else {
-        res.status(201).end();
+          throw error;
       }
-    }
-  );
-});
-
+      if (results) {
+        res.status(200).json(results);
+        return;
+      }
+      res.status(200).end();
+      return;
+    });
+  })
+  /**
+   * @function
+   * @name MessagesController::newMessage
+   * @desc Erstellt mit den übergebenen POST-Daten eine neue Nachricht in der
+   *       Datenbank
+   * @param {function (req, res)} httpCallback Callbackfunktion mit Request- und
+   *                                           Response-Objekt
+   */
+  .post(function (req, res) {
+    var messageObject = req.body;
+    messageObject.senderId = req.user.id;
+    dbam.createNewMessage(
+      messageObject,
+      function (error) {
+        if (error) {
+          res.status(500).end();
+          throw error;
+        } else {
+          res.status(201).end();
+        }
+      }
+    );
+  });
 
 /** Router-Handling für Nachrichten
  * @param {string} path - Route
  */
 messagesController.route('/:id')
-  /** @function
+  /** 
+   * @function
    * @name MessagesController::show
    * @desc Holt den Inhalt einer Nachricht
-   * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
-   * @todo <strong>Implementieren</strong>
+   * @param {function (req, res)} httpCallback Callbackfunktion mit Request- und
+   *                                           Response-Objekt
    */
   .get(function (req, res) {
     var mId = req.params.id;
@@ -101,10 +105,12 @@ messagesController.route('/:id')
       }
     });
   })
-  /** @function
-   * @name MessagesController::setAsRead
+  /** 
+   * @function
+   * @name MessagesController::setMessageAsRead
    * @desc Setzt eine Nachricht als gelesen
-   * @param {function (req, res)} middleware - HTTP-Middleware mit Request und Response-Objekt
+   * @param {function (req, res)} httpCallback Callbackfunktion mit Request und
+   *                                           Response-Objekt
    */
   .put(function (req, res) {
     var mId = req.params.id;
@@ -118,10 +124,10 @@ messagesController.route('/:id')
     });
   })
   /** @function
-   * @name MessagesController::delete
+   * @name MessagesController::deleteMessage
    * @desc Löscht eine Nachricht aus der Datenbank
-   * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
-   * @todo <strong>Implementieren</strong>
+   * @param {functoon (req, res)} httpCallback Callbackfunktion mit Request- und
+   *                                           Response-Objekt
    */
   .delete(function (req, res) {
     var mId = req.params.id;

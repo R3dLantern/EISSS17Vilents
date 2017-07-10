@@ -79,61 +79,65 @@ function getRepInLoop(userArray, callback) {
     }
 }
 
-/**
- * @function
- * @name SponsoringController::index
- * @desc Holt Daten für die Übersicht über Sponsor-suchende
- * @param {string} path - Route
- * @param {function (req, res)} middleware - HTTP-Middleware mit Request- und Response-Objekt
+/** Router-Handling für Sponsoring-Welt und neue Teams
+ * @param {string} path Route
  */
-sponsoringController.get('/index', function (req, res) {
-    dbam.getSponsoringApplicants(function (error, resultArray) {
+sponsoringController.route('/')
+  /**
+   * @function
+   * @name SponsoringController::index
+   * @desc Fordert alle Casemodder mit aktiviertem Suchstatus an.
+   * @param {function (req, res)} httpCallback Callbackfunktion mi Request- und
+   *                                           Response-Objekt
+   */
+  .get(function (req, res) {
+    dbam.getSponsoringApplicants(
+      function (error, resultArray) {
         if (error) {
-            res.status(500).end();
-            return;
+          res.status(500).end();
+          return;
         }
         if (resultArray.length > 0) {
-            getRepInLoop(resultArray, function (error) {
-                if (error) {
-                    res.status(500).end();
-                    throw error;
-                }
-                var resObj = {
-                    results: resultArray
-                };
-                res.status(200).json(resObj);
-                return;
-            });
+          getRepInLoop(
+            resultArray,
+            function (error) {
+              if (error) {
+                res.status(500).end();
+                throw error;
+              }
+              var resObj = {
+                results: resultArray
+              };
+              res.status(200).json(resObj);
+              return;
+            }
+          );
         } else {
-            res.status(200).json({});
-            return;
+          res.status(200).json({});
+          return;
         }
-        return;
-    });
-});
-
-
-
-
-/**
- * @function
- * @name SponsoringController::create
- * @desc Legt ein neues Casemodder-Team für einen Sponsor an
- * @param {string} path - Route
- * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
- * @todo <strong>Implementieren</strong>
- */
-sponsoringController.post('/new', function (req, res) {
+      }
+    );
+  })
+  /**
+   * @function
+   * @name SponsoringController::newTeam
+   * @desc Erstellt aus den erhaltenen POST-Daten ein neues Casemodder-Team,
+   *       der ausführende Benutzer ist der leitende Sponsor
+   * @param {function (req, res)} httpCallback Callbackfunktion mit Request- und
+   *                                           Response-Objekt
+   * @todo <strong>Implementieren</strong>
+   */
+  .post(function (req, res) {
     
-});
-
+  });
 
 /** Router-Handling für Casemodder-Teams
  * @param {string} path - Route
  */
 sponsoringController.route('/:id')
     /** @function
-     * @name SponsoringController::show
+     * @name SponsoringController::showTeam
      * @desc Holt Daten zu einem Casemodder-Team
      * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
      * @todo <strong>Implementieren</strong>
@@ -142,7 +146,7 @@ sponsoringController.route('/:id')
     
     })
     /** @function
-     * @name SponsoringController::update
+     * @name SponsoringController::updateTeam
      * @desc Aktualisiert einen Datensatz zu einem Casemodder-Team
      * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
      * @todo <strong>Implementieren</strong>
@@ -151,7 +155,7 @@ sponsoringController.route('/:id')
     
     })
     /** @function
-     * @name SponsoringController::delete
+     * @name SponsoringController::deleteTeam
      * @desc Löscht ein Casemodder-Team
      * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
      * @todo <strong>Implementieren</strong>

@@ -2,9 +2,10 @@
 "use strict";
 
 /** 
- * Dateiverwaltungsmodul
+ * Modul zum Verwalten von Bild- und Dokumentdateien
  * @module util/filemanager
  * @requires fs
+ * @requires util/dbam
  * @author Leonid Vilents <lvilents@smail.th-koeln.de>
  */
 

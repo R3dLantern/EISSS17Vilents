@@ -17,13 +17,13 @@ var projectUpdatesController  = express.Router();
 
 /**
  * @function
- * @name ProjectUpdatesController::create
+ * @name ProjectUpdatesController::createProjectUpdate
  * @desc Legt ein neues Projektupdate an
  * @param {string} path - Route
  * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
  * @todo <strong>Implementieren</strong>
  */
-projectUpdatesController.post('/new', /*requireLogin,*/ function (req, res) {
+projectUpdatesController.post('/', /*requireLogin,*/ function (req, res) {
     
 });
 
@@ -33,7 +33,7 @@ projectUpdatesController.post('/new', /*requireLogin,*/ function (req, res) {
  */
 projectUpdatesController.route('/:id')
     /** @function
-     * @name ProjectUpdateController::update
+     * @name ProjectUpdateController::updateProjectUpdate
      * @desc Aktualisiert einen Datensatz zu einem Projektupdate
      * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
      * @todo <strong>Implementieren</strong>
@@ -42,7 +42,7 @@ projectUpdatesController.route('/:id')
     
     })
     /** @function
-     * @name ProjectsController::delete
+     * @name ProjectsController::deleteProjectUpdate
      * @desc Löscht ein Projektupdate
      * @param {callback} middleware - HTTP-Middleware mit Request- und Response-Objekt
      * @todo <strong>Implementieren</strong>

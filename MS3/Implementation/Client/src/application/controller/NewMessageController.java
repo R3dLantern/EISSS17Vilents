@@ -50,7 +50,7 @@ public class NewMessageController {
 			errorLabel.setText("Du hast keine Nachricht, die Du abschicken kannst.");
 		}
 		
-		ServerRequest req = new ServerRequest(EURI.MESSAGE_NEW.uri());
+		ServerRequest req = new ServerRequest(EURI.MESSAGES.uri());
 		
 		JSONObject messageData = new JSONObject();
 		

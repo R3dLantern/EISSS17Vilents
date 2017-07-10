@@ -7,6 +7,7 @@
  * @module util/dbam
  * @requires node-mysql
  * @requires fs
+ * @requires util/filemanager
  * @author Leonid Vilents <lvilents@smail.th-koeln.de>
  */
 
@@ -31,7 +32,8 @@ var pool        = null;
 /**
  * @function
  * @name DBAM::getCredentialsFromJson
- * @desc Entnimmt der im System hinterlegten Konfigurationsdatei die Zugangsdaten für die Datenbank
+ * @desc Entnimmt der im System hinterlegten Konfigurationsdatei die Zugangsdaten
+ *       für die Datenbank
  * @returns {object} JSON-Objekt mit Login-Credentials für die Datenbank
  */
 function getCredentialsFromJson() {
@@ -957,6 +959,17 @@ exports.getProject = function (pId, uId, callback) {
     });
   });
 };
+
+/**
+ * @function
+ * @name DBAM:Exports:deleteProject
+ * @desc Löscht ein Projekt, die dafür generierten Upvotes und Kommentare.
+ * @param {number} pId Projekt-ID
+ * @param {noReturnCallback} callback Callbackfunktion
+ */
+/*exports.deleteProject = function deleteProject(pId, callback) {
+  
+};*/
 
 /**
  * @function
