@@ -66,7 +66,19 @@ projectsController.router('/')
    * @todo <strong>Implementieren</strong>
    */
   .post(function (req, res) {
-    
+    req.body.casemodder_id = req.user.id;
+    dbam.createProject(
+      req.body,
+      function (error) {
+        if (error) {
+          res.status(500).end();
+          throw error;
+        } else {
+          res.status(201).end();
+          return;
+        }
+      }
+    );
   });
 
 /** Router-Handling für Projekte

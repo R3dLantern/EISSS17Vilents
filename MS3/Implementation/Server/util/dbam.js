@@ -890,6 +890,61 @@ exports.getProjectsOverviewData = function getProjectsOverviewData(userId, isCas
 
 /**
  * @function
+ * @name DBAM:Exports:createProject
+ * @desc Legt ein neues Projekt an.
+ * @param {object} projectObject Die für die Anlegung benötigten Daten
+ * @param {noReturnCallback} callback Callbackfunktion
+ */
+exports.createProject = function createProject(projectObject, callback) {
+  var invalidProjectObject = (
+    projectObject.casemodderId === null
+    || projectObject.title === null
+    || projectObject.content === null
+    || projectObject.images === null
+  );
+  if (invalidProjectObject) {
+    callback(new Error('Invalid Project Object'));
+    return;
+  }
+  this.pool.getConnection(
+    function (err, conn) {
+      if (err) {
+        callback(err);
+        return;
+      }
+      conn.query(
+        'INSERT INTO projekt (casemodder_id, erstellt_am, titel, inhalt, status'
+        + ') VALUES(?, CURDATE(), ?, ?, "Laufend")',
+        [projectObject.casemodderId, projectObject.title, projectObject.content],
+        function (error, results, fields) {
+          conn.release();
+          if (error) {
+            callback(error);
+            return;
+          } else {
+            fileManager.handleProjectImagesUpload(
+              projectObject.images,
+              results[0].insertId,
+              projectObject.title,
+              function (error) {
+                if (error) {
+                  callback(error);
+                  return;
+                } else {
+                  callback(null);
+                  return;
+                }
+              }
+            );
+          }
+        }
+      );
+    }
+  );
+}
+
+/**
+ * @function
  * @name DBAM:Exports:getProject
  * @desc Holt ein Projekt, seine Kommentare, Updates und alle dazugehörigen Upvotes.
  * @param {number} pId - ID des Projektes
@@ -959,17 +1014,6 @@ exports.getProject = function (pId, uId, callback) {
     });
   });
 };
-
-/**
- * @function
- * @name DBAM:Exports:deleteProject
- * @desc Löscht ein Projekt, die dafür generierten Upvotes und Kommentare.
- * @param {number} pId Projekt-ID
- * @param {noReturnCallback} callback Callbackfunktion
- */
-/*exports.deleteProject = function deleteProject(pId, callback) {
-  
-};*/
 
 /**
  * @function

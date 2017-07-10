@@ -11,18 +11,21 @@ public enum EDialog {
 	TITLE_SENT_MESSAGE ("Deine Nachricht"),
 	TITLE_SEEK_STATUS ("Dein Suchstatus"),
 	TITLE_SEEK_STATUS_SET ("Dein Suchstatus"),
+	TITLE_NEW_PROJECT ("Neues Projekt"),
 	HEADER_SENT_MESSAGE("Erfolg"),
 	HEADER_SIGNOUT ("Benutzerkonto gelöscht"),
 	HEADER_DELETE_MESSAGE ("Nachricht löschen?"),
 	HEADER_SEEK_STATUS ("Sponsorsuchstatus setzen?"),
 	HEADER_SEEK_STATUS_SET ("Suchstatus erfolgreich gesetzt"),
+	HEADER_NEW_PROJECT ("Neues Projekt angelegt"),
 	CONTENT_DELETE_MESSAGE ("Möchtest Du diese Nachricht löschen?"),
 	CONTENT_SIGNOUT ("Du hast Dein Benutzerkonto gelöscht. Bis bald!"),
 	CONTENT_SENT_MESSAGE ("Deine Nachricht wurde erfolgreich abgeschickt."),
 	CONTENT_SEEK_STATUS (
 		"Das Setzen des Sponsorsuchstatus bedeutet, dass Sponsoren dies sehen "
 		+ "und Dich in ein Team einladen können. Bist Du sicher, dass Du das möchtest?"),
-	CONTENT_SEEK_STATUS_SET ("Du hast Deinen Sponsorsuchstatus erfolgreich gesetzt. Viel Erfolg!");
+	CONTENT_SEEK_STATUS_SET ("Du hast Deinen Sponsorsuchstatus erfolgreich gesetzt. Viel Erfolg!"),
+	CONTENT_NEW_PROJECT ("Projekt wurde erfolgreich angelegt.");
 	
 	private String text;
 	
