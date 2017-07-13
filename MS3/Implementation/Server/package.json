@@ -7,9 +7,11 @@
     "express-session": "^1.15.3",
     "mysql": "^2.13.0",
     "node-mysql": "^0.4.2",
+    "sloc": "^0.2.0"
   },
   "devDependencies": {
-    "jsdoc": "^3.4.3"
+    "jsdoc": "^3.4.3",
+    "sloc": "^0.2.0"
   },
   "description": "Server-Implementation für EIS im Sommersemester 2017",
   "main": "server.js",
